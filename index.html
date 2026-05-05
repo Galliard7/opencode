@@ -1,0 +1,876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>OpenCode — Free Algorithm Interview Prep</title>
+<meta name="description" content="Free, open-source coding interview prep. 150 NeetCode problems with solutions, interactive algorithm visualizers, and AI tutoring. No login, no paywall.">
+<meta property="og:title" content="OpenCode — Free Algorithm Interview Prep">
+<meta property="og:description" content="150 NeetCode problems, interactive visualizers, AI tutor. All free, all in your browser.">
+<meta name="theme-color" content="#6366f1">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='20' fill='%236366f1'/><text x='50' y='68' text-anchor='middle' font-size='50' font-weight='800' fill='white'>&lt;/&gt;</text></svg>">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app" id="app">
+    <!-- Header -->
+    <header class="header">
+      <button class="btn-icon" id="sidebar-toggle" title="Toggle sidebar">☰</button>
+      <div class="logo">
+        <div class="logo-mark">&lt;/&gt;</div>
+        <span>OpenCode</span>
+      </div>
+      <div class="header-spacer"></div>
+      <div class="header-actions">
+        <button class="btn btn-ghost" id="viz-btn" title="Open visualizer" style="display:none">▷ Visualize</button>
+        <button class="btn btn-ghost" id="hints-toggle">💡 Hints</button>
+        <button class="btn btn-ghost" id="chat-toggle">💬 AI Tutor</button>
+        <button class="btn btn-ghost" id="settings-btn">⚙</button>
+      </div>
+    </header>
+
+    <!-- Sidebar -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <span class="sidebar-title">Problems</span>
+      </div>
+      <div class="sidebar-search">
+        <input type="text" id="problem-search" placeholder="Search problems..." autocomplete="off" spellcheck="false">
+      </div>
+      <div class="problem-list" id="problem-list"></div>
+      <div class="sidebar-footer">
+        <div class="progress-label">
+          <span>Progress</span>
+          <span id="progress-count">0 / 0</span>
+        </div>
+        <div class="progress-bar">
+          <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Editor Area -->
+    <main class="main" id="main">
+      <div class="toolbar">
+        <div class="toolbar-problem-info">
+          <span class="toolbar-problem-title" id="current-problem-title">Select a problem</span>
+          <span class="pill" id="current-difficulty" style="display:none"></span>
+        </div>
+        <div class="toolbar-tags" id="current-tags"></div>
+        <div class="toolbar-spacer"></div>
+        <button class="btn btn-ghost" id="solution-toggle" style="display:none">Show Solution</button>
+        <button class="btn btn-ghost" id="mark-solved" style="display:none" title="Mark as solved">✓ Solved</button>
+        <button class="btn" id="run-btn" disabled>▶ Run <kbd>⌘↵</kbd></button>
+        <button class="btn btn-primary" id="benchmark-btn" disabled style="display:none">⚡ Benchmark</button>
+      </div>
+      <div class="editor-container"><div id="editor"></div></div>
+      <div class="resizer" id="resizer"></div>
+      <div class="output-panel">
+        <div class="output-header">
+          <span class="output-tab">OUTPUT</span>
+          <div class="output-actions">
+            <button class="btn-icon" id="clear-output" title="Clear">⌫</button>
+          </div>
+        </div>
+        <div class="output-content" id="output">
+          <div class="output-placeholder">Press ▶ Run or ⌘+Enter to execute your code.</div>
+        </div>
+      </div>
+    </main>
+
+    <!-- AI Chat Panel -->
+    <aside class="chat-panel" id="chat-panel">
+      <div class="chat-header">
+        <span class="chat-header-title">AI Tutor</span>
+        <button class="btn-icon" id="chat-close" title="Close">✕</button>
+      </div>
+      <div class="chat-quick-actions" id="chat-quick-actions">
+        <button class="chat-quick-btn" data-action="hint">💡 Hint</button>
+        <button class="chat-quick-btn" data-action="explain">📖 Explain</button>
+        <button class="chat-quick-btn" data-action="review">🔍 Review Code</button>
+        <button class="chat-quick-btn" data-action="pattern">🧩 Pattern</button>
+        <button class="chat-quick-btn" data-action="complexity">⏱ Complexity</button>
+      </div>
+      <div class="chat-messages" id="chat-messages">
+        <div class="chat-msg ai">Hi! I'm your AI tutor. Select a problem and ask me anything — hints, explanations, code review, or pattern recognition.</div>
+      </div>
+      <div class="chat-input-area">
+        <textarea class="chat-input" id="chat-input" placeholder="Ask anything..." rows="1"></textarea>
+        <button class="btn btn-primary" id="chat-send">↑</button>
+      </div>
+    </aside>
+  </div>
+
+  <!-- Visualizer Overlay -->
+  <div class="viz-overlay" id="viz-overlay">
+    <div class="viz-container">
+      <div class="viz-header">
+        <span class="viz-title" id="viz-title">Algorithm Visualizer</span>
+        <button class="btn btn-ghost viz-close" id="viz-close">✕ Close</button>
+      </div>
+      <div class="viz-body" id="viz-body"></div>
+      <div class="viz-controls">
+        <button class="btn-icon" id="viz-reset" title="Reset">⟲</button>
+        <button class="btn-icon" id="viz-back" title="Step back">◁</button>
+        <button class="btn-icon" id="viz-play" title="Play/Pause">▶</button>
+        <button class="btn-icon" id="viz-forward" title="Step forward">▷</button>
+        <label style="font-size:11px;color:var(--fg-secondary)">Speed</label>
+        <input type="range" class="speed-slider" id="viz-speed" min="100" max="2000" value="800" step="100">
+        <span class="viz-step-label" id="viz-step-label">0 / 0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Benchmark Engine -->
+  <script src="benchmark.js"></script>
+
+  <!-- Visualizer Scripts -->
+  <script src="visualizers/dfs.js"></script>
+  <script src="visualizers/bfs.js"></script>
+  <script src="visualizers/binary-search.js"></script>
+  <script src="visualizers/two-pointers.js"></script>
+  <script src="visualizers/sliding-window.js"></script>
+  <script src="visualizers/backtracking.js"></script>
+
+  <!-- Settings Modal -->
+  <div class="modal-backdrop" id="settings-modal">
+    <div class="modal">
+      <h3>Settings</h3>
+      <p>Enter your Google AI Studio API key to enable AI Tutor features. Get a free key at <a href="https://aistudio.google.com/apikey" target="_blank" style="color:var(--accent)">aistudio.google.com</a>.</p>
+      <input type="password" id="api-key-input" placeholder="AIza...">
+      <div class="modal-actions">
+        <button class="btn" id="settings-cancel">Cancel</button>
+        <button class="btn btn-primary" id="settings-save">Save</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Confirm Modal -->
+  <div class="modal-backdrop" id="confirm-modal">
+    <div class="modal">
+      <h3 id="confirm-title">Are you sure?</h3>
+      <p id="confirm-message">This will replace your current code.</p>
+      <div class="modal-actions">
+        <button class="btn" id="confirm-cancel">Cancel</button>
+        <button class="btn btn-primary" id="confirm-ok">Confirm</button>
+      </div>
+    </div>
+  </div>
+
+<script>
+/* ══════════════════════════════════════════════════════════════════
+   OpenCode — Main Application Script
+   ══════════════════════════════════════════════════════════════════ */
+
+// ─── State ───
+let editor = null;
+let problems = [];
+let currentProblem = null;
+let showingSolution = false;
+let userCode = '';
+let pyodide = null;
+let pyReady = false;
+let isRunning = false;
+let solvedSet = new Set(JSON.parse(localStorage.getItem('opencode_solved') || '[]'));
+let apiKey = localStorage.getItem('opencode_api_key') || '';
+
+// ─── DOM refs ───
+const app = document.getElementById('app');
+const outputEl = document.getElementById('output');
+const problemListEl = document.getElementById('problem-list');
+const runBtn = document.getElementById('run-btn');
+const benchmarkBtn = document.getElementById('benchmark-btn');
+const solutionToggle = document.getElementById('solution-toggle');
+
+// ─── Load Problems ───
+async function loadProblems() {
+  try {
+    const resp = await fetch('problems.json');
+    problems = await resp.json();
+  } catch (e) {
+    // Fallback: embedded starter problems
+    problems = getStarterProblems();
+  }
+  renderProblemList();
+  // Load last-used problem or default to first
+  const lastId = localStorage.getItem('opencode_current');
+  const target = problems.find(p => p.num == lastId) || problems[0];
+  if (target) selectProblem(target);
+}
+
+function getStarterProblems() {
+  return [
+    {
+      num: 1, title: 'Two Sum', difficulty: 'Easy', category: 'Arrays & Hashing',
+      tags: ['Array', 'Hash Table'],
+      template: `class Solution:\n    def twoSum(self, nums, target):\n        # Your code here\n        pass\n\n\nsol = Solution()\nprint(sol.twoSum([2, 7, 11, 15], 9))   # [0, 1]\nprint(sol.twoSum([3, 2, 4], 6))        # [1, 2]\nprint(sol.twoSum([3, 3], 6))           # [0, 1]\n`,
+      solution: `class Solution:\n    def twoSum(self, nums, target):\n        seen = {}\n        for i, n in enumerate(nums):\n            diff = target - n\n            if diff in seen:\n                return [seen[diff], i]\n            seen[n] = i\n\n\nsol = Solution()\nprint(sol.twoSum([2, 7, 11, 15], 9))   # [0, 1]\nprint(sol.twoSum([3, 2, 4], 6))        # [1, 2]\nprint(sol.twoSum([3, 3], 6))           # [0, 1]\n`,
+      hints: [
+        'Think about what complement you need for each number to reach the target.',
+        'Can you use a hash map to store numbers you\'ve already seen?',
+        'For each number, check if (target - number) exists in your hash map. If yes, return both indices.'
+      ]
+    },
+    {
+      num: 217, title: 'Contains Duplicate', difficulty: 'Easy', category: 'Arrays & Hashing',
+      tags: ['Array', 'Hash Table'],
+      template: `class Solution:\n    def containsDuplicate(self, nums):\n        # Your code here\n        pass\n\n\nsol = Solution()\nprint(sol.containsDuplicate([1, 2, 3, 1]))      # True\nprint(sol.containsDuplicate([1, 2, 3, 4]))      # False\n`,
+      solution: `class Solution:\n    def containsDuplicate(self, nums):\n        return len(nums) != len(set(nums))\n\n\nsol = Solution()\nprint(sol.containsDuplicate([1, 2, 3, 1]))      # True\nprint(sol.containsDuplicate([1, 2, 3, 4]))      # False\n`,
+      hints: [
+        'What data structure gives you O(1) lookup to check if you\'ve seen an element before?',
+        'A set automatically removes duplicates. Compare lengths.',
+        'Alternatively, iterate and add to a set — return True the moment you find a duplicate.'
+      ]
+    },
+    {
+      num: 242, title: 'Valid Anagram', difficulty: 'Easy', category: 'Arrays & Hashing',
+      tags: ['Hash Table', 'String', 'Sorting'],
+      template: `class Solution:\n    def isAnagram(self, s, t):\n        # Your code here\n        pass\n\n\nsol = Solution()\nprint(sol.isAnagram("anagram", "nagaram"))   # True\nprint(sol.isAnagram("rat", "car"))           # False\n`,
+      solution: `class Solution:\n    def isAnagram(self, s, t):\n        if len(s) != len(t):\n            return False\n        count = {}\n        for c in s:\n            count[c] = count.get(c, 0) + 1\n        for c in t:\n            count[c] = count.get(c, 0) - 1\n            if count[c] < 0:\n                return False\n        return True\n\n\nsol = Solution()\nprint(sol.isAnagram("anagram", "nagaram"))   # True\nprint(sol.isAnagram("rat", "car"))           # False\n`,
+      hints: [
+        'Anagrams have the same character frequencies.',
+        'Count characters in one string, then subtract counts using the other.',
+        'If any count goes negative or lengths differ, it\'s not an anagram.'
+      ]
+    },
+    {
+      num: 125, title: 'Valid Palindrome', difficulty: 'Easy', category: 'Two Pointers',
+      tags: ['Two Pointers', 'String'],
+      template: `class Solution:\n    def isPalindrome(self, s):\n        # Your code here\n        pass\n\n\nsol = Solution()\nprint(sol.isPalindrome("A man, a plan, a canal: Panama"))   # True\nprint(sol.isPalindrome("race a car"))                       # False\nprint(sol.isPalindrome(" "))                                # True\n`,
+      solution: `class Solution:\n    def isPalindrome(self, s):\n        l, r = 0, len(s) - 1\n        while l < r:\n            while l < r and not s[l].isalnum():\n                l += 1\n            while l < r and not s[r].isalnum():\n                r -= 1\n            if s[l].lower() != s[r].lower():\n                return False\n            l += 1\n            r -= 1\n        return True\n\n\nsol = Solution()\nprint(sol.isPalindrome("A man, a plan, a canal: Panama"))   # True\nprint(sol.isPalindrome("race a car"))                       # False\nprint(sol.isPalindrome(" "))                                # True\n`,
+      hints: [
+        'Only consider alphanumeric characters and ignore case.',
+        'Use two pointers from both ends moving inward.',
+        'Skip non-alphanumeric characters, then compare lowercase versions.'
+      ]
+    },
+    {
+      num: 121, title: 'Best Time to Buy and Sell Stock', difficulty: 'Easy', category: 'Sliding Window',
+      tags: ['Array', 'DP'],
+      template: `class Solution:\n    def maxProfit(self, prices):\n        # Your code here\n        pass\n\n\nsol = Solution()\nprint(sol.maxProfit([7, 1, 5, 3, 6, 4]))   # 5\nprint(sol.maxProfit([7, 6, 4, 3, 1]))      # 0\n`,
+      solution: `class Solution:\n    def maxProfit(self, prices):\n        min_price = float('inf')\n        max_profit = 0\n        for price in prices:\n            min_price = min(min_price, price)\n            max_profit = max(max_profit, price - min_price)\n        return max_profit\n\n\nsol = Solution()\nprint(sol.maxProfit([7, 1, 5, 3, 6, 4]))   # 5\nprint(sol.maxProfit([7, 6, 4, 3, 1]))      # 0\n`,
+      hints: [
+        'You want to buy low and sell high — but you must buy before you sell.',
+        'Track the minimum price seen so far as you iterate.',
+        'At each price, the best profit is current price minus the minimum seen so far.'
+      ]
+    },
+    {
+      num: 20, title: 'Valid Parentheses', difficulty: 'Easy', category: 'Stack',
+      tags: ['Stack', 'String'],
+      template: `class Solution:\n    def isValid(self, s):\n        # Your code here\n        pass\n\n\nsol = Solution()\nprint(sol.isValid("()"))         # True\nprint(sol.isValid("()[]{}"))     # True\nprint(sol.isValid("(]"))         # False\nprint(sol.isValid("{[]}"))       # True\n`,
+      solution: `class Solution:\n    def isValid(self, s):\n        stack = []\n        pairs = {')': '(', ']': '[', '}': '{'}\n        for c in s:\n            if c in pairs:\n                if not stack or stack[-1] != pairs[c]:\n                    return False\n                stack.pop()\n            else:\n                stack.append(c)\n        return len(stack) == 0\n\n\nsol = Solution()\nprint(sol.isValid("()"))         # True\nprint(sol.isValid("()[]{}"))     # True\nprint(sol.isValid("(]"))         # False\nprint(sol.isValid("{[]}"))       # True\n`,
+      hints: [
+        'Use a stack to track opening brackets.',
+        'When you see a closing bracket, check if it matches the top of the stack.',
+        'At the end, the stack should be empty for a valid string.'
+      ]
+    },
+    {
+      num: 704, title: 'Binary Search', difficulty: 'Easy', category: 'Binary Search',
+      tags: ['Binary Search', 'Array'],
+      template: `class Solution:\n    def search(self, nums, target):\n        # Your code here\n        pass\n\n\nsol = Solution()\nprint(sol.search([-1, 0, 3, 5, 9, 12], 9))    # 4\nprint(sol.search([-1, 0, 3, 5, 9, 12], 2))    # -1\n`,
+      solution: `class Solution:\n    def search(self, nums, target):\n        l, r = 0, len(nums) - 1\n        while l <= r:\n            mid = (l + r) // 2\n            if nums[mid] == target:\n                return mid\n            elif nums[mid] < target:\n                l = mid + 1\n            else:\n                r = mid - 1\n        return -1\n\n\nsol = Solution()\nprint(sol.search([-1, 0, 3, 5, 9, 12], 9))    # 4\nprint(sol.search([-1, 0, 3, 5, 9, 12], 2))    # -1\n`,
+      hints: [
+        'The array is sorted — you can eliminate half the search space each step.',
+        'Use two pointers (left, right) and compute mid.',
+        'If nums[mid] < target, search right half. If nums[mid] > target, search left half.'
+      ]
+    },
+    {
+      num: 206, title: 'Reverse Linked List', difficulty: 'Easy', category: 'Linked List',
+      tags: ['Linked List', 'Recursion'],
+      template: `class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef build(values):\n    dummy = ListNode()\n    curr = dummy\n    for v in values:\n        curr.next = ListNode(v); curr = curr.next\n    return dummy.next\n\ndef show(head):\n    out = []\n    while head:\n        out.append(head.val); head = head.next\n    print(out)\n\n\nclass Solution:\n    def reverseList(self, head):\n        # Your code here\n        pass\n\n\nsol = Solution()\nshow(sol.reverseList(build([1, 2, 3, 4, 5])))   # [5, 4, 3, 2, 1]\nshow(sol.reverseList(build([1, 2])))            # [2, 1]\n`,
+      solution: `class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef build(values):\n    dummy = ListNode()\n    curr = dummy\n    for v in values:\n        curr.next = ListNode(v); curr = curr.next\n    return dummy.next\n\ndef show(head):\n    out = []\n    while head:\n        out.append(head.val); head = head.next\n    print(out)\n\n\nclass Solution:\n    def reverseList(self, head):\n        prev = None\n        curr = head\n        while curr:\n            nxt = curr.next\n            curr.next = prev\n            prev = curr\n            curr = nxt\n        return prev\n\n\nsol = Solution()\nshow(sol.reverseList(build([1, 2, 3, 4, 5])))   # [5, 4, 3, 2, 1]\nshow(sol.reverseList(build([1, 2])))            # [2, 1]\n`,
+      hints: [
+        'You need to reverse the direction of each pointer.',
+        'Keep track of three nodes: prev, curr, and next.',
+        'At each step: save next, point curr.next to prev, advance prev and curr.'
+      ]
+    },
+  ];
+}
+
+// ─── Category order (NeetCode roadmap) ───
+const CATEGORY_ORDER = [
+  'Arrays & Hashing', 'Two Pointers', 'Sliding Window', 'Stack',
+  'Binary Search', 'Linked List', 'Trees', 'Tries',
+  'Heap / Priority Queue', 'Backtracking', 'Graphs', 'Advanced Graphs',
+  '1-D DP', '2-D DP', 'Greedy', 'Intervals',
+  'Math & Geometry', 'Bit Manipulation'
+];
+
+// ─── Render Problem List ───
+function renderProblemList(filter = '') {
+  const grouped = {};
+  const lowerFilter = filter.toLowerCase();
+  for (const p of problems) {
+    if (filter && !p.title.toLowerCase().includes(lowerFilter) &&
+        !String(p.num).includes(filter) &&
+        !p.category.toLowerCase().includes(lowerFilter) &&
+        !(p.tags || []).some(t => t.toLowerCase().includes(lowerFilter))) continue;
+    if (!grouped[p.category]) grouped[p.category] = [];
+    grouped[p.category].push(p);
+  }
+
+  // Sort categories by roadmap order
+  const sortedCats = Object.keys(grouped).sort((a, b) => {
+    const ia = CATEGORY_ORDER.indexOf(a);
+    const ib = CATEGORY_ORDER.indexOf(b);
+    return (ia === -1 ? 999 : ia) - (ib === -1 ? 999 : ib);
+  });
+
+  let html = '';
+  for (const cat of sortedCats) {
+    const items = grouped[cat];
+    html += `<div class="category-group">
+      <div class="category-header" data-cat="${cat}">
+        <span class="category-chevron">▾</span>
+        <span>${cat}</span>
+        <span class="category-count">${items.length}</span>
+      </div>`;
+    for (const p of items) {
+      const active = currentProblem && currentProblem.num === p.num ? ' active' : '';
+      const solved = solvedSet.has(p.num) ? ' solved' : '';
+      const diff = (p.difficulty || 'Easy').toLowerCase();
+      html += `<div class="problem-item${active}${solved}" data-num="${p.num}">
+        <span class="problem-num">${p.num}</span>
+        <span class="difficulty-dot ${diff}"></span>
+        <span class="problem-title">${p.title}</span>
+        <span class="solved-check">✓</span>
+      </div>`;
+    }
+    html += `</div>`;
+  }
+  problemListEl.innerHTML = html;
+
+  // Event listeners
+  problemListEl.querySelectorAll('.category-header').forEach(el => {
+    el.addEventListener('click', () => {
+      el.classList.toggle('collapsed');
+      const group = el.parentElement;
+      group.querySelectorAll('.problem-item').forEach(item => {
+        item.style.display = el.classList.contains('collapsed') ? 'none' : '';
+      });
+    });
+  });
+  problemListEl.querySelectorAll('.problem-item').forEach(el => {
+    el.addEventListener('click', () => {
+      const p = problems.find(x => x.num == el.dataset.num);
+      if (p) selectProblem(p);
+    });
+  });
+
+  updateProgress();
+}
+
+// ─── Select Problem ───
+function selectProblem(p) {
+  currentProblem = p;
+  showingSolution = false;
+  userCode = '';
+  localStorage.setItem('opencode_current', p.num);
+
+  // Update toolbar
+  document.getElementById('current-problem-title').textContent = `${p.num}. ${p.title}`;
+  const diffEl = document.getElementById('current-difficulty');
+  diffEl.style.display = '';
+  diffEl.className = `pill ${(p.difficulty || 'Easy').toLowerCase()}`;
+  diffEl.textContent = p.difficulty || 'Easy';
+
+  const tagsEl = document.getElementById('current-tags');
+  tagsEl.innerHTML = (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
+
+  // Show solution toggle
+  solutionToggle.style.display = p.solution ? '' : 'none';
+  solutionToggle.textContent = 'Show Solution';
+
+  // Show benchmark button and solved button
+  benchmarkBtn.style.display = p.solution ? '' : 'none';
+  const markSolvedBtn = document.getElementById('mark-solved');
+  markSolvedBtn.style.display = '';
+  if (solvedSet.has(p.num)) {
+    markSolvedBtn.textContent = '✓ Solved';
+    markSolvedBtn.style.color = 'var(--easy)';
+    markSolvedBtn.style.borderColor = 'var(--easy)';
+  } else {
+    markSolvedBtn.textContent = '☐ Mark Solved';
+    markSolvedBtn.style.color = '';
+    markSolvedBtn.style.borderColor = '';
+  }
+
+  // Load template into editor
+  if (editor) {
+    editor.setValue(p.template || '');
+    editor.setScrollPosition({ scrollTop: 0 });
+  }
+
+  // Update active state in list
+  problemListEl.querySelectorAll('.problem-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.num == p.num);
+  });
+
+  // Update viz button visibility
+  updateVizButton();
+
+  // Clear output
+  clearOutput();
+}
+
+// ─── Solution Toggle ───
+solutionToggle.addEventListener('click', () => {
+  if (!currentProblem || !editor) return;
+  if (!showingSolution) {
+    userCode = editor.getValue();
+    editor.setValue(currentProblem.solution || '');
+    solutionToggle.textContent = 'Back to Template';
+    showingSolution = true;
+  } else {
+    editor.setValue(userCode || currentProblem.template || '');
+    solutionToggle.textContent = 'Show Solution';
+    showingSolution = false;
+  }
+});
+
+// ─── Hints Toggle ───
+document.getElementById('hints-toggle').addEventListener('click', () => {
+  if (!currentProblem || !currentProblem.hints) return;
+  const hints = currentProblem.hints;
+  // Show hints in output panel
+  let html = '<div style="font-family:var(--font-ui);font-size:12px">';
+  html += '<div style="color:var(--fg-strong);font-weight:600;margin-bottom:8px">💡 Hints</div>';
+  hints.forEach((h, i) => {
+    html += `<details style="margin:6px 0;color:var(--fg-primary)"><summary style="cursor:pointer;color:var(--medium)">Hint ${i+1}</summary><div style="padding:6px 0 6px 16px;color:var(--fg-secondary)">${h}</div></details>`;
+  });
+  html += '</div>';
+  outputEl.innerHTML = html;
+});
+
+// ─── Progress ───
+function updateProgress() {
+  const total = problems.length;
+  const done = solvedSet.size;
+  document.getElementById('progress-count').textContent = `${done} / ${total}`;
+  document.getElementById('progress-fill').style.width = total ? `${(done/total)*100}%` : '0%';
+}
+function markSolved(num) {
+  solvedSet.add(num);
+  localStorage.setItem('opencode_solved', JSON.stringify([...solvedSet]));
+  updateProgress();
+  renderProblemList(document.getElementById('problem-search').value);
+  if (currentProblem && currentProblem.num === num) {
+    const btn = document.getElementById('mark-solved');
+    btn.textContent = '✓ Solved';
+    btn.style.color = 'var(--easy)';
+    btn.style.borderColor = 'var(--easy)';
+  }
+}
+function unmarkSolved(num) {
+  solvedSet.delete(num);
+  localStorage.setItem('opencode_solved', JSON.stringify([...solvedSet]));
+  updateProgress();
+  renderProblemList(document.getElementById('problem-search').value);
+  if (currentProblem && currentProblem.num === num) {
+    const btn = document.getElementById('mark-solved');
+    btn.textContent = '☐ Mark Solved';
+    btn.style.color = '';
+    btn.style.borderColor = '';
+  }
+}
+
+// ─── Mark Solved Button ───
+document.getElementById('mark-solved').addEventListener('click', () => {
+  if (!currentProblem) return;
+  if (solvedSet.has(currentProblem.num)) {
+    unmarkSolved(currentProblem.num);
+  } else {
+    markSolved(currentProblem.num);
+  }
+});
+
+// ─── Keyboard Navigation ───
+document.addEventListener('keydown', (e) => {
+  // Alt+Up/Down to navigate problems
+  if (e.altKey && (e.key === 'ArrowUp' || e.key === 'ArrowDown')) {
+    e.preventDefault();
+    if (!currentProblem || !problems.length) return;
+    const idx = problems.findIndex(p => p.num === currentProblem.num);
+    const next = e.key === 'ArrowDown' ? idx + 1 : idx - 1;
+    if (next >= 0 && next < problems.length) {
+      selectProblem(problems[next]);
+    }
+  }
+  // Escape to close modals/panels
+  if (e.key === 'Escape') {
+    document.getElementById('viz-overlay').classList.remove('show');
+    document.getElementById('settings-modal').classList.remove('show');
+    document.getElementById('confirm-modal').classList.remove('show');
+  }
+});
+
+// ─── Search ───
+document.getElementById('problem-search').addEventListener('input', (e) => {
+  renderProblemList(e.target.value);
+});
+
+// ─── Sidebar Toggle ───
+document.getElementById('sidebar-toggle').addEventListener('click', () => {
+  app.classList.toggle('sidebar-collapsed');
+});
+
+// ─── Chat Toggle ───
+document.getElementById('chat-toggle').addEventListener('click', () => {
+  app.classList.toggle('chat-open');
+});
+document.getElementById('chat-close').addEventListener('click', () => {
+  app.classList.remove('chat-open');
+});
+
+// ─── Settings Modal ───
+document.getElementById('settings-btn').addEventListener('click', () => {
+  document.getElementById('api-key-input').value = apiKey;
+  document.getElementById('settings-modal').classList.add('show');
+});
+document.getElementById('settings-cancel').addEventListener('click', () => {
+  document.getElementById('settings-modal').classList.remove('show');
+});
+document.getElementById('settings-save').addEventListener('click', () => {
+  apiKey = document.getElementById('api-key-input').value.trim();
+  localStorage.setItem('opencode_api_key', apiKey);
+  document.getElementById('settings-modal').classList.remove('show');
+});
+
+// ─── Visualizer ───
+const VIZ_MAP = {
+  'Trees': 'dfs',
+  'Graphs': 'bfs',
+  'Advanced Graphs': 'bfs',
+  'Binary Search': 'binary-search',
+  'Two Pointers': 'two-pointers',
+  'Sliding Window': 'sliding-window',
+  'Backtracking': 'backtracking',
+};
+const VIZ_TAG_MAP = {
+  'DFS': 'dfs', 'BFS': 'bfs', 'Binary Search': 'binary-search',
+  'Two Pointers': 'two-pointers', 'Sliding Window': 'sliding-window',
+  'Backtracking': 'backtracking',
+};
+let activeViz = null;
+
+function getVizForProblem(p) {
+  if (!p) return null;
+  // Check tags first for more specific match
+  for (const tag of (p.tags || [])) {
+    if (VIZ_TAG_MAP[tag]) return VIZ_TAG_MAP[tag];
+  }
+  return VIZ_MAP[p.category] || null;
+}
+
+function updateVizButton() {
+  const vizBtn = document.getElementById('viz-btn');
+  const vizId = getVizForProblem(currentProblem);
+  vizBtn.style.display = vizId ? '' : 'none';
+}
+
+document.getElementById('viz-btn').addEventListener('click', () => {
+  const vizId = getVizForProblem(currentProblem);
+  if (!vizId || !window.VIZ_REGISTRY || !window.VIZ_REGISTRY[vizId]) return;
+  activeViz = window.VIZ_REGISTRY[vizId];
+  document.getElementById('viz-title').textContent = activeViz.getTitle();
+  document.getElementById('viz-overlay').classList.add('show');
+  activeViz.init(document.getElementById('viz-body'));
+  document.getElementById('viz-step-label').textContent = `1 / ${activeViz.getStepCount()}`;
+});
+document.getElementById('viz-close').addEventListener('click', () => {
+  if (activeViz) activeViz.stop();
+  document.getElementById('viz-overlay').classList.remove('show');
+  activeViz = null;
+});
+document.getElementById('viz-play').addEventListener('click', () => {
+  if (!activeViz) return;
+  if (activeViz.isPlaying()) { activeViz.stop(); }
+  else { activeViz.play(); }
+});
+document.getElementById('viz-back').addEventListener('click', () => { if (activeViz) activeViz.step(-1); });
+document.getElementById('viz-forward').addEventListener('click', () => { if (activeViz) activeViz.step(1); });
+document.getElementById('viz-reset').addEventListener('click', () => { if (activeViz) activeViz.reset(); });
+document.getElementById('viz-speed').addEventListener('input', (e) => { if (activeViz) activeViz.setSpeed(2100 - parseInt(e.target.value)); });
+
+// ─── Output Helpers ───
+function clearOutput() {
+  outputEl.innerHTML = '<div class="output-placeholder">Press ▶ Run or ⌘+Enter to execute your code.</div>';
+}
+function appendOutput(text, cls = 'out-line') {
+  if (outputEl.querySelector('.output-placeholder')) outputEl.innerHTML = '';
+  const div = document.createElement('div');
+  div.className = cls;
+  div.textContent = text;
+  outputEl.appendChild(div);
+  outputEl.scrollTop = outputEl.scrollHeight;
+}
+document.getElementById('clear-output').addEventListener('click', clearOutput);
+
+// ─── Pyodide Runtime ───
+async function initPyodide() {
+  runBtn.innerHTML = '⏳ Loading... <kbd>⌘↵</kbd>';
+  try {
+    pyodide = await loadPyodide();
+    // Redirect stdout/stderr
+    pyodide.runPython(`
+import sys, io
+class OutputCapture:
+    def __init__(self, callback_name):
+        self.callback_name = callback_name
+    def write(self, text):
+        if text:
+            from js import window
+            window.pyOutput(text, self.callback_name)
+    def flush(self):
+        pass
+sys.stdout = OutputCapture('stdout')
+sys.stderr = OutputCapture('stderr')
+`);
+    pyReady = true;
+    runBtn.disabled = false;
+    benchmarkBtn.disabled = false;
+    runBtn.innerHTML = '▶ Run <kbd>⌘↵</kbd>';
+  } catch (e) {
+    runBtn.innerHTML = '✗ Failed';
+    console.error('Pyodide init failed:', e);
+  }
+}
+
+// Global callback for Python output
+window.pyOutput = function(text, stream) {
+  appendOutput(text, stream === 'stderr' ? 'out-err' : 'out-line');
+};
+
+async function runCode() {
+  if (!pyReady || !editor || isRunning) return;
+  isRunning = true;
+  runBtn.disabled = true;
+  runBtn.innerHTML = '⏳ Running...';
+
+  if (outputEl.querySelector('.output-placeholder')) outputEl.innerHTML = '';
+  const code = editor.getValue();
+  const t0 = performance.now();
+
+  try {
+    await pyodide.runPythonAsync(code);
+    const ms = (performance.now() - t0).toFixed(1);
+    appendOutput(`\n✓ Finished in ${ms}ms`, 'out-meta');
+  } catch (err) {
+    appendOutput(err.message || String(err), 'out-err');
+    const ms = (performance.now() - t0).toFixed(1);
+    appendOutput(`✗ Error after ${ms}ms`, 'out-meta');
+  } finally {
+    isRunning = false;
+    runBtn.disabled = false;
+    runBtn.innerHTML = '▶ Run <kbd>⌘↵</kbd>';
+  }
+}
+
+// ─── AI Chat ───
+const chatMessages = document.getElementById('chat-messages');
+const chatInput = document.getElementById('chat-input');
+
+document.getElementById('chat-send').addEventListener('click', sendChatMessage);
+chatInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendChatMessage(); }
+});
+
+// Quick actions
+document.getElementById('chat-quick-actions').addEventListener('click', (e) => {
+  const btn = e.target.closest('.chat-quick-btn');
+  if (!btn) return;
+  const action = btn.dataset.action;
+  const prompts = {
+    hint: "I'm stuck. Can you give me a hint without revealing the full solution?",
+    explain: "Can you explain the optimal solution for this problem step by step?",
+    review: "Can you review my current code and point out any issues?",
+    pattern: "What algorithmic pattern does this problem use? How do I recognize it in interviews?",
+    complexity: "What's the time and space complexity of my current code?"
+  };
+  chatInput.value = prompts[action] || '';
+  sendChatMessage();
+});
+
+async function sendChatMessage() {
+  const text = chatInput.value.trim();
+  if (!text) return;
+  chatInput.value = '';
+
+  // Add user message
+  addChatMsg(text, 'user');
+
+  if (!apiKey) {
+    addChatMsg("Please set your Google AI Studio API key in Settings (⚙) to enable AI features. It's free!", 'ai');
+    return;
+  }
+
+  // Build context
+  const context = buildAIContext(text);
+  try {
+    const reply = await callGemini(context);
+    addChatMsg(reply, 'ai');
+  } catch (e) {
+    addChatMsg(`Error: ${e.message}. Check your API key in Settings.`, 'ai');
+  }
+}
+
+function addChatMsg(text, role) {
+  const div = document.createElement('div');
+  div.className = `chat-msg ${role}`;
+  div.textContent = text;
+  chatMessages.appendChild(div);
+  chatMessages.scrollTop = chatMessages.scrollHeight;
+}
+
+function buildAIContext(userMessage) {
+  const prob = currentProblem;
+  const code = editor ? editor.getValue() : '';
+  let systemPrompt = `You are an expert algorithm tutor for coding interview preparation. You help students learn data structures and algorithms through Socratic questioning and progressive hints.
+
+Rules:
+- Never give the complete solution unless explicitly asked "show me the solution"
+- Give hints progressively — start with the high-level approach, then get more specific
+- When reviewing code, identify bugs and inefficiencies constructively
+- Explain time/space complexity clearly
+- Connect problems to common patterns (sliding window, two pointers, etc.)
+- Be concise but thorough`;
+
+  let context = '';
+  if (prob) {
+    context += `\nCurrent problem: #${prob.num} "${prob.title}" (${prob.difficulty})\nCategory: ${prob.category}\nTags: ${(prob.tags||[]).join(', ')}\n`;
+    if (prob.hints) context += `Authored hints: ${prob.hints.join(' | ')}\n`;
+    context += `\nKnown optimal solution:\n${prob.solution}\n`;
+  }
+  context += `\nStudent's current code:\n${code}\n`;
+
+  return { systemPrompt, context, userMessage };
+}
+
+async function callGemini({ systemPrompt, context, userMessage }) {
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemma-3-27b-it:generateContent?key=${apiKey}`;
+  const resp = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      system_instruction: { parts: [{ text: systemPrompt }] },
+      contents: [{
+        parts: [{ text: context + '\n\nStudent asks: ' + userMessage }]
+      }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 1024 }
+    })
+  });
+  if (!resp.ok) {
+    const err = await resp.json().catch(() => ({}));
+    throw new Error(err.error?.message || `API error ${resp.status}`);
+  }
+  const data = await resp.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || 'No response generated.';
+}
+
+// ─── Resizer ───
+const resizer = document.getElementById('resizer');
+let resizing = false;
+resizer.addEventListener('mousedown', (e) => {
+  resizing = true;
+  resizer.classList.add('dragging');
+  document.addEventListener('mousemove', onResize);
+  document.addEventListener('mouseup', () => {
+    resizing = false;
+    resizer.classList.remove('dragging');
+    document.removeEventListener('mousemove', onResize);
+  }, { once: true });
+});
+function onResize(e) {
+  if (!resizing) return;
+  const mainEl = document.getElementById('main');
+  const rect = mainEl.getBoundingClientRect();
+  const y = e.clientY - rect.top - 38; // toolbar height
+  const total = rect.height - 38 - 6; // minus toolbar and resizer
+  const editorPct = Math.max(20, Math.min(85, (y / total) * 100));
+  mainEl.style.gridTemplateRows = `var(--toolbar-height) ${editorPct}% 6px 1fr`;
+}
+
+// ─── Monaco Editor ───
+async function initEditor() {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs/loader.min.js';
+    s.onload = () => {
+      window.require.config({ paths: { vs: 'https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.45.0/min/vs' } });
+      window.require(['vs/editor/editor.main'], () => {
+        editor = monaco.editor.create(document.getElementById('editor'), {
+          value: '# Select a problem from the sidebar to begin\n',
+          language: 'python',
+          theme: 'vs-dark',
+          fontFamily: "'JetBrains Mono', 'Cascadia Code', monospace",
+          fontSize: 14,
+          fontLigatures: true,
+          minimap: { enabled: false },
+          scrollBeyondLastLine: false,
+          automaticLayout: true,
+          padding: { top: 12 },
+          tabSize: 4,
+          insertSpaces: true,
+          renderLineHighlight: 'line',
+          smoothScrolling: true,
+          cursorSmoothCaretAnimation: 'on',
+          bracketPairColorization: { enabled: true },
+        });
+        editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.Enter, runCode);
+        resolve();
+      });
+    };
+    s.onerror = reject;
+    document.head.appendChild(s);
+  });
+}
+
+// ─── Run Button ───
+runBtn.addEventListener('click', runCode);
+
+// ─── Benchmark Button ───
+benchmarkBtn.addEventListener('click', async () => {
+  if (!pyReady || !editor || !currentProblem || isRunning) return;
+  isRunning = true;
+  benchmarkBtn.disabled = true;
+  benchmarkBtn.innerHTML = '⏳ Benchmarking...';
+  if (outputEl.querySelector('.output-placeholder')) outputEl.innerHTML = '';
+
+  try {
+    const results = await Benchmark.runBenchmark(pyodide, editor.getValue(), currentProblem.solution, currentProblem);
+    outputEl.innerHTML += Benchmark.formatResults(results);
+    outputEl.scrollTop = outputEl.scrollHeight;
+
+    // Auto-mark as solved if passed
+    if (results.passed && currentProblem) {
+      markSolved(currentProblem.num);
+    }
+  } catch (e) {
+    appendOutput('Benchmark error: ' + (e.message || e), 'out-err');
+  } finally {
+    isRunning = false;
+    benchmarkBtn.disabled = false;
+    benchmarkBtn.innerHTML = '⚡ Benchmark';
+  }
+});
+
+// ─── Boot ───
+(async function boot() {
+  await initEditor();
+  await loadProblems();
+
+  // Load Pyodide
+  const pyScript = document.createElement('script');
+  pyScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js';
+  pyScript.onload = initPyodide;
+  document.head.appendChild(pyScript);
+})();
+</script>
+</body>
+</html>
