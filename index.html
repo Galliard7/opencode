@@ -305,6 +305,7 @@ function getStarterProblems() {
 
 // ─── Category order (NeetCode roadmap) ───
 const CATEGORY_ORDER = [
+  'Algorithms', // learn-first reference implementations
   'Arrays & Hashing', 'Two Pointers', 'Sliding Window', 'Stack',
   'Binary Search', 'Linked List', 'Trees', 'Tries',
   'Heap / Priority Queue', 'Backtracking', 'Graphs', 'Advanced Graphs',
@@ -345,8 +346,9 @@ function renderProblemList(filter = '') {
       const active = currentProblem && currentProblem.num === p.num ? ' active' : '';
       const solved = solvedSet.has(p.num) ? ' solved' : '';
       const diff = (p.difficulty || 'Easy').toLowerCase();
+      const numLabel = p.num > 0 ? p.num : '📘';
       html += `<div class="problem-item${active}${solved}" data-num="${p.num}">
-        <span class="problem-num">${p.num}</span>
+        <span class="problem-num">${numLabel}</span>
         <span class="difficulty-dot ${diff}"></span>
         <span class="problem-title">${p.title}</span>
         <span class="solved-check">✓</span>
@@ -591,7 +593,9 @@ let activeViz = null;
 
 function getVizForProblem(p) {
   if (!p) return null;
-  // Check tags first for more specific match
+  // Direct visualizer link on the problem entry
+  if (p.visualizer && window.VIZ_REGISTRY && window.VIZ_REGISTRY[p.visualizer]) return p.visualizer;
+  // Check tags for more specific match
   for (const tag of (p.tags || [])) {
     if (VIZ_TAG_MAP[tag]) return VIZ_TAG_MAP[tag];
   }
@@ -708,10 +712,15 @@ function loadPyodideScript() {
 
   const pyScript = document.createElement('script');
   pyScript.id = 'pyodide-script';
-  pyScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js';
-  pyScript.onload = initPyodide;
-  pyScript.onerror = () => {
-    showPyBanner('Failed to download Python runtime. Check your connection and tap to retry.', true);
+  pyScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.27.4/full/pyodide.js';
+  pyScript.crossOrigin = 'anonymous';
+  pyScript.onload = () => {
+    console.log('Pyodide script loaded, initializing...');
+    initPyodide();
+  };
+  pyScript.onerror = (e) => {
+    console.error('Pyodide script failed to load:', e);
+    showPyBanner('Failed to download Python runtime. Check your connection and click to retry.', true);
     runBtn.innerHTML = '✗ Retry';
     runBtn.disabled = false;
     pyBanner.style.cursor = 'pointer';

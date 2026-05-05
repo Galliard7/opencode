@@ -259,6 +259,8 @@ kbd {
 .difficulty-dot.easy { background: var(--easy); }
 .difficulty-dot.medium { background: var(--medium); }
 .difficulty-dot.hard { background: var(--hard); }
+.difficulty-dot.learn { background: var(--accent); }
+.pill.learn { background: rgba(99,102,241,0.15); color: var(--accent); }
 
 .problem-item .solved-check {
   font-size: 12px;
