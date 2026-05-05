@@ -393,7 +393,7 @@ function selectProblem(p) {
   localStorage.setItem('opencode_current', p.num);
 
   // Update toolbar
-  document.getElementById('current-problem-title').textContent = `${p.num}. ${p.title}`;
+  document.getElementById('current-problem-title').textContent = p.num > 0 ? `${p.num}. ${p.title}` : p.title;
   const diffEl = document.getElementById('current-difficulty');
   diffEl.style.display = '';
   diffEl.className = `pill ${(p.difficulty || 'Easy').toLowerCase()}`;
@@ -443,11 +443,15 @@ solutionToggle.addEventListener('click', () => {
   if (!currentProblem || !editor) return;
   if (!showingSolution) {
     userCode = editor.getValue();
-    editor.setValue(currentProblem.solution || '');
+    const sol = currentProblem.solution;
+    if (!sol) { console.warn('No solution available for this problem'); return; }
+    editor.setValue(sol);
+    editor.setScrollPosition({ scrollTop: 0 });
     solutionToggle.textContent = 'Back to Template';
     showingSolution = true;
   } else {
     editor.setValue(userCode || currentProblem.template || '');
+    editor.setScrollPosition({ scrollTop: 0 });
     solutionToggle.textContent = 'Show Solution';
     showingSolution = false;
   }
