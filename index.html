@@ -24,10 +24,10 @@
       </div>
       <div class="header-spacer"></div>
       <div class="header-actions">
-        <button class="btn btn-ghost" id="viz-btn" title="Open visualizer" style="display:none">▷ Visualize</button>
-        <button class="btn btn-ghost" id="hints-toggle">💡 Hints</button>
-        <button class="btn btn-ghost" id="chat-toggle">💬 AI Tutor</button>
-        <button class="btn btn-ghost" id="settings-btn">⚙</button>
+        <button class="btn btn-ghost" id="viz-btn" title="Open visualizer" style="display:none">▷ <span class="btn-text">Visualize</span></button>
+        <button class="btn btn-ghost" id="hints-toggle" title="Hints">💡 <span class="btn-text">Hints</span></button>
+        <button class="btn btn-ghost" id="chat-toggle" title="AI Tutor">💬 <span class="btn-text">AI Tutor</span></button>
+        <button class="btn btn-ghost" id="settings-btn" title="Settings">⚙</button>
       </div>
     </header>
 
@@ -51,6 +51,9 @@
       </div>
     </aside>
 
+    <!-- Sidebar backdrop (mobile) -->
+    <div class="sidebar-backdrop" id="sidebar-backdrop"></div>
+
     <!-- Main Editor Area -->
     <main class="main" id="main">
       <div class="toolbar">
@@ -62,7 +65,7 @@
         <div class="toolbar-spacer"></div>
         <button class="btn btn-ghost" id="solution-toggle" style="display:none">Show Solution</button>
         <button class="btn btn-ghost" id="mark-solved" style="display:none" title="Mark as solved">✓ Solved</button>
-        <button class="btn" id="run-btn" disabled>▶ Run <kbd>⌘↵</kbd></button>
+        <button class="btn btn-primary" id="run-btn" disabled>▶ Run <kbd>⌘↵</kbd></button>
         <button class="btn btn-primary" id="benchmark-btn" disabled style="display:none">⚡ Benchmark</button>
       </div>
       <div class="editor-container"><div id="editor"></div></div>
@@ -359,7 +362,14 @@ function renderProblemList(filter = '') {
   problemListEl.querySelectorAll('.problem-item').forEach(el => {
     el.addEventListener('click', () => {
       const p = problems.find(x => x.num == el.dataset.num);
-      if (p) selectProblem(p);
+      if (p) {
+        selectProblem(p);
+        // Auto-close sidebar on mobile
+        if (isMobile()) {
+          sidebar.classList.remove('mobile-open');
+          sidebarBackdrop.classList.remove('show');
+        }
+      }
     });
   });
 
@@ -516,8 +526,21 @@ document.getElementById('problem-search').addEventListener('input', (e) => {
 });
 
 // ─── Sidebar Toggle ───
+const sidebar = document.getElementById('sidebar');
+const sidebarBackdrop = document.getElementById('sidebar-backdrop');
+const isMobile = () => window.innerWidth <= 768;
+
 document.getElementById('sidebar-toggle').addEventListener('click', () => {
-  app.classList.toggle('sidebar-collapsed');
+  if (isMobile()) {
+    sidebar.classList.toggle('mobile-open');
+    sidebarBackdrop.classList.toggle('show', sidebar.classList.contains('mobile-open'));
+  } else {
+    app.classList.toggle('sidebar-collapsed');
+  }
+});
+sidebarBackdrop.addEventListener('click', () => {
+  sidebar.classList.remove('mobile-open');
+  sidebarBackdrop.classList.remove('show');
 });
 
 // ─── Chat Toggle ───
