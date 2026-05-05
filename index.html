@@ -68,7 +68,14 @@
         <button class="btn btn-primary" id="run-btn" disabled>▶ Run <kbd>⌘↵</kbd></button>
         <button class="btn btn-primary" id="benchmark-btn" disabled style="display:none">⚡ Benchmark</button>
       </div>
-      <div class="editor-container"><div id="editor"></div></div>
+      <div class="editor-container">
+        <div id="py-loading-banner" style="position:absolute;bottom:0;left:0;right:0;z-index:5;padding:10px 14px;background:rgba(99,102,241,0.12);border-top:1px solid rgba(99,102,241,0.3);font-size:12px;color:var(--accent);display:flex;align-items:center;gap:8px">
+          <span id="py-spinner" style="display:inline-block;width:14px;height:14px;border:2px solid rgba(99,102,241,0.3);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite"></span>
+          <span id="py-loading-text">Loading Python runtime...</span>
+        </div>
+        <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+        <div id="editor"></div>
+      </div>
       <div class="resizer" id="resizer"></div>
       <div class="output-panel">
         <div class="output-header">
@@ -636,11 +643,27 @@ function appendOutput(text, cls = 'out-line') {
 document.getElementById('clear-output').addEventListener('click', clearOutput);
 
 // ─── Pyodide Runtime ───
+const pyBanner = document.getElementById('py-loading-banner');
+const pyBannerText = document.getElementById('py-loading-text');
+
+function showPyBanner(text, isError) {
+  pyBanner.style.display = 'flex';
+  pyBannerText.textContent = text;
+  document.getElementById('py-spinner').style.display = isError ? 'none' : 'inline-block';
+  if (isError) {
+    pyBanner.style.background = 'rgba(239,68,68,0.1)';
+    pyBanner.style.borderTopColor = 'rgba(239,68,68,0.3)';
+    pyBannerText.style.color = '#f87171';
+  }
+}
+function hidePyBanner() { pyBanner.style.display = 'none'; }
+
 async function initPyodide() {
-  runBtn.innerHTML = '⏳ Loading... <kbd>⌘↵</kbd>';
+  runBtn.innerHTML = '⏳ Loading...';
+  showPyBanner('Downloading Python runtime (~15 MB)... this may take a moment on mobile.', false);
   try {
     pyodide = await loadPyodide();
-    // Redirect stdout/stderr
+    showPyBanner('Setting up Python environment...', false);
     pyodide.runPython(`
 import sys, io
 class OutputCapture:
@@ -659,10 +682,43 @@ sys.stderr = OutputCapture('stderr')
     runBtn.disabled = false;
     benchmarkBtn.disabled = false;
     runBtn.innerHTML = '▶ Run <kbd>⌘↵</kbd>';
+    hidePyBanner();
   } catch (e) {
-    runBtn.innerHTML = '✗ Failed';
     console.error('Pyodide init failed:', e);
+    showPyBanner('Python failed to load. Tap here to retry.', true);
+    runBtn.innerHTML = '✗ Retry';
+    runBtn.disabled = false;
+    pyBanner.style.cursor = 'pointer';
+    pyBanner.onclick = retryPyodide;
+    runBtn.onclick = retryPyodide;
   }
+}
+
+function retryPyodide() {
+  pyBanner.onclick = null;
+  runBtn.onclick = null;
+  runBtn.disabled = true;
+  loadPyodideScript();
+}
+
+function loadPyodideScript() {
+  // Remove old script if any
+  const old = document.getElementById('pyodide-script');
+  if (old) old.remove();
+
+  const pyScript = document.createElement('script');
+  pyScript.id = 'pyodide-script';
+  pyScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js';
+  pyScript.onload = initPyodide;
+  pyScript.onerror = () => {
+    showPyBanner('Failed to download Python runtime. Check your connection and tap to retry.', true);
+    runBtn.innerHTML = '✗ Retry';
+    runBtn.disabled = false;
+    pyBanner.style.cursor = 'pointer';
+    pyBanner.onclick = retryPyodide;
+    runBtn.onclick = retryPyodide;
+  };
+  document.head.appendChild(pyScript);
 }
 
 // Global callback for Python output
@@ -887,12 +943,7 @@ benchmarkBtn.addEventListener('click', async () => {
 (async function boot() {
   await initEditor();
   await loadProblems();
-
-  // Load Pyodide
-  const pyScript = document.createElement('script');
-  pyScript.src = 'https://cdn.jsdelivr.net/pyodide/v0.25.1/full/pyodide.js';
-  pyScript.onload = initPyodide;
-  document.head.appendChild(pyScript);
+  loadPyodideScript();
 })();
 </script>
 </body>
