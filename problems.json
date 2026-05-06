@@ -12,12 +12,13 @@
     ],
     "visualizer": "dfs",
     "template": "# Depth-First Search (DFS)\n# Implement both recursive and iterative DFS on a graph.\n# Time: O(V + E)  |  Space: O(V)\n\ndef dfs_recursive(graph, node, visited=None):\n    # Your code here\n    pass\n\ndef dfs_iterative(graph, start):\n    # Your code here\n    pass\n\n\n# ─── Test cases ───\ngraph = {\n    'A': ['B', 'C'],\n    'B': ['D', 'E'],\n    'C': ['F'],\n    'D': [],\n    'E': ['G'],\n    'F': [],\n    'G': [],\n}\n\nprint('Recursive:', dfs_recursive(graph, 'A'))   # Expected: {'A','B','C','D','E','F','G'}\nprint('Iterative:', dfs_iterative(graph, 'A'))   # Expected: ['A', 'B', 'D', 'E', 'G', 'C', 'F']\n",
-    "solution": "# DFS — Annotated Solution\n#\n# KEY INSIGHT: DFS uses a stack (explicit or call stack).\n# It goes as deep as possible before backtracking.\n#\n# Common uses:\n#   - Path finding, cycle detection, topological sort\n#   - Tree traversal (preorder, inorder, postorder)\n#   - Connected components, maze solving\n#\n# Time: O(V + E) — visit every vertex and edge once\n# Space: O(V) — for the visited set and stack/recursion\n\ndef dfs_recursive(graph, node, visited=None):\n    if visited is None:\n        visited = set()\n    visited.add(node)         # Mark as visited BEFORE recursing\n    print(f'Visit: {node}')\n    for neighbor in graph.get(node, []):\n        if neighbor not in visited:\n            dfs_recursive(graph, neighbor, visited)  # Go deeper\n    # When we return here, we've exhausted all paths from 'node'\n    return visited\n\ndef dfs_iterative(graph, start):\n    visited = set()\n    stack = [start]           # Stack = LIFO → depth-first\n    order = []\n    while stack:\n        node = stack.pop()    # Take from top of stack\n        if node in visited:\n            continue\n        visited.add(node)\n        order.append(node)\n        for neighbor in reversed(graph.get(node, [])):\n            if neighbor not in visited:\n                stack.append(neighbor)\n    return order\n\ngraph = {\n    'A': ['B', 'C'],\n    'B': ['D', 'E'],\n    'C': ['F'],\n    'D': [],\n    'E': ['G'],\n    'F': [],\n    'G': [],\n}\n\nprint('=== Recursive DFS ===')\ndfs_recursive(graph, 'A')\nprint()\nprint('=== Iterative DFS ===')\nprint(dfs_iterative(graph, 'A'))\n",
+    "solution": "# DFS — Annotated Solution\n#\n# KEY INSIGHT: DFS uses a stack (explicit or call stack).\n# It goes as deep as possible before backtracking.\n#\n# Common uses:\n#   - Path finding, cycle detection, topological sort\n#   - Tree traversal (preorder, inorder, postorder)\n#   - Connected components, maze solving\n#\n# Time: O(V + E) — visit every vertex and edge once\n# Space: O(V) — for the visited set and stack/recursion\n\ndef dfs_recursive(graph, node, visited=None):\n    if visited is None:\n        visited = set()\n    visited.add(node)         # Mark as visited BEFORE recursing\n    for neighbor in graph.get(node, []):\n        if neighbor not in visited:\n            dfs_recursive(graph, neighbor, visited)  # Go deeper\n    # When we return here, we've exhausted all paths from 'node'\n    return visited\n\ndef dfs_iterative(graph, start):\n    visited = set()\n    stack = [start]           # Stack = LIFO → depth-first\n    order = []\n    while stack:\n        node = stack.pop()    # Take from top of stack\n        if node in visited:\n            continue\n        visited.add(node)\n        order.append(node)\n        for neighbor in reversed(graph.get(node, [])):\n            if neighbor not in visited:\n                stack.append(neighbor)\n    return order\n\ngraph = {\n    'A': ['B', 'C'],\n    'B': ['D', 'E'],\n    'C': ['F'],\n    'D': [],\n    'E': ['G'],\n    'F': [],\n    'G': [],\n}\n\nprint('Recursive:', dfs_recursive(graph, 'A'))\nprint('Iterative:', dfs_iterative(graph, 'A'))\n",
     "hints": [
       "DFS uses a stack — either the call stack (recursion) or an explicit stack.",
       "Always mark nodes as visited BEFORE processing to avoid infinite loops in graphs with cycles.",
       "Recursive DFS naturally does preorder traversal. For postorder, process the node AFTER recursing on children."
-    ]
+    ],
+    "description": "**Depth-First Search (DFS)** explores a graph by going as deep as possible along each branch before backtracking.\n\n**Your Task:**\nImplement two versions of DFS on an adjacency-list graph:\n\n1. `dfs_recursive(graph, node, visited)` — Recursive DFS that returns the set of all visited nodes.\n2. `dfs_iterative(graph, start)` — Iterative DFS using an explicit stack that returns the visit order as a list.\n\n**Key Concepts:**\n- Uses a **stack** (call stack or explicit)\n- Marks nodes as visited **before** recursing/pushing\n- Time: **O(V + E)** — visits every vertex and edge once\n- Space: **O(V)** — for the visited set and stack\n\n**Common applications:** path finding, cycle detection, topological sort, connected components, maze solving."
   },
   {
     "num": -2,
@@ -31,12 +32,13 @@
     ],
     "visualizer": "bfs",
     "template": "# Breadth-First Search (BFS)\n# Implement BFS traversal and shortest path on an unweighted graph.\n# Time: O(V + E)  |  Space: O(V)\n\nfrom collections import deque\n\ndef bfs(graph, start):\n    # Your code here\n    pass\n\ndef bfs_shortest_path(graph, start, target):\n    # Your code here — return the shortest path as a list, or None\n    pass\n\n\n# ─── Test cases ───\ngraph = {\n    'A': ['B', 'C'],\n    'B': ['D', 'E'],\n    'C': ['F', 'G'],\n    'D': [], 'E': [], 'F': [], 'G': [],\n}\n\nprint('BFS order:', bfs(graph, 'A'))                     # Expected: ['A', 'B', 'C', 'D', 'E', 'F', 'G']\nprint('Shortest A->G:', bfs_shortest_path(graph, 'A', 'G'))  # Expected: ['A', 'C', 'G']\n",
-    "solution": "# BFS — Annotated Solution\n#\n# KEY INSIGHT: BFS uses a queue (FIFO) → processes level by level.\n# This guarantees shortest path in unweighted graphs.\n#\n# Common uses:\n#   - Shortest path (unweighted), level-order traversal\n#   - Minimum moves/steps problems, word ladder\n#   - Multi-source BFS (rotting oranges, walls & gates)\n#\n# Time: O(V + E)  |  Space: O(V)\n\nfrom collections import deque\n\ndef bfs(graph, start):\n    visited = {start}          # Mark visited WHEN ENQUEUING, not when dequeuing\n    queue = deque([start])     # Queue = FIFO → breadth-first\n    order = []\n    while queue:\n        node = queue.popleft() # Take from front of queue\n        order.append(node)\n        print(f'Visit: {node}')\n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                visited.add(neighbor)  # Mark visited immediately to avoid duplicates\n                queue.append(neighbor)\n    return order\n\ndef bfs_shortest_path(graph, start, target):\n    visited = {start}\n    queue = deque([(start, [start])])  # Store (node, path_so_far)\n    while queue:\n        node, path = queue.popleft()\n        if node == target:\n            return path  # First time we reach target = shortest path\n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                visited.add(neighbor)\n                queue.append((neighbor, path + [neighbor]))\n    return None\n\ngraph = {\n    'A': ['B', 'C'],\n    'B': ['D', 'E'],\n    'C': ['F', 'G'],\n    'D': [], 'E': [], 'F': [], 'G': [],\n}\n\nprint('=== BFS traversal ===')\nprint(bfs(graph, 'A'))\nprint()\nprint('=== Shortest path A -> G ===')\nprint(bfs_shortest_path(graph, 'A', 'G'))\n",
+    "solution": "# BFS — Annotated Solution\n#\n# KEY INSIGHT: BFS uses a queue (FIFO) → processes level by level.\n# This guarantees shortest path in unweighted graphs.\n#\n# Common uses:\n#   - Shortest path (unweighted), level-order traversal\n#   - Minimum moves/steps problems, word ladder\n#   - Multi-source BFS (rotting oranges, walls & gates)\n#\n# Time: O(V + E)  |  Space: O(V)\n\nfrom collections import deque\n\ndef bfs(graph, start):\n    visited = {start}          # Mark visited WHEN ENQUEUING, not when dequeuing\n    queue = deque([start])     # Queue = FIFO → breadth-first\n    order = []\n    while queue:\n        node = queue.popleft() # Take from front of queue\n        order.append(node)\n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                visited.add(neighbor)  # Mark visited immediately to avoid duplicates\n                queue.append(neighbor)\n    return order\n\ndef bfs_shortest_path(graph, start, target):\n    visited = {start}\n    queue = deque([(start, [start])])  # Store (node, path_so_far)\n    while queue:\n        node, path = queue.popleft()\n        if node == target:\n            return path  # First time we reach target = shortest path\n        for neighbor in graph.get(node, []):\n            if neighbor not in visited:\n                visited.add(neighbor)\n                queue.append((neighbor, path + [neighbor]))\n    return None\n\ngraph = {\n    'A': ['B', 'C'],\n    'B': ['D', 'E'],\n    'C': ['F', 'G'],\n    'D': [], 'E': [], 'F': [], 'G': [],\n}\n\nprint('BFS order:', bfs(graph, 'A'))\nprint('Shortest A->G:', bfs_shortest_path(graph, 'A', 'G'))\n",
     "hints": [
       "BFS uses a queue (FIFO) — use collections.deque for O(1) popleft.",
       "Mark nodes as visited WHEN YOU ENQUEUE them, not when you dequeue. This prevents duplicates in the queue.",
       "BFS guarantees shortest path in unweighted graphs because it explores all nodes at distance d before distance d+1."
-    ]
+    ],
+    "description": "**Breadth-First Search (BFS)** explores a graph level by level using a queue, guaranteeing the shortest path in unweighted graphs.\n\n**Your Task:**\nImplement two functions:\n\n1. `bfs(graph, start)` — BFS traversal that returns the visit order as a list.\n2. `bfs_shortest_path(graph, start, target)` — Returns the shortest path from `start` to `target` as a list of nodes, or `None` if no path exists.\n\n**Key Concepts:**\n- Uses a **queue** (FIFO) → processes nodes level by level\n- Mark visited **when enqueuing**, not when dequeuing (avoids duplicates)\n- Time: **O(V + E)** | Space: **O(V)**\n\n**Common applications:** shortest path (unweighted), level-order traversal, multi-source BFS."
   },
   {
     "num": -3,
@@ -53,7 +55,8 @@
       "Binary search works on any monotonic function — not just sorted arrays.",
       "Use l <= r (not l < r) to handle the single-element case correctly.",
       "For \"search on answer\" problems: define a condition that's monotonic (False...False...True...True), then binary search for the boundary."
-    ]
+    ],
+    "description": "**Binary Search** efficiently finds a target in a sorted search space by repeatedly halving the interval.\n\n**Your Task:**\nImplement two functions:\n\n1. `binary_search(nums, target)` — Classic binary search on a sorted array. Return the index of `target`, or `-1` if not found.\n2. `min_eating_speed(piles, h)` — Koko has `piles` of bananas and `h` hours. Find the minimum integer eating speed `k` such that she can finish all piles within `h` hours.\n\n**Key Concepts:**\n- Requires a **sorted** or **monotonic** search space\n- Each step eliminates half the remaining candidates\n- Time: **O(log n)** | Space: **O(1)**\n\n**Common applications:** searching sorted arrays, finding boundaries, optimization on monotonic functions."
   },
   {
     "num": -4,
@@ -70,7 +73,8 @@
       "Converging pointers work on sorted data — move the pointer that gets you closer to the target.",
       "Fast/slow pointers are great for in-place modifications and cycle detection.",
       "Two pointers replace a nested loop: instead of checking all pairs O(n^2), each pointer moves at most n times → O(n)."
-    ]
+    ],
+    "description": "**Two Pointers** uses two indices to traverse a data structure, often from opposite ends or at different speeds.\n\n**Your Task:**\nImplement two functions:\n\n1. `two_sum_sorted(nums, target)` — Given a **sorted** array, find two numbers that add up to `target`. Return their indices.\n2. `remove_duplicates(nums)` — Remove duplicates **in-place** from a sorted array. Return the new length.\n\n**Key Concepts:**\n- Works on **sorted** arrays or when relative order matters\n- Typically **O(n)** time, **O(1)** space\n- Two main patterns: **converging** (from both ends) and **fast/slow** (same direction)\n\n**Common applications:** pair problems, partitioning, linked list cycle detection, palindrome checking."
   },
   {
     "num": -5,
@@ -87,7 +91,8 @@
       "Fixed window: initialize with first k elements, then slide by adding right and removing left.",
       "Variable window: expand right unconditionally, shrink left only when a constraint is violated.",
       "Each element enters and exits the window at most once, so the total work is O(n) even with the inner while loop."
-    ]
+    ],
+    "description": "**Sliding Window** maintains a dynamic window over a sequence to efficiently compute aggregates or find optimal subranges.\n\n**Your Task:**\nImplement two functions:\n\n1. `longest_unique_substring(s)` — Find the length of the longest substring without repeating characters.\n2. `max_sum_subarray(arr, k)` — Find the maximum sum of any contiguous subarray of size `k`.\n\n**Key Concepts:**\n- **Fixed window:** size is constant (expand right, shrink left together)\n- **Variable window:** expand right to explore, shrink left when constraint breaks\n- Time: **O(n)** — each element is added and removed at most once\n- Space: **O(k)** where k is the alphabet/window size\n\n**Common applications:** substring problems, maximum/minimum subarray, frequency constraints."
   },
   {
     "num": -6,
@@ -105,7 +110,8 @@
       "Backtracking follows the pattern: choose → explore → un-choose.",
       "For subsets, use a start index to avoid duplicates. For permutations, use a remaining list.",
       "Pruning is key to performance: skip invalid choices early (e.g., N-Queens checks row/column/diagonal conflicts before placing)."
-    ]
+    ],
+    "description": "**Backtracking** builds solutions incrementally, abandoning (\"pruning\") a path as soon as it cannot lead to a valid solution.\n\n**Your Task:**\nImplement two functions:\n\n1. `subsets(nums)` — Return all possible subsets (the power set) of a list of distinct integers.\n2. `permutations(nums)` — Return all possible permutations of a list of distinct integers.\n\n**Key Concepts:**\n- Explore all candidates using **recursion**\n- At each step: **choose** → **explore** → **unchoose** (backtrack)\n- Pruning eliminates invalid branches early\n- Time: varies (often exponential) | Space: **O(n)** recursion depth\n\n**Common applications:** combinations, permutations, constraint satisfaction, puzzle solving, N-Queens."
   },
   {
     "num": -7,
@@ -116,12 +122,13 @@
       "DP"
     ],
     "template": "# Dynamic Programming\n# Implement top-down (memoization) and bottom-up (tabulation) DP.\n\nfrom functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef fib_memo(n):\n    \"\"\"Fibonacci using memoization.\"\"\"\n    # Your code here\n    pass\n\ndef fib_tab(n):\n    \"\"\"Fibonacci using tabulation (bottom-up).\"\"\"\n    # Your code here\n    pass\n\ndef coin_change(coins, amount):\n    \"\"\"Minimum coins to make amount. Return -1 if impossible.\"\"\"\n    # Your code here\n    pass\n\n\n# ─── Test cases ───\nprint(f'fib(10) = {fib_memo(10)}')   # Expected: 55\nprint(f'fib(10) = {fib_tab(10)}')    # Expected: 55\n\nprint(f'Coin change [1,5,10] for 27: {coin_change([1, 5, 10], 27)}')  # Expected: 5\nprint(f'Coin change [2] for 3: {coin_change([2], 3)}')                # Expected: -1\n",
-    "solution": "# Dynamic Programming — Annotated Solution\n#\n# KEY INSIGHT: If a problem has:\n#   1. Optimal substructure (optimal solution uses optimal sub-solutions)\n#   2. Overlapping subproblems (same subproblem solved multiple times)\n# → Use DP to avoid redundant computation.\n#\n# Two approaches:\n#   Top-down: recursion + memoization (cache results)\n#   Bottom-up: iterative, fill table from base cases up\n#\n# Steps to solve any DP problem:\n#   1. Define state: what variables describe a subproblem?\n#   2. Define transition: how does dp[i] relate to smaller subproblems?\n#   3. Define base case: what are the trivial cases?\n#   4. Define answer: which dp[?] holds the final answer?\n\nfrom functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef fib_memo(n):\n    if n < 2: return n                    # Base case\n    return fib_memo(n-1) + fib_memo(n-2)  # Transition\n\ndef fib_tab(n):\n    if n < 2: return n\n    dp = [0] * (n + 1)\n    dp[1] = 1                             # Base case\n    for i in range(2, n + 1):\n        dp[i] = dp[i-1] + dp[i-2]        # Transition: fill forward\n    return dp[n]                          # Answer\n\ndef fib_opt(n):\n    if n < 2: return n\n    a, b = 0, 1       # Only need last 2 values → O(1) space\n    for _ in range(n - 1):\n        a, b = b, a + b\n    return b\n\ndef coin_change(coins, amount):\n    # State: dp[a] = min coins to make amount a\n    # Transition: dp[a] = min(dp[a - c] + 1) for each coin c\n    # Base: dp[0] = 0\n    dp = [float(\"inf\")] * (amount + 1)\n    dp[0] = 0\n    for a in range(1, amount + 1):\n        for c in coins:\n            if c <= a:\n                dp[a] = min(dp[a], dp[a - c] + 1)\n    return dp[amount] if dp[amount] != float(\"inf\") else -1\n\nprint(f'fib(10) = {fib_memo(10)}')\nprint(f'fib(10) = {fib_tab(10)}')\nprint(f'fib(10) = {fib_opt(10)}')\nprint(f'Coin change [1,5,10] for 27: {coin_change([1, 5, 10], 27)}')\n",
+    "solution": "# Dynamic Programming — Annotated Solution\n#\n# KEY INSIGHT: If a problem has:\n#   1. Optimal substructure (optimal solution uses optimal sub-solutions)\n#   2. Overlapping subproblems (same subproblem solved multiple times)\n# → Use DP to avoid redundant computation.\n#\n# Two approaches:\n#   Top-down: recursion + memoization (cache results)\n#   Bottom-up: iterative, fill table from base cases up\n#\n# Steps to solve any DP problem:\n#   1. Define state: what variables describe a subproblem?\n#   2. Define transition: how does dp[i] relate to smaller subproblems?\n#   3. Define base case: what are the trivial cases?\n#   4. Define answer: which dp[?] holds the final answer?\n\nfrom functools import lru_cache\n\n@lru_cache(maxsize=None)\ndef fib_memo(n):\n    if n < 2: return n                    # Base case\n    return fib_memo(n-1) + fib_memo(n-2)  # Transition\n\ndef fib_tab(n):\n    if n < 2: return n\n    dp = [0] * (n + 1)\n    dp[1] = 1                             # Base case\n    for i in range(2, n + 1):\n        dp[i] = dp[i-1] + dp[i-2]        # Transition: fill forward\n    return dp[n]                          # Answer\n\ndef fib_opt(n):\n    if n < 2: return n\n    a, b = 0, 1       # Only need last 2 values → O(1) space\n    for _ in range(n - 1):\n        a, b = b, a + b\n    return b\n\ndef coin_change(coins, amount):\n    # State: dp[a] = min coins to make amount a\n    # Transition: dp[a] = min(dp[a - c] + 1) for each coin c\n    # Base: dp[0] = 0\n    dp = [float(\"inf\")] * (amount + 1)\n    dp[0] = 0\n    for a in range(1, amount + 1):\n        for c in coins:\n            if c <= a:\n                dp[a] = min(dp[a], dp[a - c] + 1)\n    return dp[amount] if dp[amount] != float(\"inf\") else -1\n\nprint(f'fib(10) = {fib_memo(10)}')\nprint(f'fib(10) = {fib_tab(10)}')\nprint(f'Coin change [1,5,10] for 27: {coin_change([1, 5, 10], 27)}')\nprint(f'Coin change [2] for 3: {coin_change([2], 3)}')\n",
     "hints": [
       "Start with brute-force recursion, then add memoization. That's often enough.",
       "For bottom-up: figure out the order to fill the table so that dependencies are already computed.",
       "Space optimization: if dp[i] only depends on dp[i-1] (or last few), you don't need the full array."
-    ]
+    ],
+    "description": "**Dynamic Programming** solves complex problems by breaking them into overlapping subproblems and caching results.\n\n**Your Task:**\nImplement three functions:\n\n1. `fib_memo(n)` — Fibonacci using **memoization** (top-down with cache).\n2. `fib_tab(n)` — Fibonacci using **tabulation** (bottom-up, iterative).\n3. `coin_change(coins, amount)` — Find the minimum number of coins needed to make `amount`. Return `-1` if impossible.\n\n**Key Concepts:**\n- **Optimal substructure:** optimal solution uses optimal sub-solutions\n- **Overlapping subproblems:** same subproblem solved multiple times\n- **Top-down:** recursion + memoization | **Bottom-up:** iterative table filling\n- DP recipe: define **state** → **transition** → **base case** → **answer**"
   },
   {
     "num": -8,
@@ -132,12 +139,13 @@
       "Heap"
     ],
     "template": "# Heap / Priority Queue\n# Python heapq is a MIN-heap. For max-heap, negate values.\n\nimport heapq\n\ndef k_largest(arr, k):\n    \"\"\"Find the k largest elements using a heap.\"\"\"\n    # Your code here\n    pass\n\ndef top_k_frequent(nums, k):\n    \"\"\"Find the k most frequent elements.\"\"\"\n    # Your code here\n    pass\n\n\n# ─── Test cases ───\nprint(f'3 largest of [3,2,1,5,6,4]: {k_largest([3,2,1,5,6,4], 3)}')\n# Expected: [6, 5, 4]\n\nprint(f'Top 2 frequent of [1,1,1,2,2,3]: {top_k_frequent([1,1,1,2,2,3], 2)}')\n# Expected: [1, 2]\n\n# Basic heap operations\nnums = [5, 1, 9, 3, 7, 2]\nheapq.heapify(nums)\nprint(f'Min: {heapq.heappop(nums)}')  # Expected: 1\nprint(f'Min: {heapq.heappop(nums)}')  # Expected: 2\n",
-    "solution": "# Heap — Annotated Solution\n#\n# KEY INSIGHT: When you need repeated access to the min or max,\n# a heap beats sorting (O(n log n) once) because it handles\n# dynamic inserts/deletes in O(log n).\n#\n# Python heapq = min-heap. For max-heap, push -value.\n#\n# Common patterns:\n#   - Top K elements (maintain heap of size k)\n#   - Merge K sorted lists (push heads, pop smallest)\n#   - Running median (two heaps: max-heap + min-heap)\n#\n# Time: push/pop O(log n), peek O(1), heapify O(n)\n\nimport heapq\n\nnums = [5, 1, 9, 3, 7, 2]\nheapq.heapify(nums)           # O(n) — faster than n inserts O(n log n)\nprint(f'Min: {nums[0]}')\n\nprint(heapq.heappop(nums))    # O(log n)\nprint(heapq.heappop(nums))\n\nheapq.heappush(nums, 0)       # O(log n)\nprint(f'New min: {nums[0]}')\n\ndef k_largest(arr, k):\n    heap = []                  # Min-heap of size k\n    for n in arr:\n        heapq.heappush(heap, n)\n        if len(heap) > k:\n            heapq.heappop(heap)  # Evict smallest → only k largest remain\n    return sorted(heap, reverse=True)\n\ndef top_k_frequent(nums, k):\n    from collections import Counter\n    count = Counter(nums)\n    # heapq.nlargest is optimized for k << n\n    return heapq.nlargest(k, count.keys(), key=count.get)\n\nprint(f'3 largest of [3,2,1,5,6,4]: {k_largest([3,2,1,5,6,4], 3)}')\nprint(f'Top 2 frequent of [1,1,1,2,2,3]: {top_k_frequent([1,1,1,2,2,3], 2)}')\n",
+    "solution": "# Heap — Annotated Solution\n#\n# KEY INSIGHT: When you need repeated access to the min or max,\n# a heap beats sorting (O(n log n) once) because it handles\n# dynamic inserts/deletes in O(log n).\n#\n# Python heapq = min-heap. For max-heap, push -value.\n#\n# Common patterns:\n#   - Top K elements (maintain heap of size k)\n#   - Merge K sorted lists (push heads, pop smallest)\n#   - Running median (two heaps: max-heap + min-heap)\n#\n# Time: push/pop O(log n), peek O(1), heapify O(n)\n\nimport heapq\n\ndef k_largest(arr, k):\n    heap = []                  # Min-heap of size k\n    for n in arr:\n        heapq.heappush(heap, n)\n        if len(heap) > k:\n            heapq.heappop(heap)  # Evict smallest → only k largest remain\n    return sorted(heap, reverse=True)\n\ndef top_k_frequent(nums, k):\n    from collections import Counter\n    count = Counter(nums)\n    # heapq.nlargest is optimized for k << n\n    return heapq.nlargest(k, count.keys(), key=count.get)\n\nprint(f'3 largest of [3,2,1,5,6,4]: {k_largest([3,2,1,5,6,4], 3)}')\nprint(f'Top 2 frequent of [1,1,1,2,2,3]: {top_k_frequent([1,1,1,2,2,3], 2)}')\n\nnums = [5, 1, 9, 3, 7, 2]\nheapq.heapify(nums)\nprint(f'Min: {heapq.heappop(nums)}')\nprint(f'Min: {heapq.heappop(nums)}')\n",
     "hints": [
       "Python heapq is a min-heap. For max-heap, push -value and negate when popping.",
       "To find the k largest elements, use a min-heap of size k. The smallest in the heap is the k-th largest overall.",
       "heapq.nlargest(k, iterable) and heapq.nsmallest(k, iterable) are built-in shortcuts."
-    ]
+    ],
+    "description": "**Heap / Priority Queue** provides efficient access to the minimum (or maximum) element in a dynamic collection.\n\n**Your Task:**\nImplement two functions:\n\n1. `k_largest(arr, k)` — Find the `k` largest elements in an array using a heap. Return them in descending order.\n2. `top_k_frequent(nums, k)` — Find the `k` most frequent elements in an array.\n\n**Key Concepts:**\n- Python `heapq` is a **min-heap**. For max-heap, negate values.\n- `heapify`: **O(n)** | `push`/`pop`: **O(log n)** | `peek`: **O(1)**\n- Maintain a heap of size `k` for top-K problems\n\n**Common applications:** top K elements, merge K sorted lists, running median, task scheduling."
   },
   {
     "num": 1,
@@ -154,7 +162,8 @@
       "For each number, you need to find if its complement (target - num) exists in the array.",
       "Use a hash map to store numbers you've already seen and their indices.",
       "As you iterate, check if target - nums[i] is in the map. If yes, return both indices."
-    ]
+    ],
+    "description": "Given an array of integers `nums` and an integer `target`, return the **indices** of the two numbers such that they add up to `target`.\n\nYou may assume that each input would have **exactly one solution**, and you may not use the same element twice.\n\nYou can return the answer in any order.\n\n**Example:**\n```\nInput: nums = [2,7,11,15], target = 9\nOutput: [0,1]\nExplanation: nums[0] + nums[1] == 9\n```"
   },
   {
     "num": 36,
@@ -172,7 +181,8 @@
       "You need to check three constraints: no duplicate in any row, column, or 3x3 box.",
       "Use three sets (per row, per column, per box) to track seen numbers.",
       "The box index for cell (r, c) is (r // 3, c // 3). Check all three sets before adding."
-    ]
+    ],
+    "description": "Determine if a `9 x 9` Sudoku board is valid. Only the filled cells need to be validated according to the following rules:\n\n1. Each **row** must contain the digits `1-9` without repetition.\n2. Each **column** must contain the digits `1-9` without repetition.\n3. Each of the nine `3 x 3` sub-boxes must contain the digits `1-9` without repetition.\n\n**Note:** A Sudoku board could be valid but is not necessarily solvable. Only the filled cells need to be validated."
   },
   {
     "num": 49,
@@ -191,7 +201,8 @@
       "Anagrams produce the same result when their characters are sorted.",
       "Use a hash map where the key is the sorted tuple of characters.",
       "Group strings by their sorted character tuple — all anagrams share the same key."
-    ]
+    ],
+    "description": "Given an array of strings `strs`, group the **anagrams** together. You can return the answer in **any order**.\n\nAn anagram is a word formed by rearranging the letters of another word, using all the original letters exactly once.\n\n**Example:**\n```\nInput: strs = [\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]\nOutput: [[\"bat\"],[\"nat\",\"tan\"],[\"ate\",\"eat\",\"tea\"]]\n```"
   },
   {
     "num": 128,
@@ -209,7 +220,8 @@
       "A brute force approach would sort the array, but can you do it in O(n)?",
       "Put all numbers in a set. A sequence start is a number whose predecessor (n-1) is not in the set.",
       "For each sequence start, count consecutive numbers (n+1, n+2, ...) present in the set."
-    ]
+    ],
+    "description": "Given an unsorted array of integers `nums`, return the length of the **longest consecutive elements sequence**.\n\nYou must write an algorithm that runs in **O(n)** time.\n\n**Example:**\n```\nInput: nums = [100,4,200,1,3,2]\nOutput: 4\nExplanation: The longest consecutive sequence is [1, 2, 3, 4].\n```"
   },
   {
     "num": 217,
@@ -226,7 +238,8 @@
       "Think about what data structure lets you check for existence in O(1) time.",
       "A set stores only unique elements — compare its size to the original list.",
       "If len(nums) != len(set(nums)), there must be a duplicate."
-    ]
+    ],
+    "description": "Given an integer array `nums`, return `True` if any value appears **at least twice** in the array, and return `False` if every element is distinct.\n\n**Example:**\n```\nInput: nums = [1,2,3,1]\nOutput: True\n```"
   },
   {
     "num": 238,
@@ -243,7 +256,8 @@
       "You can't use division. Think about computing the product from both directions.",
       "For each index, the answer is (product of everything left) * (product of everything right).",
       "Use two passes: one left-to-right building prefix products, one right-to-left building postfix products."
-    ]
+    ],
+    "description": "Given an integer array `nums`, return an array `answer` such that `answer[i]` is equal to the product of all the elements of `nums` **except** `nums[i]`.\n\nYou must write an algorithm that runs in **O(n)** time and **without using the division operation**.\n\n**Example:**\n```\nInput: nums = [1,2,3,4]\nOutput: [24,12,8,6]\n```"
   },
   {
     "num": 242,
@@ -261,7 +275,8 @@
       "Two strings are anagrams if they contain the same characters with the same frequencies.",
       "Use a hash map (Counter) to count character frequencies in each string.",
       "Compare the two frequency maps — if equal, the strings are anagrams."
-    ]
+    ],
+    "description": "Given two strings `s` and `t`, return `True` if `t` is an **anagram** of `s`, and `False` otherwise.\n\nAn anagram uses all the original letters exactly once.\n\n**Example:**\n```\nInput: s = \"anagram\", t = \"nagaram\"\nOutput: True\n```"
   },
   {
     "num": 271,
@@ -279,7 +294,8 @@
       "You need a way to know where each string starts and ends, even if strings contain any character.",
       "Prefix each string with its length followed by a delimiter like '#'.",
       "Encode as 'length#string' for each string. To decode, read the number before '#', then extract that many characters."
-    ]
+    ],
+    "description": "Design an algorithm to encode a list of strings to a single string. The encoded string is then decoded back to the original list of strings.\n\nImplement `encode` and `decode` methods.\n\n**Example:**\n```\nInput: [\"lint\",\"code\",\"love\",\"you\"]\nEncoded: \"4#lint4#code4#love3#you\"\nOutput: [\"lint\",\"code\",\"love\",\"you\"]\n```"
   },
   {
     "num": 347,
@@ -298,7 +314,8 @@
       "First count the frequency of each element, then find the k most frequent.",
       "Bucket sort gives O(n) time: create buckets where index = frequency.",
       "Iterate buckets from highest frequency down, collecting elements until you have k."
-    ]
+    ],
+    "description": "Given an integer array `nums` and an integer `k`, return the `k` **most frequent** elements. You may return the answer in **any order**.\n\n**Example:**\n```\nInput: nums = [1,1,1,2,2,3], k = 2\nOutput: [1,2]\n```\n\n**Follow up:** Your algorithm's time complexity must be better than O(n log n)."
   },
   {
     "num": 11,
@@ -316,7 +333,8 @@
       "Area = min(height[l], height[r]) * (r - l). Start with the widest container.",
       "Use two pointers at both ends. Always move the pointer with the shorter height inward.",
       "Moving the shorter side gives a chance to find a taller line; moving the taller side can only decrease or maintain the area."
-    ]
+    ],
+    "description": "You are given an integer array `height` of length `n`. There are `n` vertical lines drawn such that the two endpoints of the `i`th line are `(i, 0)` and `(i, height[i])`.\n\nFind two lines that together with the x-axis form a container, such that the container contains the **most water**.\n\nReturn the **maximum amount of water** a container can store.\n\n**Example:**\n```\nInput: height = [1,8,6,2,5,4,8,3,7]\nOutput: 49\n```"
   },
   {
     "num": 15,
@@ -334,7 +352,8 @@
       "Sort the array first, then reduce to a two-sum problem for each fixed element.",
       "For each element nums[i], use two pointers on the remaining subarray to find pairs summing to -nums[i].",
       "Skip duplicates at all three positions (i, left, right) to avoid duplicate triplets."
-    ]
+    ],
+    "description": "Given an integer array `nums`, return all the triplets `[nums[i], nums[j], nums[k]]` such that `i != j`, `i != k`, and `j != k`, and `nums[i] + nums[j] + nums[k] == 0`.\n\nNotice that the solution set must **not contain duplicate triplets**.\n\n**Example:**\n```\nInput: nums = [-1,0,1,2,-1,-4]\nOutput: [[-1,-1,2],[-1,0,1]]\n```"
   },
   {
     "num": 42,
@@ -353,7 +372,8 @@
       "Water at each position = min(max_left, max_right) - height[i]. The bottleneck is the shorter side.",
       "Use two pointers from both ends, tracking the max height seen from each side.",
       "Always process the side with the smaller max. Water trapped = current_max - height[i] (guaranteed non-negative because we process the smaller side)."
-    ]
+    ],
+    "description": "Given `n` non-negative integers representing an elevation map where the width of each bar is `1`, compute how much water it can trap after raining.\n\n**Example:**\n```\nInput: height = [0,1,0,2,1,0,1,3,2,1,2,1]\nOutput: 6\n```"
   },
   {
     "num": 125,
@@ -370,7 +390,8 @@
       "Consider only alphanumeric characters and ignore case.",
       "Use two pointers starting from both ends, skipping non-alphanumeric characters.",
       "Compare characters at left and right pointers (lowercased). Move inward until they meet."
-    ]
+    ],
+    "description": "A phrase is a **palindrome** if, after converting all uppercase letters into lowercase and removing all non-alphanumeric characters, it reads the same forward and backward.\n\nGiven a string `s`, return `True` if it is a palindrome, or `False` otherwise.\n\n**Example:**\n```\nInput: s = \"A man, a plan, a canal: Panama\"\nOutput: True\nExplanation: \"amanaplanacanalpanama\" is a palindrome.\n```"
   },
   {
     "num": 167,
@@ -388,7 +409,8 @@
       "The array is sorted — exploit that property instead of using a hash map.",
       "Use two pointers at the start and end. If the sum is too small, move left pointer right; if too big, move right pointer left.",
       "Return 1-indexed positions. The sorted property guarantees convergence to the answer."
-    ]
+    ],
+    "description": "Given a **1-indexed** array of integers `numbers` that is already sorted in non-decreasing order, find two numbers such that they add up to a specific `target`.\n\nReturn the indices of the two numbers (1-indexed) as an array `[index1, index2]`.\n\nYou must use only **constant extra space**.\n\n**Example:**\n```\nInput: numbers = [2,7,11,15], target = 9\nOutput: [1,2]\n```"
   },
   {
     "num": 3,
@@ -406,7 +428,8 @@
       "Use a sliding window that expands right and contracts left when a duplicate is found.",
       "Maintain a set of characters in the current window.",
       "When s[r] is already in the set, shrink from the left until the duplicate is removed, then add s[r]."
-    ]
+    ],
+    "description": "Given a string `s`, find the length of the **longest substring** without repeating characters.\n\n**Example:**\n```\nInput: s = \"abcabcbb\"\nOutput: 3\nExplanation: The answer is \"abc\", with length 3.\n```"
   },
   {
     "num": 76,
@@ -424,7 +447,8 @@
       "Use a sliding window: expand right to include all required characters, then shrink left to minimize.",
       "Track how many unique characters from t are fully satisfied in the current window.",
       "When all characters are satisfied, try shrinking from the left while recording the minimum window."
-    ]
+    ],
+    "description": "Given two strings `s` and `t` of lengths `m` and `n` respectively, return the **minimum window substring** of `s` such that every character in `t` (including duplicates) is included in the window. If there is no such substring, return the empty string `\"\"`.\n\n**Example:**\n```\nInput: s = \"ADOBECODEBANC\", t = \"ABC\"\nOutput: \"BANC\"\n```"
   },
   {
     "num": 121,
@@ -441,7 +465,8 @@
       "You want to buy low and sell high, with the buy happening before the sell.",
       "Track the minimum price seen so far as you iterate through the prices.",
       "At each price, compute profit = price - min_price_so_far, and track the maximum profit."
-    ]
+    ],
+    "description": "You are given an array `prices` where `prices[i]` is the price of a given stock on the `i`th day.\n\nYou want to maximize your profit by choosing a **single day** to buy one stock and choosing a **different day in the future** to sell that stock.\n\nReturn the maximum profit. If no profit is possible, return `0`.\n\n**Example:**\n```\nInput: prices = [7,1,5,3,6,4]\nOutput: 5\nExplanation: Buy on day 2 (price = 1), sell on day 5 (price = 6).\n```"
   },
   {
     "num": 239,
@@ -461,7 +486,8 @@
       "A brute force approach checks all k elements per window. Can you maintain the max more efficiently?",
       "Use a monotonic decreasing deque that stores indices. The front always holds the current max.",
       "For each new element: remove out-of-window indices from front, remove smaller elements from back, then append."
-    ]
+    ],
+    "description": "You are given an array of integers `nums` and a sliding window of size `k` which moves from the very left to the very right. You can only see the `k` numbers in the window. Each time the sliding window moves right by one position.\n\nReturn the **max** value in each sliding window position.\n\n**Example:**\n```\nInput: nums = [1,3,-1,-3,5,3,6,7], k = 3\nOutput: [3,3,5,5,6,7]\n```"
   },
   {
     "num": 424,
@@ -479,7 +505,8 @@
       "In a valid window, the number of characters to replace = window_size - count_of_most_frequent_char.",
       "Use a sliding window with a frequency map. Track the max frequency character in the window.",
       "If window_size - max_freq > k, shrink from the left. The answer is the largest valid window."
-    ]
+    ],
+    "description": "You are given a string `s` and an integer `k`. You can choose any character of the string and change it to any other uppercase English letter. You can perform this operation at most `k` times.\n\nReturn the length of the **longest substring** containing the same letter you can get after performing the above operations.\n\n**Example:**\n```\nInput: s = \"AABABBA\", k = 1\nOutput: 4\nExplanation: Replace the 'B' at index 5 → \"AABAAAA\", longest same-letter substring is 4.\n```"
   },
   {
     "num": 567,
@@ -498,7 +525,8 @@
       "A permutation of s1 in s2 means a substring of s2 has the same character frequencies as s1.",
       "Use a fixed-size sliding window of length len(s1) over s2, maintaining a frequency counter.",
       "Slide the window: add the new right character, remove the old left character, compare counters."
-    ]
+    ],
+    "description": "Given two strings `s1` and `s2`, return `True` if `s2` contains a **permutation** of `s1`, or `False` otherwise.\n\nIn other words, return `True` if one of `s1`'s permutations is a substring of `s2`.\n\n**Example:**\n```\nInput: s1 = \"ab\", s2 = \"eidbaooo\"\nOutput: True\nExplanation: s2 contains one permutation of s1 (\"ba\").\n```"
   },
   {
     "num": 20,
@@ -515,7 +543,8 @@
       "Each closing bracket must match the most recent unmatched opening bracket.",
       "Use a stack: push opening brackets, pop when you encounter a closing bracket.",
       "When you see a closing bracket, check if the stack top is the matching opener. At the end, the stack must be empty."
-    ]
+    ],
+    "description": "Given a string `s` containing just the characters `'('`, `')'`, `'{'`, `'}'`, `'['` and `']'`, determine if the input string is **valid**.\n\nA string is valid if:\n1. Open brackets are closed by the same type of brackets.\n2. Open brackets are closed in the correct order.\n3. Every close bracket has a corresponding open bracket of the same type.\n\n**Example:**\n```\nInput: s = \"{[]}\"\nOutput: True\n```"
   },
   {
     "num": 22,
@@ -533,7 +562,8 @@
       "Use backtracking to build valid combinations character by character.",
       "You can add '(' if open_count < n, and ')' if close_count < open_count.",
       "Base case: when the string length reaches 2*n, add it to results."
-    ]
+    ],
+    "description": "Given `n` pairs of parentheses, write a function to generate **all combinations of well-formed parentheses**.\n\n**Example:**\n```\nInput: n = 3\nOutput: [\"((()))\",\"(()())\",\"(())()\",\"()(())\",\"()()()\"]\n```"
   },
   {
     "num": 84,
@@ -551,7 +581,8 @@
       "For each bar, the rectangle's width extends left and right until a shorter bar is found.",
       "Use a monotonic increasing stack of (index, height). When a shorter bar arrives, pop and compute areas.",
       "When popping, the width extends from the popped bar's index to the current index. Remaining stack bars extend to the end."
-    ]
+    ],
+    "description": "Given an array of integers `heights` representing the histogram's bar height where the width of each bar is `1`, return the area of the **largest rectangle** in the histogram.\n\n**Example:**\n```\nInput: heights = [2,1,5,6,2,3]\nOutput: 10\nExplanation: The largest rectangle is formed by heights[2..3] = [5,6], area = 5 × 2 = 10.\n```"
   },
   {
     "num": 150,
@@ -569,7 +600,8 @@
       "In RPN, operators act on the two most recent operands.",
       "Use a stack: push numbers, and when you see an operator, pop two values, compute, push the result.",
       "For division, truncate toward zero using int(a / b), not a // b (which floors negative results)."
-    ]
+    ],
+    "description": "You are given an array of strings `tokens` that represents an arithmetic expression in **Reverse Polish Notation**.\n\nEvaluate the expression. Return an integer that represents the value of the expression.\n\n**Example:**\n```\nInput: tokens = [\"2\",\"1\",\"+\",\"3\",\"*\"]\nOutput: 9\nExplanation: ((2 + 1) * 3) = 9\n```"
   },
   {
     "num": 155,
@@ -586,7 +618,8 @@
       "You need O(1) for all operations including getMin. A single stack won't track the minimum efficiently after pops.",
       "Use an auxiliary stack that tracks the current minimum at each level.",
       "Push to min_stack when the new value is <= current min. Pop from min_stack when popping the current min."
-    ]
+    ],
+    "description": "Design a stack that supports push, pop, top, and retrieving the **minimum element** in constant time.\n\nImplement the `MinStack` class:\n- `push(val)` — pushes the element onto the stack\n- `pop()` — removes the top element\n- `top()` — gets the top element\n- `getMin()` — retrieves the minimum element in the stack\n\nEach function must run in **O(1)** time."
   },
   {
     "num": 739,
@@ -604,7 +637,8 @@
       "For each day, you need the next day with a higher temperature. Think about what a stack can track.",
       "Use a monotonic decreasing stack of indices. When a warmer day comes, pop all cooler days from the stack.",
       "For each popped index, the answer is current_index - popped_index."
-    ]
+    ],
+    "description": "Given an array of integers `temperatures`, return an array `answer` such that `answer[i]` is the number of days you have to wait after the `i`th day to get a warmer temperature. If there is no future day with a warmer temperature, set `answer[i] = 0`.\n\n**Example:**\n```\nInput: temperatures = [73,74,75,71,69,72,76,73]\nOutput: [1,1,4,2,1,1,0,0]\n```"
   },
   {
     "num": 853,
@@ -623,7 +657,8 @@
       "Calculate the time each car takes to reach the target. A faster car behind a slower one will be blocked.",
       "Sort cars by position (closest to target first). Process them in order using a stack.",
       "If a car's time to target is greater than the stack top, it forms a new fleet. Otherwise it merges into the fleet ahead."
-    ]
+    ],
+    "description": "There are `n` cars going to the same destination along a one-lane road. Each car `i` has a `position` and `speed`.\n\nA car can never pass another car ahead of it, but it can catch up and then travel at the same speed as the car ahead (forming a \"fleet\").\n\nReturn the **number of car fleets** that will arrive at the destination.\n\n**Example:**\n```\nInput: target = 12, position = [10,8,0,5,3], speed = [2,4,1,1,3]\nOutput: 3\n```"
   },
   {
     "num": 4,
@@ -641,7 +676,8 @@
       "Binary search on the smaller array to find the correct partition that splits both arrays into two halves.",
       "For a valid partition: max of left elements <= min of right elements in both arrays.",
       "Partition A at index i, then j = half - i - 2 for B. Check cross-conditions: A[i] <= B[j+1] and B[j] <= A[i+1]."
-    ]
+    ],
+    "description": "Given two sorted arrays `nums1` and `nums2` of size `m` and `n` respectively, return the **median** of the two sorted arrays.\n\nThe overall run time complexity should be **O(log(m+n))**.\n\n**Example:**\n```\nInput: nums1 = [1,3], nums2 = [2]\nOutput: 2.0\n```"
   },
   {
     "num": 33,
@@ -658,7 +694,8 @@
       "At any midpoint, one half of the array is always sorted.",
       "Determine which half is sorted by comparing nums[left] with nums[mid].",
       "If the target falls within the sorted half's range, search there; otherwise search the other half."
-    ]
+    ],
+    "description": "Given a sorted array that has been **rotated** at some pivot, and a `target` value, search for `target` in the array. Return its index, or `-1` if not found.\n\nYou must write an algorithm with **O(log n)** runtime complexity.\n\n**Example:**\n```\nInput: nums = [4,5,6,7,0,1,2], target = 0\nOutput: 4\n```"
   },
   {
     "num": 74,
@@ -676,7 +713,8 @@
       "The matrix rows are sorted and each row starts greater than the previous row's last element — treat it as one sorted array.",
       "Map a 1D index to 2D: row = index // cols, col = index % cols.",
       "Run standard binary search on indices 0 to rows*cols - 1, converting each mid to matrix coordinates."
-    ]
+    ],
+    "description": "You are given an `m x n` integer matrix with the following properties:\n- Each row is sorted in non-decreasing order.\n- The first integer of each row is greater than the last integer of the previous row.\n\nGiven an integer `target`, return `True` if `target` is in the matrix.\n\nWrite an algorithm in **O(log(m * n))** time.\n\n**Example:**\n```\nInput: matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3\nOutput: True\n```"
   },
   {
     "num": 153,
@@ -693,7 +731,8 @@
       "The minimum is at the rotation pivot point where the array transitions from high to low values.",
       "If nums[left] < nums[right], the subarray is already sorted — the minimum is nums[left].",
       "If nums[mid] >= nums[left], the pivot is in the right half; otherwise it's in the left half."
-    ]
+    ],
+    "description": "Given a sorted rotated array of **unique** elements, return the **minimum** element.\n\nYou must write an algorithm that runs in **O(log n)** time.\n\n**Example:**\n```\nInput: nums = [3,4,5,1,2]\nOutput: 1\n```"
   },
   {
     "num": 704,
@@ -710,7 +749,8 @@
       "The array is sorted — you can eliminate half the search space each step.",
       "Use two pointers (left, right) and compute the midpoint each iteration.",
       "If nums[mid] < target, search right half; if nums[mid] > target, search left half; if equal, return mid."
-    ]
+    ],
+    "description": "Given a sorted array of integers `nums` and an integer `target`, return the **index** of `target` if it exists. Otherwise, return `-1`.\n\nYou must write an algorithm with **O(log n)** runtime complexity.\n\n**Example:**\n```\nInput: nums = [-1,0,3,5,9,12], target = 9\nOutput: 4\n```"
   },
   {
     "num": 875,
@@ -727,7 +767,8 @@
       "Binary search on the answer: the eating speed k ranges from 1 to max(piles).",
       "For a given k, compute total hours as sum of ceil(pile / k) for each pile.",
       "If total hours <= h, try a smaller k (move right pointer left); otherwise try a larger k."
-    ]
+    ],
+    "description": "Koko loves to eat bananas. There are `n` piles of bananas, the `i`th pile has `piles[i]` bananas. The guards have gone and will come back in `h` hours.\n\nKoko can decide her bananas-per-hour eating speed `k`. Each hour, she eats `k` bananas from a pile. If the pile has less than `k` bananas, she eats all of them and waits.\n\nReturn the minimum integer `k` such that she can eat all the bananas within `h` hours.\n\n**Example:**\n```\nInput: piles = [3,6,7,11], h = 8\nOutput: 4\n```"
   },
   {
     "num": 981,
@@ -745,7 +786,8 @@
       "Store each key's values as a list of (timestamp, value) pairs — timestamps are always increasing.",
       "For get(), binary search for the largest timestamp <= the requested timestamp.",
       "Track the best result seen so far during binary search; move left pointer right when timestamp fits."
-    ]
+    ],
+    "description": "Design a time-based key-value data structure that can store multiple values for the same key at different timestamps and retrieve the key's value at a certain timestamp.\n\nImplement the `TimeMap` class:\n- `set(key, value, timestamp)` — stores the key-value pair at the given timestamp\n- `get(key, timestamp)` — returns the value with the largest timestamp ≤ the given timestamp, or `\"\"` if no such value exists\n\n**Example:**\n```\nset(\"foo\", \"bar\", 1)\nget(\"foo\", 1)  → \"bar\"\nget(\"foo\", 3)  → \"bar\"\nset(\"foo\", \"bar2\", 4)\nget(\"foo\", 4)  → \"bar2\"\nget(\"foo\", 5)  → \"bar2\"\n```"
   },
   {
     "num": 2,
@@ -763,7 +805,8 @@
       "Digits are stored in reverse order, so you can add them directly from head to tail with a carry.",
       "Iterate both lists simultaneously, summing corresponding digits plus carry.",
       "Create a new node for each digit (sum % 10) and propagate carry (sum // 10). Don't forget the final carry."
-    ]
+    ],
+    "description": "You are given two **non-empty** linked lists representing two non-negative integers. The digits are stored in **reverse order**, and each node contains a single digit. Add the two numbers and return the sum as a linked list.\n\n**Example:**\n```\nInput: l1 = [2,4,3], l2 = [5,6,4]\nOutput: [7,0,8]\nExplanation: 342 + 465 = 807\n```"
   },
   {
     "num": 19,
@@ -780,7 +823,8 @@
       "Use two pointers separated by n nodes so when the fast one reaches the end, the slow one is just before the target.",
       "A dummy node before head handles the edge case of removing the head itself.",
       "Advance right pointer n steps, then move both until right is None. Skip left.next."
-    ]
+    ],
+    "description": "Given the `head` of a linked list, remove the `n`th node from the **end** of the list and return its head.\n\n**Example:**\n```\nInput: head = [1,2,3,4,5], n = 2\nOutput: [1,2,3,5]\n```"
   },
   {
     "num": 21,
@@ -797,7 +841,8 @@
       "Use a dummy head node and build the merged list by comparing nodes from both lists.",
       "At each step, append the smaller node to the result and advance that list's pointer.",
       "When one list is exhausted, append the remainder of the other list."
-    ]
+    ],
+    "description": "You are given the heads of two sorted linked lists `list1` and `list2`. Merge the two lists into one **sorted** list by splicing together the nodes.\n\nReturn the head of the merged linked list.\n\n**Example:**\n```\nInput: list1 = [1,2,4], list2 = [1,3,4]\nOutput: [1,1,2,3,4,4]\n```"
   },
   {
     "num": 23,
@@ -815,7 +860,8 @@
       "Use a min-heap to always pick the smallest head across all k lists.",
       "Push (value, list_index, node) tuples so the heap can break ties without comparing ListNode objects.",
       "Pop the min, append it to the result, and push its next node back into the heap."
-    ]
+    ],
+    "description": "You are given an array of `k` linked lists, each sorted in ascending order. Merge all the linked lists into **one sorted** linked list and return it.\n\n**Example:**\n```\nInput: lists = [[1,4,5],[1,3,4],[2,6]]\nOutput: [1,1,2,3,4,4,5,6]\n```"
   },
   {
     "num": 25,
@@ -832,7 +878,8 @@
       "Process the list in groups of k. First check if k nodes remain; if not, leave them as-is.",
       "For each group, reverse the k nodes in place, then reconnect the reversed group to the previous group's tail.",
       "Track group_prev (node before current group). After reversing, the old first node becomes the new tail — set group_prev to it."
-    ]
+    ],
+    "description": "Given the `head` of a linked list, reverse the nodes of the list `k` at a time, and return the modified list.\n\nIf the number of nodes is not a multiple of `k`, the remaining nodes at the end should stay as-is.\n\n**Example:**\n```\nInput: head = [1,2,3,4,5], k = 2\nOutput: [2,1,4,3,5]\n```"
   },
   {
     "num": 138,
@@ -849,7 +896,8 @@
       "The challenge is copying random pointers that may point to nodes not yet created.",
       "Use a hash map mapping each original node to its copy. First pass: create all copies. Second pass: wire next and random.",
       "Two passes: (1) create Node copies in a dict keyed by original nodes, (2) set copy.next and copy.random using the dict."
-    ]
+    ],
+    "description": "A linked list of length `n` is given such that each node contains an additional random pointer, which could point to **any node** in the list, or `null`.\n\nConstruct a **deep copy** of the list.\n\n**Example:**\n```\nInput: head = [[7,null],[13,0],[11,4],[10,2],[1,0]]\nOutput: [[7,null],[13,0],[11,4],[10,2],[1,0]]\n```"
   },
   {
     "num": 141,
@@ -866,7 +914,8 @@
       "If there's a cycle, a fast pointer moving 2 steps will eventually meet a slow pointer moving 1 step.",
       "Use Floyd's tortoise and hare algorithm: slow moves 1 step, fast moves 2 steps.",
       "If fast reaches None, no cycle. If slow == fast at any point, there's a cycle."
-    ]
+    ],
+    "description": "Given `head`, the head of a linked list, determine if the linked list has a **cycle** in it.\n\nReturn `True` if there is a cycle, `False` otherwise.\n\n**Follow up:** Can you solve it using O(1) memory?"
   },
   {
     "num": 143,
@@ -884,7 +933,8 @@
       "The reordered list interleaves the first half with the reversed second half.",
       "Three steps: (1) find the middle with slow/fast pointers, (2) reverse the second half, (3) merge alternately.",
       "When merging, save next pointers before rewiring: first.next = second, second.next = first's old next."
-    ]
+    ],
+    "description": "You are given the head of a singly linked-list. Reorder the list to be in the following form:\n\n`L0 → Ln → L1 → Ln-1 → L2 → Ln-2 → …`\n\nYou may **not** modify the values in the list's nodes. Only nodes themselves may be changed.\n\n**Example:**\n```\nInput: head = [1,2,3,4]\nOutput: [1,4,2,3]\n```"
   },
   {
     "num": 146,
@@ -902,7 +952,8 @@
       "You need O(1) get and put — combine a hash map (for O(1) key lookup) with a doubly linked list (for O(1) insertion/removal).",
       "The doubly linked list maintains access order: most recent at the tail, least recent at the head.",
       "On get: move node to tail. On put: insert at tail, and if over capacity, evict the head (LRU) node."
-    ]
+    ],
+    "description": "Design a data structure that follows the constraints of a **Least Recently Used (LRU) cache**.\n\nImplement the `LRUCache` class:\n- `LRUCache(capacity)` — Initialize with positive size capacity\n- `get(key)` — Return the value if the key exists, otherwise return `-1`\n- `put(key, value)` — Update or insert the key-value pair. When capacity is exceeded, evict the least recently used key.\n\nBoth `get` and `put` must run in **O(1)** average time."
   },
   {
     "num": 206,
@@ -919,7 +970,8 @@
       "Iterate through the list and reverse each node's pointer to point to the previous node.",
       "Use two pointers: prev (starts at None) and cur (starts at head).",
       "At each step: save cur.next, point cur.next to prev, advance prev to cur, advance cur to saved next."
-    ]
+    ],
+    "description": "Given the `head` of a singly linked list, reverse the list, and return the reversed list.\n\n**Example:**\n```\nInput: head = [1,2,3,4,5]\nOutput: [5,4,3,2,1]\n```"
   },
   {
     "num": 287,
@@ -937,7 +989,8 @@
       "Treat the array as a linked list where index i points to nums[i]. The duplicate creates a cycle.",
       "Use Floyd's tortoise and hare algorithm: slow = nums[slow], fast = nums[nums[fast]] to find the intersection.",
       "After finding the intersection, start a second slow pointer from index 0. Where both slow pointers meet is the duplicate."
-    ]
+    ],
+    "description": "Given an array of integers `nums` containing `n + 1` integers where each integer is in the range `[1, n]` inclusive, there is exactly **one repeated number**. Return this repeated number.\n\nYou must solve it **without** modifying the array and using only **O(1)** extra space.\n\n**Example:**\n```\nInput: nums = [1,3,4,2,2]\nOutput: 2\n```"
   },
   {
     "num": 98,
@@ -955,7 +1008,8 @@
       "Just checking left < root < right at each node is not enough — you need global bounds.",
       "Pass valid range (lo, hi) down the recursion. Each node must be within its allowed range.",
       "For left child: upper bound becomes parent's value. For right child: lower bound becomes parent's value."
-    ]
+    ],
+    "description": "Given the `root` of a binary tree, determine if it is a **valid binary search tree** (BST).\n\nA valid BST:\n- The left subtree contains only nodes with keys **less than** the node's key.\n- The right subtree contains only nodes with keys **greater than** the node's key.\n- Both subtrees must also be valid BSTs."
   },
   {
     "num": 100,
@@ -972,7 +1026,8 @@
       "Two trees are the same if their roots match and their subtrees are the same.",
       "Use recursion. What are the base cases? Both null, one null, values differ.",
       "Return True only if values match AND both left subtrees match AND both right subtrees match."
-    ]
+    ],
+    "description": "Given the roots of two binary trees `p` and `q`, write a function to check if they are the **same** or not.\n\nTwo binary trees are the same if they are structurally identical, and the nodes have the same value."
   },
   {
     "num": 102,
@@ -989,7 +1044,8 @@
       "Process the tree level by level — which traversal does that naturally?",
       "Use BFS with a queue. Process all nodes at the current level before moving to the next.",
       "At each step, record the queue size, pop that many nodes (one level), and enqueue their children."
-    ]
+    ],
+    "description": "Given the `root` of a binary tree, return the **level order traversal** of its nodes' values (i.e., from left to right, level by level).\n\n**Example:**\n```\nInput: root = [3,9,20,null,null,15,7]\nOutput: [[3],[9,20],[15,7]]\n```"
   },
   {
     "num": 104,
@@ -1007,7 +1063,8 @@
       "The depth of a tree is 1 + the depth of its deepest subtree.",
       "Use recursion — the base case is an empty node with depth 0.",
       "Return 1 + max(maxDepth(left), maxDepth(right)) at each node."
-    ]
+    ],
+    "description": "Given the `root` of a binary tree, return its **maximum depth**.\n\nA binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.\n\n**Example:**\n```\nInput: root = [3,9,20,null,null,15,7]\nOutput: 3\n```"
   },
   {
     "num": 105,
@@ -1025,7 +1082,8 @@
       "The first element of preorder is always the root. Inorder tells you what's left vs right of the root.",
       "Use a hash map for O(1) lookup of root position in inorder array.",
       "Recursively build left subtree (elements before root in inorder), then right subtree. Advance preorder index."
-    ]
+    ],
+    "description": "Given two integer arrays `preorder` and `inorder` where `preorder` is the preorder traversal and `inorder` is the inorder traversal of the **same** binary tree, construct and return the binary tree.\n\n**Example:**\n```\nInput: preorder = [3,9,20,15,7], inorder = [9,3,15,20,7]\nOutput: [3,9,20,null,null,15,7]\n```"
   },
   {
     "num": 110,
@@ -1042,7 +1100,8 @@
       "A tree is balanced if every node's left and right subtree heights differ by at most 1.",
       "Compute height bottom-up with DFS. Use -1 as a sentinel for 'unbalanced'.",
       "If either subtree returns -1 or heights differ by more than 1, propagate -1 upward."
-    ]
+    ],
+    "description": "Given a binary tree, determine if it is **height-balanced**.\n\nA height-balanced binary tree is a binary tree in which the depth of the two subtrees of every node never differs by more than one."
   },
   {
     "num": 124,
@@ -1059,7 +1118,8 @@
       "A path can start and end at any node. At each node, decide whether to include left, right, or both subtrees.",
       "At each node, compute the best 'one-sided' path (for the parent) and the best 'split' path (through this node).",
       "DFS returns node.val + max(left, right) upward. Update global max with node.val + left + right. Clamp negatives to 0."
-    ]
+    ],
+    "description": "A **path** in a binary tree is a sequence of nodes where each pair of adjacent nodes has an edge connecting them. A node can only appear in the path **at most once**. The path does not need to pass through the root.\n\nThe **path sum** is the sum of the node values in the path.\n\nReturn the **maximum path sum** of any non-empty path."
   },
   {
     "num": 199,
@@ -1077,7 +1137,8 @@
       "The right side view is the last node visible at each level.",
       "Use BFS level-order traversal. The rightmost node at each level is the answer.",
       "Process each level; only add the last node of each level to the result."
-    ]
+    ],
+    "description": "Given the `root` of a binary tree, imagine yourself standing on the **right side** of it. Return the values of the nodes you can see ordered from top to bottom.\n\n**Example:**\n```\nInput: root = [1,2,3,null,5,null,4]\nOutput: [1,3,4]\n```"
   },
   {
     "num": 226,
@@ -1095,7 +1156,8 @@
       "Think about what it means to invert — every left child becomes right and vice versa.",
       "Recursion naturally fits tree problems. What's the base case?",
       "Swap left and right children at each node, then recursively invert each subtree."
-    ]
+    ],
+    "description": "Given the `root` of a binary tree, **invert** the tree (mirror it), and return its root.\n\n**Example:**\n```\nInput: root = [4,2,7,1,3,6,9]\nOutput: [4,7,2,9,6,3,1]\n```"
   },
   {
     "num": 230,
@@ -1113,7 +1175,8 @@
       "In-order traversal of a BST visits nodes in sorted order.",
       "Use iterative in-order traversal with a stack to avoid visiting all nodes.",
       "Push all left children, pop and count. When count equals k, return the value. Then go right."
-    ]
+    ],
+    "description": "Given the `root` of a binary search tree and an integer `k`, return the `k`th **smallest** value (1-indexed) of all the values of the nodes in the tree.\n\n**Example:**\n```\nInput: root = [3,1,4,null,2], k = 1\nOutput: 1\n```"
   },
   {
     "num": 235,
@@ -1131,7 +1194,8 @@
       "Exploit the BST property: left < root < right.",
       "If both p and q are smaller than root, LCA is in the left subtree. If both larger, right subtree.",
       "The first node where p and q split to different sides (or one equals the node) is the LCA."
-    ]
+    ],
+    "description": "Given a binary search tree (BST), find the **lowest common ancestor** (LCA) of two given nodes `p` and `q`.\n\nThe LCA is the deepest node that has both `p` and `q` as descendants (a node can be a descendant of itself).\n\n**Example:**\n```\nInput: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8\nOutput: 6\n```"
   },
   {
     "num": 297,
@@ -1150,7 +1214,8 @@
       "You need a format that uniquely encodes the tree structure, including null positions.",
       "Preorder DFS with a null marker (e.g., 'N') is the simplest approach.",
       "Serialize: DFS writing val or 'N'. Deserialize: consume tokens in the same order, recursing left then right."
-    ]
+    ],
+    "description": "Design an algorithm to **serialize** a binary tree into a string and **deserialize** that string back into the original tree structure.\n\nThere is no restriction on how your serialization/deserialization algorithm should work — you just need to ensure a binary tree can be serialized to a string and deserialized back."
   },
   {
     "num": 543,
@@ -1167,7 +1232,8 @@
       "The diameter passes through some node where left_height + right_height is maximized.",
       "Compute the height of each subtree with DFS, tracking the max diameter as a side effect.",
       "At each node, update diameter = max(diameter, left_height + right_height), then return 1 + max(left, right) as height."
-    ]
+    ],
+    "description": "Given the `root` of a binary tree, return the length of the **diameter** of the tree.\n\nThe diameter is the length of the **longest path** between any two nodes. This path may or may not pass through the root.\n\nThe length is measured by the **number of edges** between nodes.\n\n**Example:**\n```\nInput: root = [1,2,3,4,5]\nOutput: 3\nExplanation: Path is [4,2,1,3] or [5,2,1,3].\n```"
   },
   {
     "num": 572,
@@ -1184,7 +1250,8 @@
       "For each node in the main tree, check if the subtree rooted there is identical to subRoot.",
       "You need two recursive functions: one to traverse the main tree, one to compare two trees.",
       "isSameTree checks structural + value equality. isSubtree tries isSameTree at every node."
-    ]
+    ],
+    "description": "Given the roots of two binary trees `root` and `subRoot`, return `True` if there is a **subtree** of `root` with the same structure and node values of `subRoot`, and `False` otherwise."
   },
   {
     "num": 1448,
@@ -1201,7 +1268,8 @@
       "A node is 'good' if no node on the path from root to it has a greater value.",
       "Track the maximum value seen so far along the path from root to current node.",
       "DFS passing max_val down. If node.val >= max_val, it's good. Update max_val = max(max_val, node.val)."
-    ]
+    ],
+    "description": "Given a binary tree, a node `X` is **good** if in the path from root to `X` there are no nodes with a value **greater than** `X`.\n\nReturn the number of good nodes in the binary tree.\n\n**Example:**\n```\nInput: root = [3,1,4,3,null,1,5]\nOutput: 4\n```"
   },
   {
     "num": 208,
@@ -1219,7 +1287,8 @@
       "A trie is a tree where each node represents a character, and paths from root spell out words.",
       "Each node needs a dictionary of children and a boolean marking end-of-word.",
       "Insert: walk/create nodes for each char. Search: walk nodes, check end flag. StartsWith: walk nodes, return True if path exists."
-    ]
+    ],
+    "description": "A **trie** (prefix tree) is a tree data structure used to efficiently store and retrieve keys in a dataset of strings.\n\nImplement the `Trie` class:\n- `insert(word)` — Inserts the string `word` into the trie\n- `search(word)` — Returns `True` if `word` is in the trie, `False` otherwise\n- `startsWith(prefix)` — Returns `True` if there is a previously inserted string that has the prefix `prefix`"
   },
   {
     "num": 211,
@@ -1237,7 +1306,8 @@
       "This is a trie with wildcard '.' support in search.",
       "AddWord is standard trie insertion. Search needs DFS to handle '.' by trying all children.",
       "When you hit '.', recurse into every child node. For normal chars, follow the single matching child."
-    ]
+    ],
+    "description": "Design a data structure that supports adding new words and finding if a string matches any previously added string.\n\nImplement `WordDictionary`:\n- `addWord(word)` — Adds `word` to the data structure\n- `search(word)` — Returns `True` if any string matches `word`. The word may contain dots `'.'` where a dot can match **any** letter."
   },
   {
     "num": 212,
@@ -1256,7 +1326,8 @@
       "Searching each word independently is too slow. Build a trie from all words and search the board once.",
       "DFS from each cell, following trie edges. Mark visited cells to avoid reuse in the same path.",
       "When a trie node has '#' (end-of-word), add to results. Prune empty trie branches for efficiency."
-    ]
+    ],
+    "description": "Given an `m x n` board of characters and a list of strings `words`, return **all words** on the board.\n\nEach word must be constructed from letters of sequentially **adjacent cells** (horizontally or vertically neighboring). The same cell may not be used more than once in a word.\n\n**Example:**\n```\nInput: board = [[\"o\",\"a\",\"a\",\"n\"],[\"e\",\"t\",\"a\",\"e\"],[\"i\",\"h\",\"k\",\"r\"],[\"i\",\"f\",\"l\",\"v\"]]\nwords = [\"oath\",\"pea\",\"eat\",\"rain\"]\nOutput: [\"eat\",\"oath\"]\n```"
   },
   {
     "num": 215,
@@ -1274,7 +1345,8 @@
       "You need the kth largest, not the kth smallest. Think about what a min-heap of size k gives you.",
       "Maintain a min-heap of size k. The top element is always the kth largest seen so far.",
       "Push each element. If heap exceeds size k, pop the smallest. Final heap[0] is the answer."
-    ]
+    ],
+    "description": "Given an integer array `nums` and an integer `k`, return the `k`th **largest** element in the array.\n\nNote that it is the `k`th largest element in the sorted order, not the `k`th distinct element.\n\nCan you solve it without sorting?\n\n**Example:**\n```\nInput: nums = [3,2,1,5,6,4], k = 2\nOutput: 5\n```"
   },
   {
     "num": 295,
@@ -1292,7 +1364,8 @@
       "The median splits data into two halves. Maintain the lower half and upper half separately.",
       "Use a max-heap for the lower half and a min-heap for the upper half. Keep them balanced in size.",
       "Always push to lo first (via negation), rebalance to hi, then rebalance sizes. Median is top of lo (odd) or average of both tops (even)."
-    ]
+    ],
+    "description": "The **median** is the middle value in an ordered integer list. If the size of the list is even, there is no middle value, and the median is the mean of the two middle values.\n\nImplement the `MedianFinder` class:\n- `addNum(num)` — adds the integer `num` to the data structure\n- `findMedian()` — returns the median of all elements so far"
   },
   {
     "num": 355,
@@ -1310,7 +1383,8 @@
       "You need to merge the most recent tweets from all followed users. This is a k-way merge problem.",
       "Store tweets per user with timestamps. Use a set for follow relationships.",
       "For getNewsFeed: push each followee's latest tweet into a min-heap (negated time). Pop 10 times, pushing the next older tweet from the same user."
-    ]
+    ],
+    "description": "Design a simplified version of Twitter where users can post tweets, follow/unfollow another user, and see the **10 most recent tweets** in their news feed.\n\nImplement the `Twitter` class:\n- `postTweet(userId, tweetId)` — Composes a new tweet\n- `getNewsFeed(userId)` — Retrieves the 10 most recent tweet IDs (from user and followees)\n- `follow(followerId, followeeId)` — Follower follows a followee\n- `unfollow(followerId, followeeId)` — Follower unfollows a followee"
   },
   {
     "num": 621,
@@ -1328,7 +1402,8 @@
       "Always schedule the most frequent remaining task to minimize idle time.",
       "Use a max-heap for task frequencies and a cooldown queue tracking when tasks become available.",
       "Each tick: pop from heap, decrement count, push to cooldown with ready time. When cooldown expires, push back to heap."
-    ]
+    ],
+    "description": "Given a characters array `tasks` representing CPU tasks (A-Z) and a non-negative integer `n` representing the cooldown interval between two **same tasks**, return the least number of intervals the CPU will take to finish all tasks.\n\n**Example:**\n```\nInput: tasks = [\"A\",\"A\",\"A\",\"B\",\"B\",\"B\"], n = 2\nOutput: 8\nExplanation: A → B → idle → A → B → idle → A → B\n```"
   },
   {
     "num": 703,
@@ -1345,7 +1420,8 @@
       "You need quick access to the kth largest element as new elements arrive.",
       "A min-heap of size k keeps the k largest elements, with the kth largest at the top.",
       "Push new element, pop if heap exceeds size k. The top of the heap is always the answer."
-    ]
+    ],
+    "description": "Design a class to find the `k`th largest element in a stream. Note that it is the `k`th largest element in the sorted order, not the `k`th distinct element.\n\nImplement `KthLargest`:\n- `KthLargest(k, nums)` — Initializes the object with the integer `k` and the stream of integers `nums`\n- `add(val)` — Appends the integer `val` to the stream and returns the element representing the `k`th largest element"
   },
   {
     "num": 973,
@@ -1363,7 +1439,8 @@
       "You need the k points with smallest Euclidean distance. You don't need the actual distance — squared is fine.",
       "Use a max-heap of size k. Push negative distances so Python's min-heap acts as a max-heap.",
       "For each point, if heap has fewer than k elements push it. Otherwise, replace the farthest if current is closer."
-    ]
+    ],
+    "description": "Given an array of `points` where `points[i] = [xi, yi]` represents a point on the X-Y plane and an integer `k`, return the `k` **closest points** to the origin `(0, 0)`.\n\nThe distance between two points is the Euclidean distance: `√(x² + y²)`.\n\n**Example:**\n```\nInput: points = [[1,3],[-2,2]], k = 1\nOutput: [[-2,2]]\n```"
   },
   {
     "num": 1046,
@@ -1379,7 +1456,8 @@
       "You repeatedly need the two heaviest stones. Which data structure gives you the max efficiently?",
       "Python's heapq is a min-heap. Negate values to simulate a max-heap.",
       "Pop two largest, push their difference (if nonzero) back. Continue until 0 or 1 stones remain."
-    ]
+    ],
+    "description": "You are given an array of integers `stones` where `stones[i]` is the weight of the `i`th stone.\n\nOn each turn, choose the **heaviest two stones** and smash them together:\n- If they are equal, both are destroyed\n- If they are different, the lighter one is destroyed and the heavier one has its weight reduced by the lighter stone's weight\n\nReturn the weight of the last remaining stone, or `0` if there are no stones left.\n\n**Example:**\n```\nInput: stones = [2,7,4,1,8,1]\nOutput: 1\n```"
   },
   {
     "num": 17,
@@ -1396,7 +1474,8 @@
       "Map each digit to its corresponding letters (like a phone keypad). For each digit, try all its letters.",
       "Use backtracking with an index tracking which digit you're processing. At each level, branch into all letters for that digit.",
       "Build the string by concatenating characters. When the string length equals the number of digits, add it to results."
-    ]
+    ],
+    "description": "Given a string containing digits from `2-9`, return **all possible letter combinations** that the number could represent (like on a phone's dial pad).\n\n**Example:**\n```\nInput: digits = \"23\"\nOutput: [\"ad\",\"ae\",\"af\",\"bd\",\"be\",\"bf\",\"cd\",\"ce\",\"cf\"]\n```"
   },
   {
     "num": 39,
@@ -1413,7 +1492,8 @@
       "You can reuse the same number unlimited times. Think about branching: use the current candidate again, or move to the next one.",
       "Use backtracking with an index to avoid duplicate combinations. At each step, either include the current candidate (stay at same index) or skip it.",
       "Track the running total. If it equals target, save the combination. If it exceeds target or index is out of bounds, backtrack."
-    ]
+    ],
+    "description": "Given an array of **distinct** integers `candidates` and a target integer `target`, return all **unique combinations** of `candidates` where the chosen numbers sum to `target`.\n\nThe **same** number may be chosen an unlimited number of times. Two combinations are unique if the frequency of at least one of the chosen numbers is different.\n\n**Example:**\n```\nInput: candidates = [2,3,6,7], target = 7\nOutput: [[2,2,3],[7]]\n```"
   },
   {
     "num": 40,
@@ -1430,7 +1510,8 @@
       "Similar to Combination Sum but each number can only be used once. How do you handle duplicates?",
       "Sort the array first. In the backtracking loop, skip candidates that are the same as the previous one at the same recursion level.",
       "Use a for-loop starting from index i. Skip duplicates with `if j > i and candidates[j] == candidates[j-1]: continue`. Recurse with j+1 to avoid reusing the same element."
-    ]
+    ],
+    "description": "Given a collection of candidate numbers `candidates` (which **may contain duplicates**) and a target number `target`, find all unique combinations in `candidates` where the candidate numbers sum to `target`.\n\nEach number in `candidates` may only be used **once** in the combination.\n\n**Example:**\n```\nInput: candidates = [10,1,2,7,6,1,5], target = 8\nOutput: [[1,1,6],[1,2,5],[1,7],[2,6]]\n```"
   },
   {
     "num": 46,
@@ -1447,7 +1528,8 @@
       "A permutation uses every element exactly once. At each position, try every unused element.",
       "Use backtracking: build the permutation one element at a time, skipping elements already in the current permutation.",
       "For each recursive call, iterate through all nums and only add those not already in the current permutation. When the permutation length equals nums length, save it."
-    ]
+    ],
+    "description": "Given an array `nums` of distinct integers, return **all possible permutations**. You can return the answer in any order.\n\n**Example:**\n```\nInput: nums = [1,2,3]\nOutput: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]\n```"
   },
   {
     "num": 51,
@@ -1464,7 +1546,8 @@
       "Place queens row by row. For each row, try every column and check if it's safe (no other queen in the same column or diagonals).",
       "Use three sets to track attacked columns, positive diagonals (r+c), and negative diagonals (r-c).",
       "For each row, iterate through columns. If the column and both diagonals are free, place the queen, update the sets, recurse to the next row, then undo."
-    ]
+    ],
+    "description": "The **N-Queens** puzzle is the problem of placing `n` queens on an `n x n` chessboard such that no two queens attack each other.\n\nGiven an integer `n`, return **all distinct solutions** to the N-Queens puzzle. Each solution contains a distinct board configuration.\n\n**Example:**\n```\nInput: n = 4\nOutput: [[\".Q..\",\"...Q\",\"Q...\",\"..Q.\"],[\"..Q.\",\"Q...\",\"...Q\",\".Q..\"]]\n```"
   },
   {
     "num": 78,
@@ -1481,7 +1564,8 @@
       "For each element, you have two choices: include it or skip it.",
       "Use a recursive backtracking approach where you build subsets by deciding include/exclude at each index.",
       "At each index i, add nums[i] to the current subset and recurse, then remove it and recurse again. When i reaches the end, append a copy of the current subset to results."
-    ]
+    ],
+    "description": "Given an integer array `nums` of **unique** elements, return **all possible subsets** (the power set).\n\nThe solution set must not contain duplicate subsets. Return the solution in any order.\n\n**Example:**\n```\nInput: nums = [1,2,3]\nOutput: [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]\n```"
   },
   {
     "num": 79,
@@ -1499,7 +1583,8 @@
       "Try starting the search from every cell that matches the first character of the word.",
       "Use DFS/backtracking. Mark visited cells to avoid revisiting them in the same path.",
       "Temporarily mark a cell as visited (e.g., replace with '#'), explore all 4 directions, then restore the original value when backtracking."
-    ]
+    ],
+    "description": "Given an `m x n` grid of characters `board` and a string `word`, return `True` if `word` exists in the grid.\n\nThe word can be constructed from letters of **sequentially adjacent cells** (horizontally or vertically neighboring). The same letter cell may not be used more than once.\n\n**Example:**\n```\nInput: board = [[\"A\",\"B\",\"C\",\"E\"],[\"S\",\"F\",\"C\",\"S\"],[\"A\",\"D\",\"E\",\"E\"]], word = \"ABCCED\"\nOutput: True\n```"
   },
   {
     "num": 90,
@@ -1516,7 +1601,8 @@
       "This is like Subsets but with duplicates. How can you avoid generating duplicate subsets?",
       "Sort the array first. When you decide to skip an element, skip all duplicates of that element too.",
       "After sorting, at each index decide to include or exclude. When excluding, advance the index past all duplicates of the current element."
-    ]
+    ],
+    "description": "Given an integer array `nums` that **may contain duplicates**, return all possible subsets (the power set).\n\nThe solution set must **not** contain duplicate subsets. Return the solution in any order.\n\n**Example:**\n```\nInput: nums = [1,2,2]\nOutput: [[],[1],[1,2],[1,2,2],[2],[2,2]]\n```"
   },
   {
     "num": 131,
@@ -1533,7 +1619,8 @@
       "At each position, try every possible substring starting there and check if it's a palindrome.",
       "Use backtracking: for index i, try all substrings s[i:j+1]. If it's a palindrome, add it to the current partition and recurse from j+1.",
       "Check palindrome with s[i:j+1] == s[i:j+1][::-1]. When index i reaches the end of the string, save the current partition."
-    ]
+    ],
+    "description": "Given a string `s`, partition `s` such that every substring of the partition is a **palindrome**. Return all possible palindrome partitionings of `s`.\n\n**Example:**\n```\nInput: s = \"aab\"\nOutput: [[\"a\",\"a\",\"b\"],[\"aa\",\"b\"]]\n```"
   },
   {
     "num": 127,
@@ -1551,7 +1638,8 @@
       "Think of each word as a node and an edge between words that differ by one character. Find the shortest path from beginWord to endWord.",
       "BFS gives the shortest path. At each step, try changing each character to every letter a-z and check if the result is in the word list.",
       "Use a set for O(1) word lookup. BFS level by level, tracking visited words. For each word, try all 26 letters at each position. Return the level when endWord is found."
-    ]
+    ],
+    "description": "Given two words, `beginWord` and `endWord`, and a dictionary `wordList`, return the number of words in the **shortest transformation sequence** from `beginWord` to `endWord`, where each transformation changes a single letter.\n\nReturn `0` if no such sequence exists.\n\n**Example:**\n```\nInput: beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]\nOutput: 5\nExplanation: \"hit\" → \"hot\" → \"dot\" → \"dog\" → \"cog\"\n```"
   },
   {
     "num": 130,
@@ -1570,7 +1658,8 @@
       "O's on the border can never be captured. Any O connected to a border O is also safe.",
       "Start DFS/BFS from all border O's and mark them as safe (temporary marker). Then flip remaining O's to X and restore safe ones.",
       "Mark border-connected O's as 'T'. Then iterate the entire board: convert 'O' to 'X' (captured) and 'T' back to 'O' (safe)."
-    ]
+    ],
+    "description": "Given an `m x n` matrix `board` containing `'X'` and `'O'`, capture all regions that are **4-directionally surrounded** by `'X'`.\n\nA region is captured by flipping all `'O'`s into `'X'`s in that surrounded region."
   },
   {
     "num": 133,
@@ -1589,7 +1678,8 @@
       "You need to create a deep copy of every node. How do you handle cycles in the graph?",
       "Use a hash map from original node to cloned node. Before cloning a node, check if it already exists in the map.",
       "DFS through the graph. For each node, create a clone, store it in the map, then recursively clone all neighbors and add them to the clone's neighbor list."
-    ]
+    ],
+    "description": "Given a reference of a node in a **connected** undirected graph, return a **deep copy** (clone) of the graph.\n\nEach node in the graph contains a value and a list of its neighbors."
   },
   {
     "num": 200,
@@ -1608,7 +1698,8 @@
       "Each connected group of '1's is one island. How can you mark an entire island as visited?",
       "Use DFS or BFS. When you find a '1', increment count and flood-fill to mark all connected '1's as visited.",
       "Sink the island by changing '1' to '0' as you visit each cell. Explore all 4 directions from each cell."
-    ]
+    ],
+    "description": "Given an `m x n` 2D binary grid `grid` which represents a map of `'1'`s (land) and `'0'`s (water), return the **number of islands**.\n\nAn island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically.\n\n**Example:**\n```\nInput: grid = [\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"0\",\"0\",\"1\",\"0\",\"0\"],\n  [\"0\",\"0\",\"0\",\"1\",\"1\"]\n]\nOutput: 3\n```"
   },
   {
     "num": 207,
@@ -1627,7 +1718,8 @@
       "This is a cycle detection problem in a directed graph. If there's a cycle, you can't finish all courses.",
       "Build an adjacency list and use DFS with three states: unvisited, visiting (in current path), and visited (fully processed).",
       "If you encounter a node in the 'visiting' state during DFS, there's a cycle. Mark nodes as 'visited' after fully exploring all their prerequisites."
-    ]
+    ],
+    "description": "There are a total of `numCourses` courses you have to take, labeled from `0` to `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [ai, bi]` indicates that you must take course `bi` before course `ai`.\n\nReturn `True` if you can finish all courses, or `False` otherwise.\n\n**Example:**\n```\nInput: numCourses = 2, prerequisites = [[1,0]]\nOutput: True\n```"
   },
   {
     "num": 210,
@@ -1646,7 +1738,8 @@
       "This is topological sort. You need to find an ordering where all prerequisites come before the courses that depend on them.",
       "Use DFS with cycle detection. After fully processing a node (all dependencies visited), add it to the result.",
       "DFS post-order gives reverse topological order. Append courses after all their prerequisites are processed. If a cycle is detected, return empty list."
-    ]
+    ],
+    "description": "There are `numCourses` courses. Given `prerequisites` pairs, return the **ordering** of courses you should take to finish all courses. If impossible, return an empty array.\n\nIf there are multiple valid orderings, return any of them.\n\n**Example:**\n```\nInput: numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]\nOutput: [0,2,1,3] or [0,1,2,3]\n```"
   },
   {
     "num": 261,
@@ -1663,7 +1756,8 @@
       "A valid tree has exactly n-1 edges and no cycles. Also, it must be fully connected.",
       "Use Union-Find. First check if edges count equals n-1. Then process edges — if any edge connects already-connected nodes, there's a cycle.",
       "Quick check: if len(edges) != n-1, return False. Then use Union-Find: for each edge, if both nodes share the same root, it's a cycle — return False."
-    ]
+    ],
+    "description": "Given `n` nodes labeled from `0` to `n - 1` and a list of undirected edges, determine if these edges form a **valid tree**.\n\nA valid tree has exactly `n - 1` edges, is connected, and has no cycles.\n\n**Example:**\n```\nInput: n = 5, edges = [[0,1],[0,2],[0,3],[1,4]]\nOutput: True\n```"
   },
   {
     "num": 286,
@@ -1681,7 +1775,8 @@
       "Instead of BFS from each empty room to find the nearest gate, think in reverse: BFS from all gates simultaneously.",
       "Multi-source BFS: add all gate positions (value 0) to the queue. Expand outward, updating INF cells with distance.",
       "Start BFS from all gates at once. For each cell, set distance = parent distance + 1. Only process cells with value INF (skip walls and already-visited cells)."
-    ]
+    ],
+    "description": "You are given an `m x n` grid `rooms` initialized with values:\n- `-1` — A wall or obstacle\n- `0` — A gate\n- `INF` (2³¹ - 1) — An empty room\n\nFill each empty room with the distance to its **nearest gate**. If impossible to reach a gate, leave it as `INF`."
   },
   {
     "num": 323,
@@ -1698,7 +1793,8 @@
       "Start with n components (each node is its own component). Each edge that successfully merges two components reduces the count by 1.",
       "Use Union-Find. Initialize each node as its own parent. For each edge, union the two nodes.",
       "Start with components = n. Each successful union (where the two nodes had different roots) decreases components by 1. Return the final count."
-    ]
+    ],
+    "description": "Given `n` nodes labeled from `0` to `n - 1` and a list of undirected edges, return the **number of connected components** in the graph.\n\n**Example:**\n```\nInput: n = 5, edges = [[0,1],[1,2],[3,4]]\nOutput: 2\n```"
   },
   {
     "num": 417,
@@ -1717,7 +1813,8 @@
       "Instead of checking from each cell whether water can flow to both oceans, think in reverse: start from the ocean borders.",
       "Run DFS/BFS from Pacific border cells and Atlantic border cells separately, flowing uphill. Cells reachable from both are the answer.",
       "Pacific touches top and left edges, Atlantic touches bottom and right edges. DFS from each border, only moving to cells with height >= current. Intersect the two reachable sets."
-    ]
+    ],
+    "description": "There is an `m x n` rectangular island that borders the Pacific Ocean (top and left edges) and the Atlantic Ocean (bottom and right edges).\n\nWater can only flow in four directions (up, down, left, right) from a cell to a neighboring cell with **equal or lower** height.\n\nReturn a list of grid coordinates where water can flow to **both** the Pacific and Atlantic oceans."
   },
   {
     "num": 684,
@@ -1734,7 +1831,8 @@
       "A tree with n nodes has exactly n-1 edges. The extra edge creates a cycle. Find it.",
       "Use Union-Find. Process edges one by one. The first edge that connects two already-connected nodes is the redundant one.",
       "Implement Union-Find with path compression and union by rank. For each edge, if find(a) == find(b), that edge is redundant."
-    ]
+    ],
+    "description": "Given a graph that started as a tree with `n` nodes and had **one additional edge** added, return the edge that can be removed so the result is a tree.\n\nIf there are multiple answers, return the edge that occurs **last** in the input.\n\n**Example:**\n```\nInput: edges = [[1,2],[1,3],[2,3]]\nOutput: [2,3]\n```"
   },
   {
     "num": 695,
@@ -1753,7 +1851,8 @@
       "Similar to Number of Islands, but instead of counting islands, track the size of each one.",
       "Use DFS that returns the area (count of cells) for each island. Keep track of the maximum.",
       "DFS returns 0 for out-of-bounds or water cells. For land cells, mark as visited and return 1 + sum of DFS in all 4 directions."
-    ]
+    ],
+    "description": "You are given an `m x n` binary matrix `grid`. An island is a group of `1`'s connected 4-directionally. Return the maximum area of an island in the grid. If there is no island, return `0`.\n\n**Example:**\n```\nInput: grid = [[0,0,1,0,0],[0,0,0,0,0],[0,1,1,0,1],[0,1,0,0,1],[0,1,1,1,1]]\nOutput: 6\n```"
   },
   {
     "num": 994,
@@ -1771,7 +1870,8 @@
       "All rotten oranges spread simultaneously. This is a multi-source BFS problem.",
       "Add all initially rotten oranges to a queue. Process level by level (each level = 1 minute). Count fresh oranges upfront.",
       "BFS from all rotten oranges at once. Each level of BFS is one minute. Decrement fresh count as oranges rot. If fresh > 0 at the end, return -1."
-    ]
+    ],
+    "description": "You are given an `m x n` grid where each cell can have one of three values:\n- `0` — empty cell\n- `1` — fresh orange\n- `2` — rotten orange\n\nEvery minute, any fresh orange adjacent (4-directionally) to a rotten orange becomes rotten. Return the minimum number of minutes until no cell has a fresh orange. If impossible, return `-1`.\n\n**Example:**\n```\nInput: grid = [[2,1,1],[1,1,0],[0,1,1]]\nOutput: 4\n```"
   },
   {
     "num": 269,
@@ -1788,7 +1888,8 @@
       "Compare adjacent words to find ordering constraints between characters. The first differing character tells you which comes first in the alien alphabet.",
       "Build a directed graph from the ordering constraints and perform topological sort (Kahn's algorithm with in-degrees).",
       "Compare each pair of adjacent words character by character. At the first difference, add an edge w1[j] -> w2[j]. Edge case: if w1 is longer than w2 but is a prefix match, the order is invalid. Topological sort the graph; if not all characters are included, there's a cycle."
-    ]
+    ],
+    "description": "There is a new alien language that uses the English alphabet but in a different order. Given a list of strings `words` from the alien language dictionary (sorted lexicographically by the alien language's rules), return a string of the unique letters in the new alien language sorted in the alien's order.\n\nIf there is no valid solution, return `\"\"`. If there are multiple solutions, return any of them."
   },
   {
     "num": 332,
@@ -1806,7 +1907,8 @@
       "This is an Eulerian path problem. You need to use every ticket exactly once, starting from JFK, choosing the smallest lexicographic order.",
       "Sort tickets so each destination list is in alphabetical order. Use Hierholzer's algorithm to find the Eulerian path.",
       "DFS from JFK, always visiting the smallest destination first. After all destinations are exhausted, add the airport to the result. Reverse the result at the end."
-    ]
+    ],
+    "description": "You are given a list of airline `tickets` where `tickets[i] = [from, to]`. Reconstruct the itinerary in order starting from `\"JFK\"`.\n\nIf there are multiple valid itineraries, return the itinerary that has the **smallest lexical order** when read as a single string.\n\n**Example:**\n```\nInput: tickets = [[\"MUC\",\"LHR\"],[\"JFK\",\"MUC\"],[\"SFO\",\"SJC\"],[\"LHR\",\"SFO\"]]\nOutput: [\"JFK\",\"MUC\",\"LHR\",\"SFO\",\"SJC\"]\n```"
   },
   {
     "num": 743,
@@ -1824,7 +1926,8 @@
       "Find the shortest time from node k to all other nodes. The answer is the maximum of those shortest times.",
       "Use Dijkstra's algorithm. Build an adjacency list and use a min-heap to process nodes in order of arrival time.",
       "Start Dijkstra from node k. Track the time to reach each node. The answer is the max time among all visited nodes. If not all nodes are reachable, return -1."
-    ]
+    ],
+    "description": "You are given a network of `n` nodes, labeled from `1` to `n`. Given `times`, a list of travel times as directed edges `[u, v, w]`, and a source node `k`, return the **minimum time** it takes for all `n` nodes to receive the signal. If impossible, return `-1`.\n\n**Example:**\n```\nInput: times = [[2,1,1],[2,3,1],[3,4,1]], n = 4, k = 2\nOutput: 2\n```"
   },
   {
     "num": 778,
@@ -1843,7 +1946,8 @@
       "You need the minimum time t such that there's a path from (0,0) to (n-1,n-1) where every cell has elevation <= t.",
       "Use a modified Dijkstra: instead of summing weights, track the maximum elevation along the path. The min-heap prioritizes by this maximum.",
       "Push (max_elevation, row, col) onto the heap. For each neighbor, push max(current_max, neighbor_elevation). When you reach (n-1, n-1), that's the answer."
-    ]
+    ],
+    "description": "You are given an `n x n` integer matrix `grid` where each value `grid[i][j]` represents the elevation at point `(i, j)`. Starting from the top-left corner, find the minimum time `t` such that you can reach the bottom-right corner. At time `t`, you can swim in any cell with elevation ≤ `t`.\n\n**Example:**\n```\nInput: grid = [[0,2],[1,3]]\nOutput: 3\n```"
   },
   {
     "num": 787,
@@ -1861,7 +1965,8 @@
       "Standard Dijkstra doesn't work well here because of the stop constraint. Consider Bellman-Ford which naturally handles limited iterations.",
       "Run Bellman-Ford for exactly k+1 iterations (k stops = k+1 edges). Use a copy of the prices array each iteration to avoid cascading updates.",
       "Initialize prices[src] = 0, all others infinity. For k+1 rounds, copy the prices array and relax all edges using the previous round's values. This ensures at most k+1 edges are used."
-    ]
+    ],
+    "description": "There are `n` cities connected by some flights. You are given `flights` where `flights[i] = [from, to, price]`. Find the cheapest price from `src` to `dst` with at most `k` stops. If there is no such route, return `-1`.\n\n**Example:**\n```\nInput: n = 4, flights = [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]], src = 0, dst = 3, k = 1\nOutput: 700\n```"
   },
   {
     "num": 1584,
@@ -1878,7 +1983,8 @@
       "This is a Minimum Spanning Tree problem. The cost between two points is their Manhattan distance.",
       "Use Prim's algorithm with a min-heap. Start from any point and greedily add the cheapest edge to an unvisited point.",
       "Start with point 0 in the MST. Push all edges from it to the heap. Pop the smallest edge, add the new point if unvisited, push its edges. Repeat until all points are connected."
-    ]
+    ],
+    "description": "You are given an array `points` representing integer coordinates of some points on a 2D-plane. The cost of connecting two points is the **Manhattan distance** between them.\n\nReturn the minimum cost to make all points connected.\n\n**Example:**\n```\nInput: points = [[0,0],[2,2],[3,10],[5,2],[7,0]]\nOutput: 20\n```"
   },
   {
     "num": 5,
@@ -1895,7 +2001,8 @@
       "A palindrome mirrors around its center. Try expanding from each possible center.",
       "There are 2n-1 centers: each character (odd-length) and between each pair (even-length).",
       "For each center, expand outward while characters match. Track the longest found."
-    ]
+    ],
+    "description": "Given a string `s`, return the **longest palindromic substring** in `s`.\n\n**Example:**\n```\nInput: s = \"babad\"\nOutput: \"bab\" (or \"aba\")\n```"
   },
   {
     "num": 70,
@@ -1912,7 +2019,8 @@
       "Think about how many ways you can reach step n from step n-1 and step n-2.",
       "This is essentially the Fibonacci sequence. Use two variables to track the last two values.",
       "Iterate from 3 to n, updating: a, b = b, a + b. Return b."
-    ]
+    ],
+    "description": "You are climbing a staircase. It takes `n` steps to reach the top. Each time you can either climb `1` or `2` steps. In how many **distinct ways** can you climb to the top?\n\n**Example:**\n```\nInput: n = 3\nOutput: 3\nExplanation: 1+1+1, 1+2, 2+1\n```"
   },
   {
     "num": 91,
@@ -1929,7 +2037,8 @@
       "At each position, you can decode one digit (if non-zero) or two digits (if 10-26).",
       "dp[i] depends on dp[i-1] and dp[i-2]. Only need two variables.",
       "For each index i: if s[i] != '0', add dp[i-1]. If s[i-1:i+1] is between 10 and 26, add dp[i-2]."
-    ]
+    ],
+    "description": "A message containing letters from `A-Z` can be **encoded** into numbers using `'A' → 1, 'B' → 2, ..., 'Z' → 26`.\n\nGiven a string `s` containing only digits, return the **number of ways** to decode it.\n\n**Example:**\n```\nInput: s = \"226\"\nOutput: 3\nExplanation: \"BZ\" (2 26), \"VF\" (22 6), or \"BBF\" (2 2 6)\n```"
   },
   {
     "num": 139,
@@ -1947,7 +2056,8 @@
       "Can you break s[0:i] into valid dictionary words? Check all possible splits.",
       "dp[i] is True if s[0:i] can be segmented. For each i, check all j < i where dp[j] is True and s[j:i] is in the dictionary.",
       "Convert wordDict to a set for O(1) lookups. dp[0] = True (empty string). Return dp[len(s)]."
-    ]
+    ],
+    "description": "Given a string `s` and a dictionary of strings `wordDict`, return `True` if `s` can be segmented into a space-separated sequence of one or more dictionary words.\n\n**Example:**\n```\nInput: s = \"leetcode\", wordDict = [\"leet\",\"code\"]\nOutput: True\nExplanation: \"leet code\"\n```"
   },
   {
     "num": 152,
@@ -1964,7 +2074,8 @@
       "A negative number can flip a large product to small and vice versa. Track both max and min products.",
       "At each element, the new max is max(num, num * prev_max, num * prev_min). Similarly for min.",
       "Initialize cur_max = cur_min = 1. For each num, compute all three candidates and update both."
-    ]
+    ],
+    "description": "Given an integer array `nums`, find a subarray that has the **largest product**, and return the product.\n\n**Example:**\n```\nInput: nums = [2,3,-2,4]\nOutput: 6\nExplanation: [2,3] has the largest product 6.\n```"
   },
   {
     "num": 198,
@@ -1981,7 +2092,8 @@
       "At each house, you either rob it (add its value to what you had two houses ago) or skip it (keep what you had at the previous house).",
       "dp[i] = max(dp[i-1], dp[i-2] + nums[i]). You only need two variables.",
       "Track two values: a (two houses back) and b (previous house). For each num: a, b = b, max(b, a + num)."
-    ]
+    ],
+    "description": "You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed. **Adjacent houses have security systems connected** — if two adjacent houses are broken into on the same night, the police will be alerted.\n\nGiven an array `nums` representing the amount of money at each house, return the maximum amount you can rob **without alerting the police**.\n\n**Example:**\n```\nInput: nums = [1,2,3,1]\nOutput: 4\nExplanation: Rob house 1 (1) and house 3 (3) = 4.\n```"
   },
   {
     "num": 213,
@@ -1998,7 +2110,8 @@
       "Since houses are in a circle, the first and last house are adjacent. You can't rob both.",
       "Run House Robber I twice: once on nums[:-1] (exclude last) and once on nums[1:] (exclude first). Take the max.",
       "Handle the edge case of a single house separately. Then use the linear rob helper on both subarrays."
-    ]
+    ],
+    "description": "You are a robber planning to rob houses arranged **in a circle**. Adjacent houses have security systems — you cannot rob two adjacent houses. The first and last houses are also adjacent.\n\nGiven an array `nums`, return the maximum amount you can rob.\n\n**Example:**\n```\nInput: nums = [2,3,2]\nOutput: 3\nExplanation: You cannot rob house 1 (2) and house 3 (2), since they are adjacent.\n```"
   },
   {
     "num": 300,
@@ -2016,7 +2129,8 @@
       "The O(n^2) DP approach: dp[i] = longest subsequence ending at i. For each j < i where nums[j] < nums[i], dp[i] = max(dp[i], dp[j] + 1).",
       "For O(n log n): maintain a 'tails' array where tails[i] is the smallest tail of all increasing subsequences of length i+1.",
       "For each number, use binary search (bisect_left) to find where it fits in tails. Replace or append."
-    ]
+    ],
+    "description": "Given an integer array `nums`, return the length of the **longest strictly increasing subsequence**.\n\n**Example:**\n```\nInput: nums = [10,9,2,5,3,7,101,18]\nOutput: 4\nExplanation: The longest increasing subsequence is [2,3,7,101].\n```"
   },
   {
     "num": 322,
@@ -2033,7 +2147,8 @@
       "For each amount, try using each coin and take the minimum number of coins needed.",
       "Build a dp array of size amount+1. dp[i] = minimum coins to make amount i.",
       "dp[i] = min(dp[i - c] + 1) for each coin c <= i. Initialize dp[0] = 0, rest = infinity."
-    ]
+    ],
+    "description": "You are given an integer array `coins` representing coins of different denominations and an integer `amount` representing a total amount of money.\n\nReturn the **fewest number of coins** needed to make up that amount. If it cannot be made up, return `-1`.\n\n**Example:**\n```\nInput: coins = [1,5,10], amount = 27\nOutput: 5\nExplanation: 10 + 10 + 5 + 1 + 1\n```"
   },
   {
     "num": 416,
@@ -2050,7 +2165,8 @@
       "If the total sum is odd, we can't partition equally. Otherwise, find a subset that sums to total/2.",
       "This reduces to the 0/1 knapsack problem. Use a set of reachable sums.",
       "Start with dp = {0}. For each num, add num to every existing sum in dp. Check if target is reached."
-    ]
+    ],
+    "description": "Given an integer array `nums`, return `True` if you can partition the array into two subsets such that the sum of elements in both subsets is **equal**.\n\n**Example:**\n```\nInput: nums = [1,5,11,5]\nOutput: True\nExplanation: [1,5,5] and [11]\n```"
   },
   {
     "num": 647,
@@ -2067,7 +2183,8 @@
       "Similar to Longest Palindromic Substring — expand from each center.",
       "Count each valid expansion as one palindromic substring.",
       "For each center (both odd and even), expand while characters match, incrementing the count each time."
-    ]
+    ],
+    "description": "Given a string `s`, return the number of **palindromic substrings** in it.\n\nA string is a palindrome when it reads the same backward as forward. A substring is a contiguous sequence of characters within the string.\n\n**Example:**\n```\nInput: s = \"abc\"\nOutput: 3\nExplanation: \"a\", \"b\", \"c\" are palindromic substrings.\n```"
   },
   {
     "num": 746,
@@ -2084,7 +2201,8 @@
       "You can start from step 0 or step 1. At each step, you can climb 1 or 2 steps. What's the minimum cost to reach step i?",
       "dp[i] = min(dp[i-1] + cost[i-1], dp[i-2] + cost[i-2]). You only need two variables.",
       "Initialize a=0, b=0. For i in range(2, len(cost)+1): a, b = b, min(b + cost[i-1], a + cost[i-2])."
-    ]
+    ],
+    "description": "You are given an integer array `cost` where `cost[i]` is the cost of the `i`th step on a staircase. Once you pay the cost, you can climb one or two steps.\n\nYou can start from the step with index `0` or index `1`.\n\nReturn the **minimum cost** to reach the top of the floor.\n\n**Example:**\n```\nInput: cost = [10,15,20]\nOutput: 15\nExplanation: Start at index 1, pay 15, climb two steps to the top.\n```"
   },
   {
     "num": 10,
@@ -2101,7 +2219,8 @@
       "'*' means zero or more of the preceding character. Handle two cases: use zero copies (skip pattern by 2) or use one+ copies.",
       "dp[i][j] = does s[0:i] match p[0:j]? For '*': dp[i][j-2] (zero copies) or dp[i-1][j] if char matches (one+ copies).",
       "Initialize dp[0][0] = True. For patterns like 'a*b*', dp[0][j] = dp[0][j-2] when p[j-1] == '*'."
-    ]
+    ],
+    "description": "Given an input string `s` and a pattern `p`, implement regular expression matching with support for `'.'` and `'*'` where:\n- `'.'` matches any single character\n- `'*'` matches zero or more of the preceding element\n\nThe matching should cover the **entire** input string.\n\n**Example:**\n```\nInput: s = \"aa\", p = \"a*\"\nOutput: True\n```"
   },
   {
     "num": 62,
@@ -2118,7 +2237,8 @@
       "Each cell can be reached from the cell above or the cell to the left.",
       "dp[i][j] = dp[i-1][j] + dp[i][j-1]. The first row and column are all 1s.",
       "Optimize space to a single row. For each new row, update left to right: row[j] += row[j-1]."
-    ]
+    ],
+    "description": "There is a robot on an `m x n` grid starting at the top-left corner. The robot can only move either **down** or **right** at any point. How many possible **unique paths** are there to the bottom-right corner?\n\n**Example:**\n```\nInput: m = 3, n = 7\nOutput: 28\n```"
   },
   {
     "num": 72,
@@ -2135,7 +2255,8 @@
       "Three operations: insert, delete, replace. At each position, pick the cheapest.",
       "dp[i][j] = edit distance for word1[0:i] and word2[0:j]. If chars match, no cost. Otherwise, 1 + min of three operations.",
       "Replace = dp[i-1][j-1], insert = dp[i][j-1], delete = dp[i-1][j]. Optimize to two rows."
-    ]
+    ],
+    "description": "Given two strings `word1` and `word2`, return the minimum number of operations required to convert `word1` to `word2`.\n\nYou have three operations: **Insert**, **Delete**, or **Replace** a character.\n\n**Example:**\n```\nInput: word1 = \"horse\", word2 = \"ros\"\nOutput: 3\nExplanation: horse → rorse (replace h with r) → rose (remove r) → ros (remove e)\n```"
   },
   {
     "num": 97,
@@ -2152,7 +2273,8 @@
       "s3 is an interleaving of s1 and s2 if we can form s3 by taking characters from s1 and s2 in order.",
       "dp[i][j] = True if s3[0:i+j] is an interleaving of s1[0:i] and s2[0:j].",
       "Check if the next character in s3 matches s1[i] (come from top) or s2[j] (come from left). Optimize to 1D."
-    ]
+    ],
+    "description": "Given strings `s1`, `s2`, and `s3`, find whether `s3` is formed by an **interleaving** of `s1` and `s2`.\n\nAn interleaving is a configuration where `s3` contains all characters of `s1` and `s2` while preserving the left-to-right ordering of each.\n\n**Example:**\n```\nInput: s1 = \"aabcc\", s2 = \"dbbca\", s3 = \"aadbbcbcac\"\nOutput: True\n```"
   },
   {
     "num": 115,
@@ -2169,7 +2291,8 @@
       "dp[i][j] = number of ways to form t[0:j] from s[0:i]. If chars match, you can use it or skip it.",
       "If s[i-1] == t[j-1]: dp[i][j] = dp[i-1][j-1] + dp[i-1][j]. Else: dp[i][j] = dp[i-1][j].",
       "Optimize to 1D. Iterate j from right to left to avoid overwriting values we still need."
-    ]
+    ],
+    "description": "Given two strings `s` and `t`, return the number of **distinct subsequences** of `s` which equals `t`.\n\n**Example:**\n```\nInput: s = \"rabbbit\", t = \"rabbit\"\nOutput: 3\n```"
   },
   {
     "num": 309,
@@ -2186,7 +2309,8 @@
       "Model three states: holding stock, just sold (cooldown next), and resting (can buy).",
       "sold = held + price, held = max(held, rest - price), rest = max(rest, prev_sold).",
       "Use three variables for the states. After selling, you must rest one day before buying again."
-    ]
+    ],
+    "description": "You are given an array `prices` where `prices[i]` is the price of a given stock on the `i`th day.\n\nFind the maximum profit you can achieve. You may complete as many transactions as you like, but after you sell, you cannot buy on the **next day** (i.e., cooldown of 1 day).\n\n**Example:**\n```\nInput: prices = [1,2,3,0,2]\nOutput: 3\nExplanation: buy, sell, cooldown, buy, sell\n```"
   },
   {
     "num": 312,
@@ -2203,7 +2327,8 @@
       "Think in reverse: instead of which balloon to burst first, think about which to burst last in a range.",
       "Add boundary balloons [1] at both ends. dp[left][right] = max coins from bursting all balloons between left and right.",
       "For each subproblem (left, right), try each k as the last balloon to burst: dp[left][k] + nums[left]*nums[k]*nums[right] + dp[k][right]."
-    ]
+    ],
+    "description": "You are given `n` balloons, indexed from `0` to `n - 1`. Each balloon is painted with a number on it represented by `nums`. You are asked to burst all the balloons.\n\nIf you burst the `i`th balloon, you will get `nums[i - 1] * nums[i] * nums[i + 1]` coins. If `i - 1` or `i + 1` goes out of bounds, treat it as having a balloon with a `1` painted on it.\n\nReturn the **maximum** coins you can collect by bursting the balloons wisely."
   },
   {
     "num": 329,
@@ -2221,7 +2346,8 @@
       "DFS from each cell, exploring neighbors with strictly larger values. Memoize results.",
       "Use @lru_cache or a memo dictionary. The path is a DAG (no cycles since values strictly increase).",
       "dfs(r, c) returns the longest path starting at (r, c). Result = max of dfs over all cells."
-    ]
+    ],
+    "description": "Given an `m x n` integers matrix, return the length of the **longest increasing path** in the matrix.\n\nFrom each cell, you can move in four directions. You may **not** move diagonally or outside the boundary.\n\n**Example:**\n```\nInput: matrix = [[9,9,4],[6,6,8],[2,1,1]]\nOutput: 4\nExplanation: The longest increasing path is [1, 2, 6, 9].\n```"
   },
   {
     "num": 494,
@@ -2238,7 +2364,8 @@
       "For each number, you can either add or subtract it. Track all possible sums and their counts.",
       "Use a dictionary mapping current_sum -> number_of_ways to reach it.",
       "For each num, create a new dictionary. For each existing (sum, count), add count to sum+num and sum-num."
-    ]
+    ],
+    "description": "You are given an integer array `nums` and an integer `target`. You want to build an expression by adding `'+'` or `'-'` before each integer in `nums` and concatenating them.\n\nReturn the number of different expressions that evaluate to `target`.\n\n**Example:**\n```\nInput: nums = [1,1,1,1,1], target = 3\nOutput: 5\n```"
   },
   {
     "num": 518,
@@ -2255,7 +2382,8 @@
       "This is an unbounded knapsack problem. Count combinations, not permutations.",
       "Iterate coins in the outer loop (to avoid counting permutations) and amounts in the inner loop.",
       "dp[0] = 1. For each coin, for i from coin to amount: dp[i] += dp[i - coin]."
-    ]
+    ],
+    "description": "You are given an integer array `coins` representing coins of different denominations and an integer `amount`. Return the **number of combinations** that make up that amount. If that amount cannot be made up, return `0`.\n\nYou may assume you have an **infinite number** of each kind of coin.\n\n**Example:**\n```\nInput: amount = 5, coins = [1,2,5]\nOutput: 4\nExplanation: 5, 2+2+1, 2+1+1+1, 1+1+1+1+1\n```"
   },
   {
     "num": 1143,
@@ -2272,7 +2400,8 @@
       "If characters match, extend the LCS. Otherwise, take the max of excluding one character from either string.",
       "dp[i][j] = dp[i-1][j-1] + 1 if match, else max(dp[i-1][j], dp[i][j-1]).",
       "Optimize to two rows (prev and curr) since each row only depends on the previous row."
-    ]
+    ],
+    "description": "Given two strings `text1` and `text2`, return the length of their **longest common subsequence**. If there is no common subsequence, return `0`.\n\nA subsequence is a sequence that can be derived by deleting some (or no) elements without changing the order of the remaining elements.\n\n**Example:**\n```\nInput: text1 = \"abcde\", text2 = \"ace\"\nOutput: 3\nExplanation: The longest common subsequence is \"ace\".\n```"
   },
   {
     "num": 45,
@@ -2289,7 +2418,8 @@
       "Think of it as BFS levels. Each jump explores all positions reachable from the current level.",
       "Track the end of the current jump range. When you reach it, increment jumps and set the new end.",
       "farthest = max reachable from current level. When i == cur_end: jumps++, cur_end = farthest."
-    ]
+    ],
+    "description": "You are given a 0-indexed array of integers `nums` of length `n`, where `nums[i]` is the maximum jump length from index `i`.\n\nReturn the **minimum number of jumps** to reach `nums[n - 1]`. The test cases are generated so you can always reach the last index.\n\n**Example:**\n```\nInput: nums = [2,3,1,1,4]\nOutput: 2\n```"
   },
   {
     "num": 53,
@@ -2307,7 +2437,8 @@
       "If the current running sum becomes negative, it's better to start fresh from the next element.",
       "Kadane's algorithm: cur_sum = max(num, cur_sum + num) at each step.",
       "Track the global maximum across all positions. Initialize max_sum = nums[0]."
-    ]
+    ],
+    "description": "Given an integer array `nums`, find the subarray with the **largest sum**, and return its sum.\n\n**Example:**\n```\nInput: nums = [-2,1,-3,4,-1,2,1,-5,4]\nOutput: 6\nExplanation: The subarray [4,-1,2,1] has the largest sum 6.\n```"
   },
   {
     "num": 55,
@@ -2324,7 +2455,8 @@
       "Track the farthest index you can reach. If you ever land beyond that, you're stuck.",
       "Greedily update the maximum reachable index: reach = max(reach, i + nums[i]).",
       "If at any index i > reach, return False. Otherwise return True after the loop."
-    ]
+    ],
+    "description": "You are given an integer array `nums`. You are initially positioned at the array's **first index**, and each element represents your maximum jump length at that position.\n\nReturn `True` if you can reach the **last index**, or `False` otherwise.\n\n**Example:**\n```\nInput: nums = [2,3,1,1,4]\nOutput: True\n```"
   },
   {
     "num": 134,
@@ -2341,7 +2473,8 @@
       "If total gas >= total cost, a solution exists. The question is where to start.",
       "If starting from i the tank goes negative at j, then no station between i and j works either. Start from j+1.",
       "Reset tank to 0 and start to i+1 whenever tank goes negative. Return start."
-    ]
+    ],
+    "description": "There are `n` gas stations along a circular route. You are given `gas[i]` (fuel at station `i`) and `cost[i]` (fuel needed to travel to the next station).\n\nReturn the starting gas station's index if you can travel around the circuit once in the clockwise direction, otherwise return `-1`.\n\nIf a solution exists, it is **guaranteed to be unique**.\n\n**Example:**\n```\nInput: gas = [1,2,3,4,5], cost = [3,4,5,1,2]\nOutput: 3\n```"
   },
   {
     "num": 678,
@@ -2358,7 +2491,8 @@
       "Track the range of possible open-paren counts. '*' can be '(', ')' or empty.",
       "lo = minimum possible open count, hi = maximum. '(' increments both, ')' decrements both, '*' decrements lo and increments hi.",
       "If hi < 0, too many ')'. Clamp lo to 0 (can't have negative open parens). Valid if lo == 0 at the end."
-    ]
+    ],
+    "description": "Given a string `s` containing only three types of characters: `'('`, `')'` and `'*'`, return `True` if `s` is **valid**.\n\n`'*'` could be treated as:\n- A single right parenthesis `')'`\n- A single left parenthesis `'('`\n- An empty string `\"\"`"
   },
   {
     "num": 763,
@@ -2376,7 +2510,8 @@
       "Each character must appear in exactly one partition. A partition must extend to the last occurrence of every character in it.",
       "Record the last index of each character. Scan left to right, expanding the partition end.",
       "When i equals the current end, the partition is complete. Record its size and start a new one."
-    ]
+    ],
+    "description": "You are given a string `s`. Partition the string into as many parts as possible so that each letter appears in **at most one part**.\n\nReturn a list of integers representing the size of these parts.\n\n**Example:**\n```\nInput: s = \"ababcbacadefegdehijhklij\"\nOutput: [9,7,8]\n```"
   },
   {
     "num": 846,
@@ -2394,7 +2529,8 @@
       "Sort the cards. Always start a group from the smallest remaining card.",
       "Count frequencies. For each smallest card with remaining count, try to form a consecutive group.",
       "For the smallest card with count f, subtract f from the next groupSize-1 consecutive cards. If any goes negative, return False."
-    ]
+    ],
+    "description": "Alice has some number of cards arranged in a hand. She wants to rearrange the cards into groups so that each group is of size `groupSize`, and consists of `groupSize` **consecutive** cards.\n\nReturn `True` if she can rearrange, `False` otherwise.\n\n**Example:**\n```\nInput: hand = [1,2,3,6,2,3,4,7,8], groupSize = 3\nOutput: True\nExplanation: [1,2,3], [2,3,4], [6,7,8]\n```"
   },
   {
     "num": 1899,
@@ -2411,7 +2547,8 @@
       "Merge operation takes max of each position. Any triplet with a value exceeding target in any position is unusable.",
       "Filter out triplets where any value exceeds the corresponding target value.",
       "From remaining triplets, check if we can find target[0], target[1], and target[2] each in at least one triplet."
-    ]
+    ],
+    "description": "A triplet is an array of three integers. You are given a 2D integer array `triplets` and an integer array `target`. Find if it's possible to merge triplets by replacing each element with the **max** of the corresponding values to form the `target` triplet.\n\n**Example:**\n```\nInput: triplets = [[2,5,3],[1,8,4],[1,7,5]], target = [2,7,5]\nOutput: True\n```"
   },
   {
     "num": 56,
@@ -2429,7 +2566,8 @@
       "Sort intervals by start time. Then merge overlapping ones in a single pass.",
       "If the current interval's start <= the last merged interval's end, they overlap.",
       "When overlapping, extend the end: merged[-1][1] = max(merged[-1][1], end). Otherwise, add a new interval."
-    ]
+    ],
+    "description": "Given an array of `intervals` where `intervals[i] = [starti, endi]`, merge all **overlapping** intervals, and return an array of the non-overlapping intervals that cover all the intervals in the input.\n\n**Example:**\n```\nInput: intervals = [[1,3],[2,6],[8,10],[15,18]]\nOutput: [[1,6],[8,10],[15,18]]\n```"
   },
   {
     "num": 57,
@@ -2446,7 +2584,8 @@
       "Three cases for each existing interval: entirely before new (add it), entirely after new (add new then rest), or overlapping (merge).",
       "When overlapping, merge by expanding newInterval to cover both.",
       "After the loop, don't forget to append newInterval (it may not have been added yet)."
-    ]
+    ],
+    "description": "You are given an array of non-overlapping intervals `intervals` (sorted by start time) and a `newInterval`. **Insert** `newInterval` into `intervals` such that the intervals are still sorted and non-overlapping (merge if necessary).\n\n**Example:**\n```\nInput: intervals = [[1,3],[6,9]], newInterval = [2,5]\nOutput: [[1,5],[6,9]]\n```"
   },
   {
     "num": 252,
@@ -2464,7 +2603,8 @@
       "If any two meetings overlap, the person can't attend all of them.",
       "Sort by start time, then check adjacent pairs for overlap.",
       "Two meetings overlap if the next one starts before the previous one ends."
-    ]
+    ],
+    "description": "Given an array of meeting time intervals consisting of start and end times `[[s1,e1],[s2,e2],...]`, determine if a person could attend **all** meetings (i.e., no two meetings overlap).\n\n**Example:**\n```\nInput: intervals = [[0,30],[5,10],[15,20]]\nOutput: False\n```"
   },
   {
     "num": 253,
@@ -2483,7 +2623,8 @@
       "The max number of overlapping meetings at any point = rooms needed.",
       "Separate starts and ends, sort both. Use two pointers to simulate a timeline.",
       "If next start < next end, a new room is needed. Otherwise, a room is freed (advance end pointer)."
-    ]
+    ],
+    "description": "Given an array of meeting time intervals `intervals`, find the **minimum number of conference rooms** required.\n\n**Example:**\n```\nInput: intervals = [[0,30],[5,10],[15,20]]\nOutput: 2\n```"
   },
   {
     "num": 435,
@@ -2502,7 +2643,8 @@
       "This is the classic interval scheduling problem. Maximize non-overlapping intervals, then subtract.",
       "Sort by end time. Greedily keep intervals that don't overlap with the last kept one.",
       "If start >= prev_end, keep it (update prev_end). Otherwise, remove it (increment count)."
-    ]
+    ],
+    "description": "Given an array of intervals `intervals`, return the minimum number of intervals you need to **remove** to make the rest of the intervals non-overlapping.\n\n**Example:**\n```\nInput: intervals = [[1,2],[2,3],[3,4],[1,3]]\nOutput: 1\nExplanation: Remove [1,3] to make the rest non-overlapping.\n```"
   },
   {
     "num": 1851,
@@ -2521,7 +2663,8 @@
       "Sort intervals and queries. Process queries in order, adding applicable intervals to a min-heap by size.",
       "For each query, push all intervals with start <= query. Remove expired intervals (end < query) from heap top.",
       "The heap top gives the smallest interval containing the query. Use (size, end) as heap key."
-    ]
+    ],
+    "description": "You are given a 2D integer array `intervals` (`[left, right]`) and an integer array `queries`. For each query, return the **size of the smallest interval** containing that query. If no such interval exists, return `-1`.\n\n**Example:**\n```\nInput: intervals = [[1,4],[2,4],[3,6],[4,4]], queries = [2,3,4,5]\nOutput: [3,3,1,4]\n```"
   },
   {
     "num": 43,
@@ -2538,7 +2681,8 @@
       "Simulate grade-school multiplication. The product of digits at positions i and j goes to positions i+j and i+j+1.",
       "Use an array of length m+n to accumulate results. Handle carries as you go.",
       "For each digit pair, multiply, add to result[i+j+1], carry to result[i+j]. Strip leading zeros."
-    ]
+    ],
+    "description": "Given two non-negative integers `num1` and `num2` represented as **strings**, return the product of `num1` and `num2`, also represented as a string.\n\nYou must not use any built-in BigInteger library or convert the inputs to integer directly.\n\n**Example:**\n```\nInput: num1 = \"123\", num2 = \"456\"\nOutput: \"56088\"\n```"
   },
   {
     "num": 48,
@@ -2556,7 +2700,8 @@
       "90-degree clockwise rotation = transpose + reverse each row.",
       "Transpose: swap matrix[i][j] with matrix[j][i] for j > i.",
       "Then reverse each row in-place."
-    ]
+    ],
+    "description": "You are given an `n x n` 2D matrix representing an image. Rotate the image by **90 degrees clockwise**. You must rotate the image **in-place**.\n\n**Example:**\n```\nInput: matrix = [[1,2,3],[4,5,6],[7,8,9]]\nOutput: [[7,4,1],[8,5,2],[9,6,3]]\n```"
   },
   {
     "num": 50,
@@ -2573,7 +2718,8 @@
       "Use fast exponentiation (binary exponentiation) for O(log n) time.",
       "If n is negative, compute pow(1/x, -n). Square x each step, multiply into result when bit is set.",
       "While n > 0: if n is odd, multiply result by x. Square x, halve n."
-    ]
+    ],
+    "description": "Implement `pow(x, n)`, which calculates `x` raised to the power `n` (i.e., `x^n`).\n\n**Example:**\n```\nInput: x = 2.0, n = 10\nOutput: 1024.0\n```\n\n**Example:**\n```\nInput: x = 2.0, n = -2\nOutput: 0.25\n```"
   },
   {
     "num": 54,
@@ -2590,7 +2736,8 @@
       "Use four boundaries: top, bottom, left, right. Shrink them after traversing each edge.",
       "Traverse right, down, left, up in order. Check boundaries before traversing bottom and left edges.",
       "After going right, top++. After going down, right--. After going left, bottom--. After going up, left++."
-    ]
+    ],
+    "description": "Given an `m x n` matrix, return all elements of the matrix in **spiral order**.\n\n**Example:**\n```\nInput: matrix = [[1,2,3],[4,5,6],[7,8,9]]\nOutput: [1,2,3,6,9,8,7,4,5]\n```"
   },
   {
     "num": 66,
@@ -2607,7 +2754,8 @@
       "Start from the last digit. If it's less than 9, just increment and return.",
       "If it's 9, set it to 0 and carry over to the next digit.",
       "If all digits were 9 (loop finishes), prepend 1 to the array."
-    ]
+    ],
+    "description": "You are given a **large integer** represented as an integer array `digits`, where each `digits[i]` is the `i`th digit of the integer. The digits are ordered from most significant to least significant.\n\nIncrement the large integer by one and return the resulting array of digits.\n\n**Example:**\n```\nInput: digits = [1,2,3]\nOutput: [1,2,4]\n```"
   },
   {
     "num": 73,
@@ -2624,7 +2772,8 @@
       "Use the first row and first column as markers for which rows/columns should be zeroed.",
       "First, record whether the first row/column themselves contain zeros. Then use them as flags.",
       "Mark matrix[i][0] and matrix[0][j] when matrix[i][j]==0. Then zero cells based on markers. Finally handle first row/col."
-    ]
+    ],
+    "description": "Given an `m x n` integer matrix, if an element is `0`, set its **entire row and column** to `0`'s.\n\nYou must do it **in place**.\n\n**Follow up:** Can you use O(1) extra space?"
   },
   {
     "num": 202,
@@ -2641,7 +2790,8 @@
       "Replace n with the sum of squares of its digits. If it reaches 1, it's happy. If it loops, it's not.",
       "Use a set to detect cycles. If n repeats, we're in a loop.",
       "While n != 1 and n not in seen: add n to seen, compute sum of digit squares."
-    ]
+    ],
+    "description": "Write an algorithm to determine if a number `n` is a **happy number**.\n\nA happy number: Starting with any positive integer, replace the number by the sum of the squares of its digits, and repeat. It eventually reaches `1` (happy), or loops endlessly in a cycle (not happy).\n\n**Example:**\n```\nInput: n = 19\nOutput: True\nExplanation: 1² + 9² = 82 → 8² + 2² = 68 → 6² + 8² = 100 → 1² + 0² + 0² = 1\n```"
   },
   {
     "num": 2013,
@@ -2659,7 +2809,8 @@
       "For a query point, find all other points sharing the same x. The y-distance gives the side length.",
       "For each candidate side length, check both directions (left and right) for the other two corners.",
       "Multiply counts of the three other corners (to handle duplicates). Use a counter for point frequencies."
-    ]
+    ],
+    "description": "Design a data structure to **detect squares**. You receive a stream of points on the X-Y plane. For a query point, count the number of ways to choose three points such that they form an **axis-aligned square** with the query point.\n\nImplement `DetectSquares`:\n- `add(point)` — Adds a new point\n- `count(point)` — Counts axis-aligned squares formable with this point"
   },
   {
     "num": 7,
@@ -2675,7 +2826,8 @@
       "Extract digits from the end using modulo 10 and build the reversed number.",
       "Handle negative numbers by working with the absolute value and restoring the sign.",
       "Check for 32-bit integer overflow: if result is outside [-2^31, 2^31 - 1], return 0."
-    ]
+    ],
+    "description": "Given a signed 32-bit integer `x`, return `x` with its **digits reversed**. If reversing causes the value to go outside the signed 32-bit integer range `[-2³¹, 2³¹ - 1]`, then return `0`.\n\n**Example:**\n```\nInput: x = 123\nOutput: 321\n```"
   },
   {
     "num": 136,
@@ -2692,7 +2844,8 @@
       "XOR of a number with itself is 0. XOR of a number with 0 is the number itself.",
       "XOR all numbers together. Pairs cancel out, leaving the single number.",
       "result = 0; for num in nums: result ^= num. Return result."
-    ]
+    ],
+    "description": "Given a **non-empty** array of integers `nums`, every element appears **twice** except for one. Find that single one.\n\nYou must implement a solution with linear runtime complexity and use only **constant extra space**.\n\n**Example:**\n```\nInput: nums = [2,2,1]\nOutput: 1\n```"
   },
   {
     "num": 190,
@@ -2708,7 +2861,8 @@
       "Extract the last bit of n and append it to result, 32 times.",
       "Left-shift result by 1, OR with (n & 1), then right-shift n by 1.",
       "Repeat exactly 32 times to handle all bits of a 32-bit integer."
-    ]
+    ],
+    "description": "Reverse bits of a given 32 bits unsigned integer.\n\n**Example:**\n```\nInput:  00000010100101000001111010011100\nOutput: 00111001011110000010100101000000\nExplanation: 964176192\n```"
   },
   {
     "num": 191,
@@ -2724,7 +2878,8 @@
       "Count the number of set bits. You can check the last bit and right-shift.",
       "Brian Kernighan's trick: n & (n-1) clears the lowest set bit.",
       "While n != 0: count++, n &= (n-1). Each iteration removes one set bit."
-    ]
+    ],
+    "description": "Write a function that takes the binary representation of a positive integer and returns the **number of set bits** it has (also known as the Hamming weight).\n\n**Example:**\n```\nInput: n = 11 (binary: 1011)\nOutput: 3\n```"
   },
   {
     "num": 268,
@@ -2742,7 +2897,8 @@
       "The array contains n numbers from the range [0, n]. One is missing.",
       "Sum of 0 to n = n*(n+1)/2. Subtract the actual sum to find the missing number.",
       "Alternatively, XOR all numbers with indices 0..n. The missing number remains."
-    ]
+    ],
+    "description": "Given an array `nums` containing `n` distinct numbers in the range `[0, n]`, return the only number in the range that is **missing** from the array.\n\n**Example:**\n```\nInput: nums = [3,0,1]\nOutput: 2\n```"
   },
   {
     "num": 338,
@@ -2759,7 +2915,8 @@
       "The number of 1-bits in i relates to i right-shifted by 1 (i >> 1), plus the last bit.",
       "dp[i] = dp[i >> 1] + (i & 1). This uses the fact that i >> 1 has already been computed.",
       "Initialize dp[0] = 0. Iterate from 1 to n, applying the recurrence."
-    ]
+    ],
+    "description": "Given an integer `n`, return an array `ans` of length `n + 1` such that for each `i` (0 ≤ i ≤ n), `ans[i]` is the **number of 1's** in the binary representation of `i`.\n\n**Example:**\n```\nInput: n = 5\nOutput: [0,1,1,2,1,2]\n```"
   },
   {
     "num": 371,
@@ -2776,6 +2933,7 @@
       "XOR gives sum without carry. AND gives the carry bits, which need to be shifted left by 1.",
       "Repeat: sum = a ^ b, carry = (a & b) << 1. Set a = sum, b = carry. Stop when carry is 0.",
       "In Python, use a 32-bit mask (0xFFFFFFFF) since Python integers have unlimited precision. Handle negative results."
-    ]
+    ],
+    "description": "Given two integers `a` and `b`, return the **sum of the two integers** without using the operators `+` and `-`.\n\n**Example:**\n```\nInput: a = 1, b = 2\nOutput: 3\n```"
   }
 ]

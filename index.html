@@ -25,6 +25,7 @@
       <div class="header-spacer"></div>
       <div class="header-actions">
         <button class="btn btn-ghost" id="viz-btn" title="Open visualizer" style="display:none">▷ <span class="btn-text">Visualize</span></button>
+        <button class="btn btn-ghost" id="desc-toggle" title="Problem description">📋 <span class="btn-text">Description</span></button>
         <button class="btn btn-ghost" id="hints-toggle" title="Hints">💡 <span class="btn-text">Hints</span></button>
         <button class="btn btn-ghost" id="chat-toggle" title="AI Tutor">💬 <span class="btn-text">AI Tutor</span></button>
         <button class="btn btn-ghost" id="settings-btn" title="Settings">⚙</button>
@@ -67,6 +68,13 @@
         <button class="btn btn-ghost" id="mark-solved" style="display:none" title="Mark as solved">✓ Solved</button>
         <button class="btn btn-primary" id="run-btn" disabled>▶ Run <kbd>⌘↵</kbd></button>
         <button class="btn btn-primary" id="benchmark-btn" disabled style="display:none">⚡ Benchmark</button>
+      </div>
+      <div class="desc-panel" id="desc-panel" style="display:none">
+        <div class="desc-header">
+          <span class="desc-tab">DESCRIPTION</span>
+          <button class="btn-icon" id="desc-close" title="Hide description">✕</button>
+        </div>
+        <div class="desc-content" id="desc-content"></div>
       </div>
       <div class="editor-container">
         <div id="py-loading-banner" style="position:absolute;bottom:0;left:0;right:0;z-index:5;padding:10px 14px;background:rgba(99,102,241,0.12);border-top:1px solid rgba(99,102,241,0.3);font-size:12px;color:var(--accent);display:flex;align-items:center;gap:8px">
@@ -431,6 +439,13 @@ function selectProblem(p) {
     el.classList.toggle('active', el.dataset.num == p.num);
   });
 
+  // Update description panel content
+  if (p.description) {
+    descContent.innerHTML = renderDescription(p.description);
+  } else {
+    descContent.innerHTML = '<p style="color:var(--fg-muted);font-style:italic">No description available for this problem.</p>';
+  }
+
   // Update viz button visibility
   updateVizButton();
 
@@ -455,6 +470,66 @@ solutionToggle.addEventListener('click', () => {
     solutionToggle.textContent = 'Show Solution';
     showingSolution = false;
   }
+});
+
+// ─── Description Panel ───
+const descPanel = document.getElementById('desc-panel');
+const descContent = document.getElementById('desc-content');
+let descVisible = false;
+
+function renderDescription(md) {
+  // Simple markdown-to-HTML: code blocks, inline code, bold, lists, paragraphs
+  let html = md
+    // Code blocks: ```...```
+    .replace(/```([^`]*?)```/gs, (_, code) => `<pre><code>${code.replace(/</g,'&lt;').replace(/>/g,'&gt;').trim()}</code></pre>`)
+    // Inline code: `...`
+    .replace(/`([^`]+)`/g, (_, code) => `<code>${code.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code>`)
+    // Bold: **...**
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  // Convert lines to paragraphs/lists
+  const lines = html.split('\n');
+  let out = '';
+  let inList = false;
+  let listType = '';
+  for (const line of lines) {
+    const trimmed = line.trim();
+    if (!trimmed) {
+      if (inList) { out += `</${listType}>`; inList = false; }
+      continue;
+    }
+    const olMatch = trimmed.match(/^(\d+)\.\s+(.*)/);
+    const ulMatch = trimmed.match(/^[-*]\s+(.*)/);
+    if (olMatch) {
+      if (!inList || listType !== 'ol') { if (inList) out += `</${listType}>`; out += '<ol>'; inList = true; listType = 'ol'; }
+      out += `<li>${olMatch[2]}</li>`;
+    } else if (ulMatch) {
+      if (!inList || listType !== 'ul') { if (inList) out += `</${listType}>`; out += '<ul>'; inList = true; listType = 'ul'; }
+      out += `<li>${ulMatch[1]}</li>`;
+    } else {
+      if (inList) { out += `</${listType}>`; inList = false; }
+      // Don't wrap <pre> blocks in <p>
+      if (trimmed.startsWith('<pre>') || trimmed.startsWith('</pre>')) {
+        out += trimmed;
+      } else {
+        out += `<p>${trimmed}</p>`;
+      }
+    }
+  }
+  if (inList) out += `</${listType}>`;
+  return out;
+}
+
+function toggleDescription(show) {
+  descVisible = typeof show === 'boolean' ? show : !descVisible;
+  descPanel.style.display = descVisible ? '' : 'none';
+  if (descVisible && editor) editor.layout();
+}
+
+document.getElementById('desc-toggle').addEventListener('click', () => {
+  toggleDescription();
+});
+document.getElementById('desc-close').addEventListener('click', () => {
+  toggleDescription(false);
 });
 
 // ─── Hints Toggle ───
@@ -836,6 +911,7 @@ Rules:
   let context = '';
   if (prob) {
     context += `\nCurrent problem: #${prob.num} "${prob.title}" (${prob.difficulty})\nCategory: ${prob.category}\nTags: ${(prob.tags||[]).join(', ')}\n`;
+    if (prob.description) context += `\nProblem description:\n${prob.description}\n`;
     if (prob.hints) context += `Authored hints: ${prob.hints.join(' | ')}\n`;
     context += `\nKnown optimal solution:\n${prob.solution}\n`;
   }
@@ -881,11 +957,18 @@ resizer.addEventListener('mousedown', (e) => {
 function onResize(e) {
   if (!resizing) return;
   const mainEl = document.getElementById('main');
+  const editorEl = document.querySelector('.editor-container');
+  const outputEl2 = document.querySelector('.output-panel');
   const rect = mainEl.getBoundingClientRect();
-  const y = e.clientY - rect.top - 38; // toolbar height
-  const total = rect.height - 38 - 6; // minus toolbar and resizer
-  const editorPct = Math.max(20, Math.min(85, (y / total) * 100));
-  mainEl.style.gridTemplateRows = `var(--toolbar-height) ${editorPct}% 6px 1fr`;
+  // Calculate available space (main height minus toolbar, desc panel, resizer)
+  const toolbar = document.querySelector('.toolbar');
+  const descPanel2 = document.getElementById('desc-panel');
+  const fixedH = toolbar.offsetHeight + (descPanel2.style.display !== 'none' ? descPanel2.offsetHeight : 0) + 6;
+  const available = rect.height - fixedH;
+  const y = e.clientY - rect.top - fixedH + 6;
+  const outputH = Math.max(80, Math.min(available - 120, available - y));
+  outputEl2.style.height = outputH + 'px';
+  if (editor) editor.layout();
 }
 
 // ─── Monaco Editor ───
