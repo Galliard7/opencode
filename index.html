@@ -508,9 +508,13 @@ document.getElementById('solution-picker-arrow').addEventListener('click', (e) =
   // Build dropdown items
   dropdown.innerHTML = sols.map((s, i) =>
     `<button class="solution-dropdown-item${i === currentSolutionIdx && showingSolution ? ' active' : ''}" data-idx="${i}">
-      <span class="sol-label">${s.label}</span>
+      ${s.label}
     </button>`
   ).join('');
+  // Position dropdown below the arrow button using fixed positioning
+  const rect = e.currentTarget.getBoundingClientRect();
+  dropdown.style.top = (rect.bottom + 4) + 'px';
+  dropdown.style.left = Math.max(8, rect.left - 160) + 'px';
   dropdown.classList.toggle('show');
 });
 
