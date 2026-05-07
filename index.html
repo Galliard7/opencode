@@ -509,7 +509,6 @@ document.getElementById('solution-picker-arrow').addEventListener('click', (e) =
   dropdown.innerHTML = sols.map((s, i) =>
     `<button class="solution-dropdown-item${i === currentSolutionIdx && showingSolution ? ' active' : ''}" data-idx="${i}">
       <span class="sol-label">${s.label}</span>
-      ${i === 0 ? '<span class="sol-tag">primary</span>' : '<span class="sol-tag">alt</span>'}
     </button>`
   ).join('');
   dropdown.classList.toggle('show');
