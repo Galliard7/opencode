@@ -64,7 +64,11 @@
         </div>
         <div class="toolbar-tags" id="current-tags"></div>
         <div class="toolbar-spacer"></div>
-        <button class="btn btn-ghost" id="solution-toggle" style="display:none">Show Solution</button>
+        <div class="solution-picker" id="solution-picker" style="display:none">
+          <button class="btn btn-ghost" id="solution-toggle">Show Solution</button>
+          <button class="btn btn-ghost solution-picker-arrow" id="solution-picker-arrow" style="display:none" title="Alternate solutions">▾</button>
+          <div class="solution-dropdown" id="solution-dropdown"></div>
+        </div>
         <button class="btn btn-ghost" id="mark-solved" style="display:none" title="Mark as solved">✓ Solved</button>
         <button class="btn btn-primary" id="run-btn" disabled>▶ Run <kbd>⌘↵</kbd></button>
         <button class="btn btn-primary" id="benchmark-btn" disabled style="display:none">⚡ Benchmark</button>
@@ -410,9 +414,14 @@ function selectProblem(p) {
   const tagsEl = document.getElementById('current-tags');
   tagsEl.innerHTML = (p.tags || []).map(t => `<span class="tag">${t}</span>`).join('');
 
-  // Show solution toggle
-  solutionToggle.style.display = p.solution ? '' : 'none';
+  // Show solution picker
+  const picker = document.getElementById('solution-picker');
+  const pickerArrow = document.getElementById('solution-picker-arrow');
+  picker.style.display = p.solution ? '' : 'none';
   solutionToggle.textContent = 'Show Solution';
+  pickerArrow.style.display = (p.alt_solutions && p.alt_solutions.length) ? '' : 'none';
+  currentSolutionIdx = 0;
+  document.getElementById('solution-dropdown').classList.remove('show');
 
   // Show benchmark button and solved button
   benchmarkBtn.style.display = p.solution ? '' : 'none';
@@ -453,22 +462,70 @@ function selectProblem(p) {
   clearOutput();
 }
 
-// ─── Solution Toggle ───
+// ─── Solution Toggle + Picker ───
+let currentSolutionIdx = 0; // 0 = primary solution
+
+function getAllSolutions(p) {
+  if (!p) return [];
+  const primary = { label: p.solution_label || 'Solution', code: p.solution };
+  const alts = (p.alt_solutions || []).map(a => ({ label: a.label, code: a.code }));
+  return [primary, ...alts];
+}
+
+function showSolution(idx) {
+  if (!currentProblem || !editor) return;
+  const sols = getAllSolutions(currentProblem);
+  if (idx < 0 || idx >= sols.length) return;
+  if (!showingSolution) userCode = editor.getValue();
+  currentSolutionIdx = idx;
+  editor.setValue(sols[idx].code);
+  editor.setScrollPosition({ scrollTop: 0 });
+  const label = sols.length > 1 ? sols[idx].label : 'Solution';
+  solutionToggle.textContent = `Hide: ${label}`;
+  showingSolution = true;
+  document.getElementById('solution-dropdown').classList.remove('show');
+}
+
 solutionToggle.addEventListener('click', () => {
   if (!currentProblem || !editor) return;
   if (!showingSolution) {
-    userCode = editor.getValue();
-    const sol = currentProblem.solution;
-    if (!sol) { console.warn('No solution available for this problem'); return; }
-    editor.setValue(sol);
-    editor.setScrollPosition({ scrollTop: 0 });
-    solutionToggle.textContent = 'Back to Template';
-    showingSolution = true;
+    showSolution(currentSolutionIdx);
   } else {
     editor.setValue(userCode || currentProblem.template || '');
     editor.setScrollPosition({ scrollTop: 0 });
     solutionToggle.textContent = 'Show Solution';
     showingSolution = false;
+  }
+});
+
+// Arrow dropdown
+document.getElementById('solution-picker-arrow').addEventListener('click', (e) => {
+  e.stopPropagation();
+  if (!currentProblem) return;
+  const dropdown = document.getElementById('solution-dropdown');
+  const sols = getAllSolutions(currentProblem);
+  if (sols.length <= 1) return;
+  // Build dropdown items
+  dropdown.innerHTML = sols.map((s, i) =>
+    `<button class="solution-dropdown-item${i === currentSolutionIdx && showingSolution ? ' active' : ''}" data-idx="${i}">
+      <span class="sol-label">${s.label}</span>
+      ${i === 0 ? '<span class="sol-tag">primary</span>' : '<span class="sol-tag">alt</span>'}
+    </button>`
+  ).join('');
+  dropdown.classList.toggle('show');
+});
+
+// Dropdown item click
+document.getElementById('solution-dropdown').addEventListener('click', (e) => {
+  const item = e.target.closest('.solution-dropdown-item');
+  if (!item) return;
+  showSolution(parseInt(item.dataset.idx));
+});
+
+// Close dropdown on outside click
+document.addEventListener('click', (e) => {
+  if (!e.target.closest('.solution-picker')) {
+    document.getElementById('solution-dropdown').classList.remove('show');
   }
 });
 

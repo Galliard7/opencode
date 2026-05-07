@@ -163,7 +163,14 @@
       "Use a hash map to store numbers you've already seen and their indices.",
       "As you iterate, check if target - nums[i] is in the map. If yes, return both indices."
     ],
-    "description": "Given an array of integers `nums` and an integer `target`, return the **indices** of the two numbers such that they add up to `target`.\n\nYou may assume that each input would have **exactly one solution**, and you may not use the same element twice.\n\nYou can return the answer in any order.\n\n**Example:**\n```\nInput: nums = [2,7,11,15], target = 9\nOutput: [0,1]\nExplanation: nums[0] + nums[1] == 9\n```"
+    "description": "Given an array of integers `nums` and an integer `target`, return the **indices** of the two numbers such that they add up to `target`.\n\nYou may assume that each input would have **exactly one solution**, and you may not use the same element twice.\n\nYou can return the answer in any order.\n\n**Example:**\n```\nInput: nums = [2,7,11,15], target = 9\nOutput: [0,1]\nExplanation: nums[0] + nums[1] == 9\n```",
+    "solution_label": "Hash Map",
+    "alt_solutions": [
+      {
+        "label": "Sorting + Two Pointers",
+        "code": "class Solution:\n    def twoSum(self, nums, target):\n        indexed = sorted(enumerate(nums), key=lambda x: x[1])\n        l, r = 0, len(indexed) - 1\n        while l < r:\n            total = indexed[l][1] + indexed[r][1]\n            if total == target:\n                return [indexed[l][0], indexed[r][0]]\n            elif total < target:\n                l += 1\n            else:\n                r -= 1\n        return []\n\n# Test cases\nsol = Solution()\nprint(sol.twoSum([2, 7, 11, 15], 9))   # Expected: [0, 1]\nprint(sol.twoSum([3, 2, 4], 6))         # Expected: [1, 2]\nprint(sol.twoSum([3, 3], 6))            # Expected: [0, 1]\n"
+      }
+    ]
   },
   {
     "num": 36,
@@ -202,7 +209,14 @@
       "Use a hash map where the key is the sorted tuple of characters.",
       "Group strings by their sorted character tuple — all anagrams share the same key."
     ],
-    "description": "Given an array of strings `strs`, group the **anagrams** together. You can return the answer in **any order**.\n\nAn anagram is a word formed by rearranging the letters of another word, using all the original letters exactly once.\n\n**Example:**\n```\nInput: strs = [\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]\nOutput: [[\"bat\"],[\"nat\",\"tan\"],[\"ate\",\"eat\",\"tea\"]]\n```"
+    "description": "Given an array of strings `strs`, group the **anagrams** together. You can return the answer in **any order**.\n\nAn anagram is a word formed by rearranging the letters of another word, using all the original letters exactly once.\n\n**Example:**\n```\nInput: strs = [\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"]\nOutput: [[\"bat\"],[\"nat\",\"tan\"],[\"ate\",\"eat\",\"tea\"]]\n```",
+    "solution_label": "Sorted Key",
+    "alt_solutions": [
+      {
+        "label": "Character Count Key",
+        "code": "from collections import defaultdict\n\nclass Solution:\n    def groupAnagrams(self, strs):\n        groups = defaultdict(list)\n        for s in strs:\n            count = [0] * 26\n            for c in s:\n                count[ord(c) - ord('a')] += 1\n            groups[tuple(count)].append(s)\n        return list(groups.values())\n\n# Test cases\nsol = Solution()\nresult = sol.groupAnagrams([\"eat\",\"tea\",\"tan\",\"ate\",\"nat\",\"bat\"])\nfor group in sorted([sorted(g) for g in result]):\n    print(group)\nprint(sol.groupAnagrams([\"\"]))   # Expected: [['']]\nprint(sol.groupAnagrams([\"a\"]))  # Expected: [['a']]\n"
+      }
+    ]
   },
   {
     "num": 128,
@@ -239,7 +253,14 @@
       "A set stores only unique elements — compare its size to the original list.",
       "If len(nums) != len(set(nums)), there must be a duplicate."
     ],
-    "description": "Given an integer array `nums`, return `True` if any value appears **at least twice** in the array, and return `False` if every element is distinct.\n\n**Example:**\n```\nInput: nums = [1,2,3,1]\nOutput: True\n```"
+    "description": "Given an integer array `nums`, return `True` if any value appears **at least twice** in the array, and return `False` if every element is distinct.\n\n**Example:**\n```\nInput: nums = [1,2,3,1]\nOutput: True\n```",
+    "solution_label": "Hash Set",
+    "alt_solutions": [
+      {
+        "label": "Sorting",
+        "code": "class Solution:\n    def containsDuplicate(self, nums):\n        nums.sort()\n        for i in range(1, len(nums)):\n            if nums[i] == nums[i - 1]:\n                return True\n        return False\n\n# Test cases\nsol = Solution()\nprint(sol.containsDuplicate([1, 2, 3, 1]))       # Expected: True\nprint(sol.containsDuplicate([1, 2, 3, 4]))       # Expected: False\nprint(sol.containsDuplicate([1, 1, 1, 3, 3, 4, 3, 2, 4, 2]))  # Expected: True\n"
+      }
+    ]
   },
   {
     "num": 238,
@@ -276,7 +297,14 @@
       "Use a hash map (Counter) to count character frequencies in each string.",
       "Compare the two frequency maps — if equal, the strings are anagrams."
     ],
-    "description": "Given two strings `s` and `t`, return `True` if `t` is an **anagram** of `s`, and `False` otherwise.\n\nAn anagram uses all the original letters exactly once.\n\n**Example:**\n```\nInput: s = \"anagram\", t = \"nagaram\"\nOutput: True\n```"
+    "description": "Given two strings `s` and `t`, return `True` if `t` is an **anagram** of `s`, and `False` otherwise.\n\nAn anagram uses all the original letters exactly once.\n\n**Example:**\n```\nInput: s = \"anagram\", t = \"nagaram\"\nOutput: True\n```",
+    "solution_label": "Counter",
+    "alt_solutions": [
+      {
+        "label": "Sorting",
+        "code": "class Solution:\n    def isAnagram(self, s, t):\n        return sorted(s) == sorted(t)\n\n# Test cases\nsol = Solution()\nprint(sol.isAnagram(\"anagram\", \"nagaram\"))  # Expected: True\nprint(sol.isAnagram(\"rat\", \"car\"))          # Expected: False\nprint(sol.isAnagram(\"a\", \"a\"))              # Expected: True\n"
+      }
+    ]
   },
   {
     "num": 271,
@@ -315,7 +343,14 @@
       "Bucket sort gives O(n) time: create buckets where index = frequency.",
       "Iterate buckets from highest frequency down, collecting elements until you have k."
     ],
-    "description": "Given an integer array `nums` and an integer `k`, return the `k` **most frequent** elements. You may return the answer in **any order**.\n\n**Example:**\n```\nInput: nums = [1,1,1,2,2,3], k = 2\nOutput: [1,2]\n```\n\n**Follow up:** Your algorithm's time complexity must be better than O(n log n)."
+    "description": "Given an integer array `nums` and an integer `k`, return the `k` **most frequent** elements. You may return the answer in **any order**.\n\n**Example:**\n```\nInput: nums = [1,1,1,2,2,3], k = 2\nOutput: [1,2]\n```\n\n**Follow up:** Your algorithm's time complexity must be better than O(n log n).",
+    "solution_label": "Bucket Sort",
+    "alt_solutions": [
+      {
+        "label": "Heap",
+        "code": "import heapq\nfrom collections import Counter\n\nclass Solution:\n    def topKFrequent(self, nums, k):\n        count = Counter(nums)\n        return heapq.nlargest(k, count.keys(), key=count.get)\n\n# Test cases\nsol = Solution()\nprint(sorted(sol.topKFrequent([1,1,1,2,2,3], 2)))  # Expected: [1, 2]\nprint(sol.topKFrequent([1], 1))                      # Expected: [1]\nprint(sorted(sol.topKFrequent([4,4,4,1,1,2,2,2,3], 2)))  # Expected: [2, 4]\n"
+      }
+    ]
   },
   {
     "num": 11,
@@ -373,7 +408,18 @@
       "Use two pointers from both ends, tracking the max height seen from each side.",
       "Always process the side with the smaller max. Water trapped = current_max - height[i] (guaranteed non-negative because we process the smaller side)."
     ],
-    "description": "Given `n` non-negative integers representing an elevation map where the width of each bar is `1`, compute how much water it can trap after raining.\n\n**Example:**\n```\nInput: height = [0,1,0,2,1,0,1,3,2,1,2,1]\nOutput: 6\n```"
+    "description": "Given `n` non-negative integers representing an elevation map where the width of each bar is `1`, compute how much water it can trap after raining.\n\n**Example:**\n```\nInput: height = [0,1,0,2,1,0,1,3,2,1,2,1]\nOutput: 6\n```",
+    "solution_label": "Two Pointers",
+    "alt_solutions": [
+      {
+        "label": "Monotonic Stack",
+        "code": "class Solution:\n    def trap(self, height):\n        stack = []\n        water = 0\n        for i, h in enumerate(height):\n            while stack and height[stack[-1]] < h:\n                bottom = height[stack.pop()]\n                if not stack:\n                    break\n                width = i - stack[-1] - 1\n                bounded = min(h, height[stack[-1]]) - bottom\n                water += width * bounded\n            stack.append(i)\n        return water\n\n\nsol = Solution()\nprint(sol.trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]))  # Expected: 6\nprint(sol.trap([4, 2, 0, 3, 2, 5]))                       # Expected: 9\nprint(sol.trap([1, 0, 1]))                                 # Expected: 1\n"
+      },
+      {
+        "label": "DP (Prefix Max)",
+        "code": "class Solution:\n    def trap(self, height):\n        if not height:\n            return 0\n        n = len(height)\n        left_max = [0] * n\n        right_max = [0] * n\n\n        left_max[0] = height[0]\n        for i in range(1, n):\n            left_max[i] = max(left_max[i-1], height[i])\n\n        right_max[n-1] = height[n-1]\n        for i in range(n-2, -1, -1):\n            right_max[i] = max(right_max[i+1], height[i])\n\n        water = 0\n        for i in range(n):\n            water += min(left_max[i], right_max[i]) - height[i]\n        return water\n\n\nsol = Solution()\nprint(sol.trap([0, 1, 0, 2, 1, 0, 1, 3, 2, 1, 2, 1]))  # Expected: 6\nprint(sol.trap([4, 2, 0, 3, 2, 5]))                       # Expected: 9\nprint(sol.trap([1, 0, 1]))                                 # Expected: 1\n"
+      }
+    ]
   },
   {
     "num": 125,
@@ -391,7 +437,14 @@
       "Use two pointers starting from both ends, skipping non-alphanumeric characters.",
       "Compare characters at left and right pointers (lowercased). Move inward until they meet."
     ],
-    "description": "A phrase is a **palindrome** if, after converting all uppercase letters into lowercase and removing all non-alphanumeric characters, it reads the same forward and backward.\n\nGiven a string `s`, return `True` if it is a palindrome, or `False` otherwise.\n\n**Example:**\n```\nInput: s = \"A man, a plan, a canal: Panama\"\nOutput: True\nExplanation: \"amanaplanacanalpanama\" is a palindrome.\n```"
+    "description": "A phrase is a **palindrome** if, after converting all uppercase letters into lowercase and removing all non-alphanumeric characters, it reads the same forward and backward.\n\nGiven a string `s`, return `True` if it is a palindrome, or `False` otherwise.\n\n**Example:**\n```\nInput: s = \"A man, a plan, a canal: Panama\"\nOutput: True\nExplanation: \"amanaplanacanalpanama\" is a palindrome.\n```",
+    "solution_label": "Two Pointers",
+    "alt_solutions": [
+      {
+        "label": "Filter + Reverse",
+        "code": "class Solution:\n    def isPalindrome(self, s):\n        cleaned = ''.join(c.lower() for c in s if c.isalnum())\n        return cleaned == cleaned[::-1]\n\n# Test cases\nsol = Solution()\nprint(sol.isPalindrome(\"A man, a plan, a canal: Panama\"))  # Expected: True\nprint(sol.isPalindrome(\"race a car\"))                      # Expected: False\nprint(sol.isPalindrome(\" \"))                                # Expected: True\n"
+      }
+    ]
   },
   {
     "num": 167,
@@ -410,7 +463,14 @@
       "Use two pointers at the start and end. If the sum is too small, move left pointer right; if too big, move right pointer left.",
       "Return 1-indexed positions. The sorted property guarantees convergence to the answer."
     ],
-    "description": "Given a **1-indexed** array of integers `numbers` that is already sorted in non-decreasing order, find two numbers such that they add up to a specific `target`.\n\nReturn the indices of the two numbers (1-indexed) as an array `[index1, index2]`.\n\nYou must use only **constant extra space**.\n\n**Example:**\n```\nInput: numbers = [2,7,11,15], target = 9\nOutput: [1,2]\n```"
+    "description": "Given a **1-indexed** array of integers `numbers` that is already sorted in non-decreasing order, find two numbers such that they add up to a specific `target`.\n\nReturn the indices of the two numbers (1-indexed) as an array `[index1, index2]`.\n\nYou must use only **constant extra space**.\n\n**Example:**\n```\nInput: numbers = [2,7,11,15], target = 9\nOutput: [1,2]\n```",
+    "solution_label": "Two Pointers",
+    "alt_solutions": [
+      {
+        "label": "Binary Search",
+        "code": "import bisect\n\nclass Solution:\n    def twoSum(self, numbers, target):\n        for i in range(len(numbers)):\n            comp = target - numbers[i]\n            j = bisect.bisect_left(numbers, comp, i + 1)\n            if j < len(numbers) and numbers[j] == comp:\n                return [i + 1, j + 1]\n        return []\n\n# Test cases\nsol = Solution()\nprint(sol.twoSum([2, 7, 11, 15], 9))   # Expected: [1, 2]\nprint(sol.twoSum([2, 3, 4], 6))         # Expected: [1, 3]\nprint(sol.twoSum([-1, 0], -1))          # Expected: [1, 2]\n"
+      }
+    ]
   },
   {
     "num": 3,
@@ -429,7 +489,14 @@
       "Maintain a set of characters in the current window.",
       "When s[r] is already in the set, shrink from the left until the duplicate is removed, then add s[r]."
     ],
-    "description": "Given a string `s`, find the length of the **longest substring** without repeating characters.\n\n**Example:**\n```\nInput: s = \"abcabcbb\"\nOutput: 3\nExplanation: The answer is \"abc\", with length 3.\n```"
+    "description": "Given a string `s`, find the length of the **longest substring** without repeating characters.\n\n**Example:**\n```\nInput: s = \"abcabcbb\"\nOutput: 3\nExplanation: The answer is \"abc\", with length 3.\n```",
+    "solution_label": "Sliding Window + Set",
+    "alt_solutions": [
+      {
+        "label": "Sliding Window + Dict",
+        "code": "class Solution:\n    def lengthOfLongestSubstring(self, s):\n        last_seen = {}\n        l = 0\n        result = 0\n        for r, c in enumerate(s):\n            if c in last_seen and last_seen[c] >= l:\n                l = last_seen[c] + 1\n            last_seen[c] = r\n            result = max(result, r - l + 1)\n        return result\n\n# Test cases\nsol = Solution()\nprint(sol.lengthOfLongestSubstring(\"abcabcbb\"))  # Expected: 3\nprint(sol.lengthOfLongestSubstring(\"bbbbb\"))      # Expected: 1\nprint(sol.lengthOfLongestSubstring(\"pwwkew\"))     # Expected: 3\nprint(sol.lengthOfLongestSubstring(\"\"))            # Expected: 0\n"
+      }
+    ]
   },
   {
     "num": 76,
@@ -466,7 +533,14 @@
       "Track the minimum price seen so far as you iterate through the prices.",
       "At each price, compute profit = price - min_price_so_far, and track the maximum profit."
     ],
-    "description": "You are given an array `prices` where `prices[i]` is the price of a given stock on the `i`th day.\n\nYou want to maximize your profit by choosing a **single day** to buy one stock and choosing a **different day in the future** to sell that stock.\n\nReturn the maximum profit. If no profit is possible, return `0`.\n\n**Example:**\n```\nInput: prices = [7,1,5,3,6,4]\nOutput: 5\nExplanation: Buy on day 2 (price = 1), sell on day 5 (price = 6).\n```"
+    "description": "You are given an array `prices` where `prices[i]` is the price of a given stock on the `i`th day.\n\nYou want to maximize your profit by choosing a **single day** to buy one stock and choosing a **different day in the future** to sell that stock.\n\nReturn the maximum profit. If no profit is possible, return `0`.\n\n**Example:**\n```\nInput: prices = [7,1,5,3,6,4]\nOutput: 5\nExplanation: Buy on day 2 (price = 1), sell on day 5 (price = 6).\n```",
+    "solution_label": "Single Pass (Min Tracking)",
+    "alt_solutions": [
+      {
+        "label": "Kadane's Algorithm (Max Diff)",
+        "code": "class Solution:\n    def maxProfit(self, prices):\n        max_profit = 0\n        max_diff = 0\n        for i in range(1, len(prices)):\n            max_diff = max(0, max_diff + prices[i] - prices[i - 1])\n            max_profit = max(max_profit, max_diff)\n        return max_profit\n\n# Test cases\nsol = Solution()\nprint(sol.maxProfit([7, 1, 5, 3, 6, 4]))  # Expected: 5\nprint(sol.maxProfit([7, 6, 4, 3, 1]))      # Expected: 0\nprint(sol.maxProfit([2, 4, 1]))             # Expected: 2\n"
+      }
+    ]
   },
   {
     "num": 239,
@@ -487,7 +561,14 @@
       "Use a monotonic decreasing deque that stores indices. The front always holds the current max.",
       "For each new element: remove out-of-window indices from front, remove smaller elements from back, then append."
     ],
-    "description": "You are given an array of integers `nums` and a sliding window of size `k` which moves from the very left to the very right. You can only see the `k` numbers in the window. Each time the sliding window moves right by one position.\n\nReturn the **max** value in each sliding window position.\n\n**Example:**\n```\nInput: nums = [1,3,-1,-3,5,3,6,7], k = 3\nOutput: [3,3,5,5,6,7]\n```"
+    "description": "You are given an array of integers `nums` and a sliding window of size `k` which moves from the very left to the very right. You can only see the `k` numbers in the window. Each time the sliding window moves right by one position.\n\nReturn the **max** value in each sliding window position.\n\n**Example:**\n```\nInput: nums = [1,3,-1,-3,5,3,6,7], k = 3\nOutput: [3,3,5,5,6,7]\n```",
+    "solution_label": "Monotonic Deque",
+    "alt_solutions": [
+      {
+        "label": "Heap (Max-Heap)",
+        "code": "import heapq\n\nclass Solution:\n    def maxSlidingWindow(self, nums, k):\n        heap = []\n        result = []\n        for i in range(len(nums)):\n            heapq.heappush(heap, (-nums[i], i))\n            if i >= k - 1:\n                while heap[0][1] <= i - k:\n                    heapq.heappop(heap)\n                result.append(-heap[0][0])\n        return result\n\n# Test cases\nsol = Solution()\nprint(sol.maxSlidingWindow([1,3,-1,-3,5,3,6,7], 3))  # Expected: [3, 3, 5, 5, 6, 7]\nprint(sol.maxSlidingWindow([1], 1))                    # Expected: [1]\nprint(sol.maxSlidingWindow([1, -1], 1))                # Expected: [1, -1]\n"
+      }
+    ]
   },
   {
     "num": 424,
@@ -619,7 +700,14 @@
       "Use an auxiliary stack that tracks the current minimum at each level.",
       "Push to min_stack when the new value is <= current min. Pop from min_stack when popping the current min."
     ],
-    "description": "Design a stack that supports push, pop, top, and retrieving the **minimum element** in constant time.\n\nImplement the `MinStack` class:\n- `push(val)` — pushes the element onto the stack\n- `pop()` — removes the top element\n- `top()` — gets the top element\n- `getMin()` — retrieves the minimum element in the stack\n\nEach function must run in **O(1)** time."
+    "description": "Design a stack that supports push, pop, top, and retrieving the **minimum element** in constant time.\n\nImplement the `MinStack` class:\n- `push(val)` — pushes the element onto the stack\n- `pop()` — removes the top element\n- `top()` — gets the top element\n- `getMin()` — retrieves the minimum element in the stack\n\nEach function must run in **O(1)** time.",
+    "solution_label": "Two Stacks",
+    "alt_solutions": [
+      {
+        "label": "Stack of Tuples (val, min)",
+        "code": "class MinStack:\n    def __init__(self):\n        self.stack = []  # each entry is (val, current_min)\n\n    def push(self, val):\n        cur_min = min(val, self.stack[-1][1]) if self.stack else val\n        self.stack.append((val, cur_min))\n\n    def pop(self):\n        self.stack.pop()\n\n    def top(self):\n        return self.stack[-1][0]\n\n    def getMin(self):\n        return self.stack[-1][1]\n\n# Test cases\nms = MinStack()\nms.push(-2)\nms.push(0)\nms.push(-3)\nprint(ms.getMin())  # Expected: -3\nms.pop()\nprint(ms.top())     # Expected: 0\nprint(ms.getMin())  # Expected: -2\n"
+      }
+    ]
   },
   {
     "num": 739,
@@ -714,7 +802,14 @@
       "Map a 1D index to 2D: row = index // cols, col = index % cols.",
       "Run standard binary search on indices 0 to rows*cols - 1, converting each mid to matrix coordinates."
     ],
-    "description": "You are given an `m x n` integer matrix with the following properties:\n- Each row is sorted in non-decreasing order.\n- The first integer of each row is greater than the last integer of the previous row.\n\nGiven an integer `target`, return `True` if `target` is in the matrix.\n\nWrite an algorithm in **O(log(m * n))** time.\n\n**Example:**\n```\nInput: matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3\nOutput: True\n```"
+    "description": "You are given an `m x n` integer matrix with the following properties:\n- Each row is sorted in non-decreasing order.\n- The first integer of each row is greater than the last integer of the previous row.\n\nGiven an integer `target`, return `True` if `target` is in the matrix.\n\nWrite an algorithm in **O(log(m * n))** time.\n\n**Example:**\n```\nInput: matrix = [[1,3,5,7],[10,11,16,20],[23,30,34,60]], target = 3\nOutput: True\n```",
+    "solution_label": "Flat Binary Search",
+    "alt_solutions": [
+      {
+        "label": "Row + Column Binary Search",
+        "code": "class Solution:\n    def searchMatrix(self, matrix, target):\n        # Binary search for the correct row\n        top, bot = 0, len(matrix) - 1\n        while top <= bot:\n            mid = (top + bot) // 2\n            if target < matrix[mid][0]:\n                bot = mid - 1\n            elif target > matrix[mid][-1]:\n                top = mid + 1\n            else:\n                break\n        if top > bot:\n            return False\n        row = (top + bot) // 2\n        # Binary search within the row\n        l, r = 0, len(matrix[row]) - 1\n        while l <= r:\n            m = (l + r) // 2\n            if matrix[row][m] == target:\n                return True\n            elif matrix[row][m] < target:\n                l = m + 1\n            else:\n                r = m - 1\n        return False\n\n\nsol = Solution()\nprint(sol.searchMatrix([[1,3,5,7],[10,11,16,20],[23,30,34,60]], 3))    # True\nprint(sol.searchMatrix([[1,3,5,7],[10,11,16,20],[23,30,34,60]], 13))   # False\nprint(sol.searchMatrix([[1]], 1))                                       # True\n"
+      }
+    ]
   },
   {
     "num": 153,
@@ -806,7 +901,14 @@
       "Iterate both lists simultaneously, summing corresponding digits plus carry.",
       "Create a new node for each digit (sum % 10) and propagate carry (sum // 10). Don't forget the final carry."
     ],
-    "description": "You are given two **non-empty** linked lists representing two non-negative integers. The digits are stored in **reverse order**, and each node contains a single digit. Add the two numbers and return the sum as a linked list.\n\n**Example:**\n```\nInput: l1 = [2,4,3], l2 = [5,6,4]\nOutput: [7,0,8]\nExplanation: 342 + 465 = 807\n```"
+    "description": "You are given two **non-empty** linked lists representing two non-negative integers. The digits are stored in **reverse order**, and each node contains a single digit. Add the two numbers and return the sum as a linked list.\n\n**Example:**\n```\nInput: l1 = [2,4,3], l2 = [5,6,4]\nOutput: [7,0,8]\nExplanation: 342 + 465 = 807\n```",
+    "solution_label": "Iterative",
+    "alt_solutions": [
+      {
+        "label": "Recursive",
+        "code": "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef build(arr):\n    dummy = ListNode(0)\n    cur = dummy\n    for v in arr:\n        cur.next = ListNode(v)\n        cur = cur.next\n    return dummy.next\n\ndef show(head):\n    res = []\n    while head:\n        res.append(head.val)\n        head = head.next\n    return res\n\nclass Solution:\n    def addTwoNumbers(self, l1, l2, carry=0):\n        if not l1 and not l2 and not carry:\n            return None\n        v1 = l1.val if l1 else 0\n        v2 = l2.val if l2 else 0\n        total = v1 + v2 + carry\n        node = ListNode(total % 10)\n        node.next = self.addTwoNumbers(\n            l1.next if l1 else None,\n            l2.next if l2 else None,\n            total // 10\n        )\n        return node\n\n\nsol = Solution()\nprint(show(sol.addTwoNumbers(build([2, 4, 3]), build([5, 6, 4]))))   # [7, 0, 8]\nprint(show(sol.addTwoNumbers(build([0]), build([0]))))                # [0]\nprint(show(sol.addTwoNumbers(build([9, 9, 9, 9]), build([9, 9]))))   # [8, 9, 0, 0, 1]\n"
+      }
+    ]
   },
   {
     "num": 19,
@@ -842,7 +944,14 @@
       "At each step, append the smaller node to the result and advance that list's pointer.",
       "When one list is exhausted, append the remainder of the other list."
     ],
-    "description": "You are given the heads of two sorted linked lists `list1` and `list2`. Merge the two lists into one **sorted** list by splicing together the nodes.\n\nReturn the head of the merged linked list.\n\n**Example:**\n```\nInput: list1 = [1,2,4], list2 = [1,3,4]\nOutput: [1,1,2,3,4,4]\n```"
+    "description": "You are given the heads of two sorted linked lists `list1` and `list2`. Merge the two lists into one **sorted** list by splicing together the nodes.\n\nReturn the head of the merged linked list.\n\n**Example:**\n```\nInput: list1 = [1,2,4], list2 = [1,3,4]\nOutput: [1,1,2,3,4,4]\n```",
+    "solution_label": "Iterative",
+    "alt_solutions": [
+      {
+        "label": "Recursive",
+        "code": "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef build(arr):\n    dummy = ListNode(0)\n    cur = dummy\n    for v in arr:\n        cur.next = ListNode(v)\n        cur = cur.next\n    return dummy.next\n\ndef show(head):\n    res = []\n    while head:\n        res.append(head.val)\n        head = head.next\n    return res\n\nclass Solution:\n    def mergeTwoLists(self, list1, list2):\n        if not list1:\n            return list2\n        if not list2:\n            return list1\n        if list1.val <= list2.val:\n            list1.next = self.mergeTwoLists(list1.next, list2)\n            return list1\n        else:\n            list2.next = self.mergeTwoLists(list1, list2.next)\n            return list2\n\n\nsol = Solution()\nprint(show(sol.mergeTwoLists(build([1, 2, 4]), build([1, 3, 4]))))   # [1, 1, 2, 3, 4, 4]\nprint(show(sol.mergeTwoLists(build([]), build([]))))                   # []\nprint(show(sol.mergeTwoLists(build([]), build([0]))))                  # [0]\n"
+      }
+    ]
   },
   {
     "num": 23,
@@ -861,7 +970,14 @@
       "Push (value, list_index, node) tuples so the heap can break ties without comparing ListNode objects.",
       "Pop the min, append it to the result, and push its next node back into the heap."
     ],
-    "description": "You are given an array of `k` linked lists, each sorted in ascending order. Merge all the linked lists into **one sorted** linked list and return it.\n\n**Example:**\n```\nInput: lists = [[1,4,5],[1,3,4],[2,6]]\nOutput: [1,1,2,3,4,4,5,6]\n```"
+    "description": "You are given an array of `k` linked lists, each sorted in ascending order. Merge all the linked lists into **one sorted** linked list and return it.\n\n**Example:**\n```\nInput: lists = [[1,4,5],[1,3,4],[2,6]]\nOutput: [1,1,2,3,4,4,5,6]\n```",
+    "solution_label": "Heap (Priority Queue)",
+    "alt_solutions": [
+      {
+        "label": "Divide and Conquer",
+        "code": "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef build(values):\n    dummy = ListNode()\n    curr = dummy\n    for v in values:\n        curr.next = ListNode(v); curr = curr.next\n    return dummy.next\n\ndef show(head):\n    out = []\n    while head:\n        out.append(head.val); head = head.next\n    return out\n\n\nclass Solution:\n    def mergeKLists(self, lists):\n        if not lists:\n            return None\n        if len(lists) == 1:\n            return lists[0]\n\n        def merge2(l1, l2):\n            dummy = ListNode()\n            curr = dummy\n            while l1 and l2:\n                if l1.val <= l2.val:\n                    curr.next = l1; l1 = l1.next\n                else:\n                    curr.next = l2; l2 = l2.next\n                curr = curr.next\n            curr.next = l1 or l2\n            return dummy.next\n\n        while len(lists) > 1:\n            merged = []\n            for i in range(0, len(lists), 2):\n                l1 = lists[i]\n                l2 = lists[i + 1] if i + 1 < len(lists) else None\n                merged.append(merge2(l1, l2))\n            lists = merged\n\n        return lists[0]\n\n\nsol = Solution()\nprint(show(sol.mergeKLists([build([1,4,5]), build([1,3,4]), build([2,6])])))   # [1, 1, 2, 3, 4, 4, 5, 6]\nprint(show(sol.mergeKLists([])))                                                # []\nprint(show(sol.mergeKLists([build([])])))                                       # []\n"
+      }
+    ]
   },
   {
     "num": 25,
@@ -915,7 +1031,14 @@
       "Use Floyd's tortoise and hare algorithm: slow moves 1 step, fast moves 2 steps.",
       "If fast reaches None, no cycle. If slow == fast at any point, there's a cycle."
     ],
-    "description": "Given `head`, the head of a linked list, determine if the linked list has a **cycle** in it.\n\nReturn `True` if there is a cycle, `False` otherwise.\n\n**Follow up:** Can you solve it using O(1) memory?"
+    "description": "Given `head`, the head of a linked list, determine if the linked list has a **cycle** in it.\n\nReturn `True` if there is a cycle, `False` otherwise.\n\n**Follow up:** Can you solve it using O(1) memory?",
+    "solution_label": "Floyd's (Fast/Slow)",
+    "alt_solutions": [
+      {
+        "label": "Hash Set",
+        "code": "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef build_cycle(arr, pos):\n    if not arr:\n        return None\n    nodes = [ListNode(v) for v in arr]\n    for i in range(len(nodes) - 1):\n        nodes[i].next = nodes[i + 1]\n    if pos >= 0:\n        nodes[-1].next = nodes[pos]\n    return nodes[0]\n\nclass Solution:\n    def hasCycle(self, head):\n        seen = set()\n        while head:\n            if id(head) in seen:\n                return True\n            seen.add(id(head))\n            head = head.next\n        return False\n\n\nsol = Solution()\nprint(sol.hasCycle(build_cycle([3, 2, 0, -4], 1)))   # True\nprint(sol.hasCycle(build_cycle([1, 2], 0)))            # True\nprint(sol.hasCycle(build_cycle([1], -1)))               # False\n"
+      }
+    ]
   },
   {
     "num": 143,
@@ -953,7 +1076,14 @@
       "The doubly linked list maintains access order: most recent at the tail, least recent at the head.",
       "On get: move node to tail. On put: insert at tail, and if over capacity, evict the head (LRU) node."
     ],
-    "description": "Design a data structure that follows the constraints of a **Least Recently Used (LRU) cache**.\n\nImplement the `LRUCache` class:\n- `LRUCache(capacity)` — Initialize with positive size capacity\n- `get(key)` — Return the value if the key exists, otherwise return `-1`\n- `put(key, value)` — Update or insert the key-value pair. When capacity is exceeded, evict the least recently used key.\n\nBoth `get` and `put` must run in **O(1)** average time."
+    "description": "Design a data structure that follows the constraints of a **Least Recently Used (LRU) cache**.\n\nImplement the `LRUCache` class:\n- `LRUCache(capacity)` — Initialize with positive size capacity\n- `get(key)` — Return the value if the key exists, otherwise return `-1`\n- `put(key, value)` — Update or insert the key-value pair. When capacity is exceeded, evict the least recently used key.\n\nBoth `get` and `put` must run in **O(1)** average time.",
+    "solution_label": "Doubly Linked List + HashMap",
+    "alt_solutions": [
+      {
+        "label": "OrderedDict",
+        "code": "from collections import OrderedDict\n\nclass LRUCache:\n    def __init__(self, capacity):\n        self.cache = OrderedDict()\n        self.cap = capacity\n\n    def get(self, key):\n        if key not in self.cache:\n            return -1\n        self.cache.move_to_end(key)\n        return self.cache[key]\n\n    def put(self, key, value):\n        if key in self.cache:\n            self.cache.move_to_end(key)\n        self.cache[key] = value\n        if len(self.cache) > self.cap:\n            self.cache.popitem(last=False)\n\n\ncache = LRUCache(2)\ncache.put(1, 1)\ncache.put(2, 2)\nprint(cache.get(1))      # 1\ncache.put(3, 3)\nprint(cache.get(2))      # -1\ncache.put(4, 4)\nprint(cache.get(1))      # -1\nprint(cache.get(3))      # 3\nprint(cache.get(4))      # 4\n"
+      }
+    ]
   },
   {
     "num": 206,
@@ -971,7 +1101,14 @@
       "Use two pointers: prev (starts at None) and cur (starts at head).",
       "At each step: save cur.next, point cur.next to prev, advance prev to cur, advance cur to saved next."
     ],
-    "description": "Given the `head` of a singly linked list, reverse the list, and return the reversed list.\n\n**Example:**\n```\nInput: head = [1,2,3,4,5]\nOutput: [5,4,3,2,1]\n```"
+    "description": "Given the `head` of a singly linked list, reverse the list, and return the reversed list.\n\n**Example:**\n```\nInput: head = [1,2,3,4,5]\nOutput: [5,4,3,2,1]\n```",
+    "solution_label": "Iterative",
+    "alt_solutions": [
+      {
+        "label": "Recursive",
+        "code": "class ListNode:\n    def __init__(self, val=0, next=None):\n        self.val = val\n        self.next = next\n\ndef build(values):\n    dummy = ListNode()\n    curr = dummy\n    for v in values:\n        curr.next = ListNode(v); curr = curr.next\n    return dummy.next\n\ndef show(head):\n    out = []\n    while head:\n        out.append(head.val); head = head.next\n    return out\n\n\nclass Solution:\n    def reverseList(self, head):\n        if not head or not head.next:\n            return head\n        new_head = self.reverseList(head.next)\n        head.next.next = head\n        head.next = None\n        return new_head\n\n\nsol = Solution()\nprint(show(sol.reverseList(build([1, 2, 3, 4, 5]))))   # [5, 4, 3, 2, 1]\nprint(show(sol.reverseList(build([1, 2]))))              # [2, 1]\nprint(show(sol.reverseList(build([]))))                  # []\n"
+      }
+    ]
   },
   {
     "num": 287,
@@ -990,7 +1127,14 @@
       "Use Floyd's tortoise and hare algorithm: slow = nums[slow], fast = nums[nums[fast]] to find the intersection.",
       "After finding the intersection, start a second slow pointer from index 0. Where both slow pointers meet is the duplicate."
     ],
-    "description": "Given an array of integers `nums` containing `n + 1` integers where each integer is in the range `[1, n]` inclusive, there is exactly **one repeated number**. Return this repeated number.\n\nYou must solve it **without** modifying the array and using only **O(1)** extra space.\n\n**Example:**\n```\nInput: nums = [1,3,4,2,2]\nOutput: 2\n```"
+    "description": "Given an array of integers `nums` containing `n + 1` integers where each integer is in the range `[1, n]` inclusive, there is exactly **one repeated number**. Return this repeated number.\n\nYou must solve it **without** modifying the array and using only **O(1)** extra space.\n\n**Example:**\n```\nInput: nums = [1,3,4,2,2]\nOutput: 2\n```",
+    "solution_label": "Floyd's Cycle Detection",
+    "alt_solutions": [
+      {
+        "label": "Binary Search on Value Range",
+        "code": "class Solution:\n    def findDuplicate(self, nums):\n        lo, hi = 1, len(nums) - 1\n        while lo < hi:\n            mid = (lo + hi) // 2\n            count = sum(1 for n in nums if n <= mid)\n            if count > mid:\n                hi = mid\n            else:\n                lo = mid + 1\n        return lo\n\n\nsol = Solution()\nprint(sol.findDuplicate([1, 3, 4, 2, 2]))   # 2\nprint(sol.findDuplicate([3, 1, 3, 4, 2]))   # 3\nprint(sol.findDuplicate([1, 1]))              # 1\n"
+      }
+    ]
   },
   {
     "num": 98,
@@ -1009,7 +1153,14 @@
       "Pass valid range (lo, hi) down the recursion. Each node must be within its allowed range.",
       "For left child: upper bound becomes parent's value. For right child: lower bound becomes parent's value."
     ],
-    "description": "Given the `root` of a binary tree, determine if it is a **valid binary search tree** (BST).\n\nA valid BST:\n- The left subtree contains only nodes with keys **less than** the node's key.\n- The right subtree contains only nodes with keys **greater than** the node's key.\n- Both subtrees must also be valid BSTs."
+    "description": "Given the `root` of a binary tree, determine if it is a **valid binary search tree** (BST).\n\nA valid BST:\n- The left subtree contains only nodes with keys **less than** the node's key.\n- The right subtree contains only nodes with keys **greater than** the node's key.\n- Both subtrees must also be valid BSTs.",
+    "solution_label": "DFS (Recursive Bounds)",
+    "alt_solutions": [
+      {
+        "label": "Iterative In-Order",
+        "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val; self.left = left; self.right = right\n\ndef build(vals):\n    if not vals: return None\n    root = TreeNode(vals[0])\n    queue = deque([root])\n    i = 1\n    while queue and i < len(vals):\n        node = queue.popleft()\n        if i < len(vals) and vals[i] is not None:\n            node.left = TreeNode(vals[i]); queue.append(node.left)\n        i += 1\n        if i < len(vals) and vals[i] is not None:\n            node.right = TreeNode(vals[i]); queue.append(node.right)\n        i += 1\n    return root\n\n\nclass Solution:\n    def isValidBST(self, root):\n        stack = []\n        prev = float('-inf')\n        curr = root\n        while stack or curr:\n            while curr:\n                stack.append(curr)\n                curr = curr.left\n            curr = stack.pop()\n            if curr.val <= prev:\n                return False\n            prev = curr.val\n            curr = curr.right\n        return True\n\n\nsol = Solution()\nprint(sol.isValidBST(build([2,1,3])))        # True\nprint(sol.isValidBST(build([5,1,4,None,None,3,6])))  # False\nprint(sol.isValidBST(build([5,4,6,None,None,3,7])))  # False\n"
+      }
+    ]
   },
   {
     "num": 100,
@@ -1027,7 +1178,14 @@
       "Use recursion. What are the base cases? Both null, one null, values differ.",
       "Return True only if values match AND both left subtrees match AND both right subtrees match."
     ],
-    "description": "Given the roots of two binary trees `p` and `q`, write a function to check if they are the **same** or not.\n\nTwo binary trees are the same if they are structurally identical, and the nodes have the same value."
+    "description": "Given the roots of two binary trees `p` and `q`, write a function to check if they are the **same** or not.\n\nTwo binary trees are the same if they are structurally identical, and the nodes have the same value.",
+    "solution_label": "DFS (Recursive)",
+    "alt_solutions": [
+      {
+        "label": "BFS (Iterative)",
+        "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val; self.left = left; self.right = right\n\ndef build(values):\n    if not values: return None\n    root = TreeNode(values[0])\n    q = deque([root]); i = 1\n    while q and i < len(values):\n        node = q.popleft()\n        if i < len(values) and values[i] is not None:\n            node.left = TreeNode(values[i]); q.append(node.left)\n        i += 1\n        if i < len(values) and values[i] is not None:\n            node.right = TreeNode(values[i]); q.append(node.right)\n        i += 1\n    return root\n\nclass Solution:\n    def isSameTree(self, p, q):\n        queue = deque([(p, q)])\n        while queue:\n            n1, n2 = queue.popleft()\n            if not n1 and not n2:\n                continue\n            if not n1 or not n2 or n1.val != n2.val:\n                return False\n            queue.append((n1.left, n2.left))\n            queue.append((n1.right, n2.right))\n        return True\n\n\nsol = Solution()\nprint(sol.isSameTree(build([1,2,3]), build([1,2,3])))    # True\nprint(sol.isSameTree(build([1,2]), build([1,None,2])))   # False\nprint(sol.isSameTree(build([1,2,1]), build([1,1,2])))    # False\n"
+      }
+    ]
   },
   {
     "num": 102,
@@ -1045,7 +1203,14 @@
       "Use BFS with a queue. Process all nodes at the current level before moving to the next.",
       "At each step, record the queue size, pop that many nodes (one level), and enqueue their children."
     ],
-    "description": "Given the `root` of a binary tree, return the **level order traversal** of its nodes' values (i.e., from left to right, level by level).\n\n**Example:**\n```\nInput: root = [3,9,20,null,null,15,7]\nOutput: [[3],[9,20],[15,7]]\n```"
+    "description": "Given the `root` of a binary tree, return the **level order traversal** of its nodes' values (i.e., from left to right, level by level).\n\n**Example:**\n```\nInput: root = [3,9,20,null,null,15,7]\nOutput: [[3],[9,20],[15,7]]\n```",
+    "solution_label": "BFS (Queue)",
+    "alt_solutions": [
+      {
+        "label": "DFS (Recursive)",
+        "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val; self.left = left; self.right = right\n\ndef build(vals):\n    if not vals: return None\n    root = TreeNode(vals[0])\n    queue = deque([root])\n    i = 1\n    while queue and i < len(vals):\n        node = queue.popleft()\n        if i < len(vals) and vals[i] is not None:\n            node.left = TreeNode(vals[i]); queue.append(node.left)\n        i += 1\n        if i < len(vals) and vals[i] is not None:\n            node.right = TreeNode(vals[i]); queue.append(node.right)\n        i += 1\n    return root\n\n\nclass Solution:\n    def levelOrder(self, root):\n        result = []\n        def dfs(node, depth):\n            if not node:\n                return\n            if depth == len(result):\n                result.append([])\n            result[depth].append(node.val)\n            dfs(node.left, depth + 1)\n            dfs(node.right, depth + 1)\n        dfs(root, 0)\n        return result\n\n\nsol = Solution()\nprint(sol.levelOrder(build([3,9,20,None,None,15,7])))  # [[3], [9, 20], [15, 7]]\nprint(sol.levelOrder(build([1])))                       # [[1]]\nprint(sol.levelOrder(build([])))                        # []\n"
+      }
+    ]
   },
   {
     "num": 104,
@@ -1064,7 +1229,18 @@
       "Use recursion — the base case is an empty node with depth 0.",
       "Return 1 + max(maxDepth(left), maxDepth(right)) at each node."
     ],
-    "description": "Given the `root` of a binary tree, return its **maximum depth**.\n\nA binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.\n\n**Example:**\n```\nInput: root = [3,9,20,null,null,15,7]\nOutput: 3\n```"
+    "description": "Given the `root` of a binary tree, return its **maximum depth**.\n\nA binary tree's maximum depth is the number of nodes along the longest path from the root node down to the farthest leaf node.\n\n**Example:**\n```\nInput: root = [3,9,20,null,null,15,7]\nOutput: 3\n```",
+    "solution_label": "DFS (Recursive)",
+    "alt_solutions": [
+      {
+        "label": "BFS (Level Order)",
+        "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val; self.left = left; self.right = right\n\ndef build(vals):\n    if not vals: return None\n    root = TreeNode(vals[0])\n    queue = deque([root])\n    i = 1\n    while queue and i < len(vals):\n        node = queue.popleft()\n        if i < len(vals) and vals[i] is not None:\n            node.left = TreeNode(vals[i]); queue.append(node.left)\n        i += 1\n        if i < len(vals) and vals[i] is not None:\n            node.right = TreeNode(vals[i]); queue.append(node.right)\n        i += 1\n    return root\n\n\nclass Solution:\n    def maxDepth(self, root):\n        if not root:\n            return 0\n        depth = 0\n        queue = deque([root])\n        while queue:\n            depth += 1\n            for _ in range(len(queue)):\n                node = queue.popleft()\n                if node.left:\n                    queue.append(node.left)\n                if node.right:\n                    queue.append(node.right)\n        return depth\n\n\nsol = Solution()\nprint(sol.maxDepth(build([3,9,20,None,None,15,7])))  # 3\nprint(sol.maxDepth(build([1,None,2])))                # 2\nprint(sol.maxDepth(build([])))                        # 0\n"
+      },
+      {
+        "label": "Iterative DFS (Stack)",
+        "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val; self.left = left; self.right = right\n\ndef build(vals):\n    if not vals: return None\n    root = TreeNode(vals[0])\n    queue = deque([root])\n    i = 1\n    while queue and i < len(vals):\n        node = queue.popleft()\n        if i < len(vals) and vals[i] is not None:\n            node.left = TreeNode(vals[i]); queue.append(node.left)\n        i += 1\n        if i < len(vals) and vals[i] is not None:\n            node.right = TreeNode(vals[i]); queue.append(node.right)\n        i += 1\n    return root\n\n\nclass Solution:\n    def maxDepth(self, root):\n        if not root:\n            return 0\n        stack = [(root, 1)]\n        max_depth = 0\n        while stack:\n            node, depth = stack.pop()\n            max_depth = max(max_depth, depth)\n            if node.left:\n                stack.append((node.left, depth + 1))\n            if node.right:\n                stack.append((node.right, depth + 1))\n        return max_depth\n\n\nsol = Solution()\nprint(sol.maxDepth(build([3,9,20,None,None,15,7])))  # 3\nprint(sol.maxDepth(build([1,None,2])))                # 2\nprint(sol.maxDepth(build([])))                        # 0\n"
+      }
+    ]
   },
   {
     "num": 105,
@@ -1138,7 +1314,14 @@
       "Use BFS level-order traversal. The rightmost node at each level is the answer.",
       "Process each level; only add the last node of each level to the result."
     ],
-    "description": "Given the `root` of a binary tree, imagine yourself standing on the **right side** of it. Return the values of the nodes you can see ordered from top to bottom.\n\n**Example:**\n```\nInput: root = [1,2,3,null,5,null,4]\nOutput: [1,3,4]\n```"
+    "description": "Given the `root` of a binary tree, imagine yourself standing on the **right side** of it. Return the values of the nodes you can see ordered from top to bottom.\n\n**Example:**\n```\nInput: root = [1,2,3,null,5,null,4]\nOutput: [1,3,4]\n```",
+    "solution_label": "BFS (Level Order)",
+    "alt_solutions": [
+      {
+        "label": "DFS (Rightmost First)",
+        "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val; self.left = left; self.right = right\n\ndef build(values):\n    if not values: return None\n    root = TreeNode(values[0])\n    q = deque([root]); i = 1\n    while q and i < len(values):\n        node = q.popleft()\n        if i < len(values) and values[i] is not None:\n            node.left = TreeNode(values[i]); q.append(node.left)\n        i += 1\n        if i < len(values) and values[i] is not None:\n            node.right = TreeNode(values[i]); q.append(node.right)\n        i += 1\n    return root\n\nclass Solution:\n    def rightSideView(self, root):\n        result = []\n        def dfs(node, depth):\n            if not node:\n                return\n            if depth == len(result):\n                result.append(node.val)\n            dfs(node.right, depth + 1)\n            dfs(node.left, depth + 1)\n        dfs(root, 0)\n        return result\n\n\nsol = Solution()\nprint(sol.rightSideView(build([1,2,3,None,5,None,4])))  # [1, 3, 4]\nprint(sol.rightSideView(build([1,None,3])))              # [1, 3]\nprint(sol.rightSideView(build([])))                      # []\n"
+      }
+    ]
   },
   {
     "num": 226,
@@ -1157,7 +1340,14 @@
       "Recursion naturally fits tree problems. What's the base case?",
       "Swap left and right children at each node, then recursively invert each subtree."
     ],
-    "description": "Given the `root` of a binary tree, **invert** the tree (mirror it), and return its root.\n\n**Example:**\n```\nInput: root = [4,2,7,1,3,6,9]\nOutput: [4,7,2,9,6,3,1]\n```"
+    "description": "Given the `root` of a binary tree, **invert** the tree (mirror it), and return its root.\n\n**Example:**\n```\nInput: root = [4,2,7,1,3,6,9]\nOutput: [4,7,2,9,6,3,1]\n```",
+    "solution_label": "DFS (Recursive)",
+    "alt_solutions": [
+      {
+        "label": "BFS (Iterative)",
+        "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val; self.left = left; self.right = right\n\ndef build(vals):\n    if not vals: return None\n    root = TreeNode(vals[0])\n    queue = deque([root])\n    i = 1\n    while queue and i < len(vals):\n        node = queue.popleft()\n        if i < len(vals) and vals[i] is not None:\n            node.left = TreeNode(vals[i]); queue.append(node.left)\n        i += 1\n        if i < len(vals) and vals[i] is not None:\n            node.right = TreeNode(vals[i]); queue.append(node.right)\n        i += 1\n    return root\n\ndef to_list(root):\n    if not root: return []\n    result, queue = [], deque([root])\n    while queue:\n        node = queue.popleft()\n        result.append(node.val)\n        if node.left: queue.append(node.left)\n        if node.right: queue.append(node.right)\n    return result\n\n\nclass Solution:\n    def invertTree(self, root):\n        if not root:\n            return None\n        queue = deque([root])\n        while queue:\n            node = queue.popleft()\n            node.left, node.right = node.right, node.left\n            if node.left:\n                queue.append(node.left)\n            if node.right:\n                queue.append(node.right)\n        return root\n\n\nsol = Solution()\nprint(to_list(sol.invertTree(build([4,2,7,1,3,6,9]))))  # [4, 7, 2, 9, 6, 3, 1]\nprint(to_list(sol.invertTree(build([2,1,3]))))           # [2, 3, 1]\nprint(to_list(sol.invertTree(build([]))))                # []\n"
+      }
+    ]
   },
   {
     "num": 230,
@@ -1176,7 +1366,14 @@
       "Use iterative in-order traversal with a stack to avoid visiting all nodes.",
       "Push all left children, pop and count. When count equals k, return the value. Then go right."
     ],
-    "description": "Given the `root` of a binary search tree and an integer `k`, return the `k`th **smallest** value (1-indexed) of all the values of the nodes in the tree.\n\n**Example:**\n```\nInput: root = [3,1,4,null,2], k = 1\nOutput: 1\n```"
+    "description": "Given the `root` of a binary search tree and an integer `k`, return the `k`th **smallest** value (1-indexed) of all the values of the nodes in the tree.\n\n**Example:**\n```\nInput: root = [3,1,4,null,2], k = 1\nOutput: 1\n```",
+    "solution_label": "Iterative In-Order",
+    "alt_solutions": [
+      {
+        "label": "Recursive In-Order",
+        "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val; self.left = left; self.right = right\n\ndef build(values):\n    if not values: return None\n    root = TreeNode(values[0])\n    q = deque([root]); i = 1\n    while q and i < len(values):\n        node = q.popleft()\n        if i < len(values) and values[i] is not None:\n            node.left = TreeNode(values[i]); q.append(node.left)\n        i += 1\n        if i < len(values) and values[i] is not None:\n            node.right = TreeNode(values[i]); q.append(node.right)\n        i += 1\n    return root\n\nclass Solution:\n    def kthSmallest(self, root, k):\n        self.count = 0\n        self.result = None\n        def inorder(node):\n            if not node or self.result is not None:\n                return\n            inorder(node.left)\n            self.count += 1\n            if self.count == k:\n                self.result = node.val\n                return\n            inorder(node.right)\n        inorder(root)\n        return self.result\n\n\nsol = Solution()\nprint(sol.kthSmallest(build([3,1,4,None,2]), 1))    # 1\nprint(sol.kthSmallest(build([5,3,6,2,4,None,None,1]), 3))  # 3\n"
+      }
+    ]
   },
   {
     "num": 235,
@@ -1195,7 +1392,14 @@
       "If both p and q are smaller than root, LCA is in the left subtree. If both larger, right subtree.",
       "The first node where p and q split to different sides (or one equals the node) is the LCA."
     ],
-    "description": "Given a binary search tree (BST), find the **lowest common ancestor** (LCA) of two given nodes `p` and `q`.\n\nThe LCA is the deepest node that has both `p` and `q` as descendants (a node can be a descendant of itself).\n\n**Example:**\n```\nInput: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8\nOutput: 6\n```"
+    "description": "Given a binary search tree (BST), find the **lowest common ancestor** (LCA) of two given nodes `p` and `q`.\n\nThe LCA is the deepest node that has both `p` and `q` as descendants (a node can be a descendant of itself).\n\n**Example:**\n```\nInput: root = [6,2,8,0,4,7,9,null,null,3,5], p = 2, q = 8\nOutput: 6\n```",
+    "solution_label": "Iterative",
+    "alt_solutions": [
+      {
+        "label": "Recursive",
+        "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val; self.left = left; self.right = right\n\ndef build(values):\n    if not values: return None\n    root = TreeNode(values[0])\n    q = deque([root]); i = 1\n    while q and i < len(values):\n        node = q.popleft()\n        if i < len(values) and values[i] is not None:\n            node.left = TreeNode(values[i]); q.append(node.left)\n        i += 1\n        if i < len(values) and values[i] is not None:\n            node.right = TreeNode(values[i]); q.append(node.right)\n        i += 1\n    return root\n\nclass Solution:\n    def lowestCommonAncestor(self, root, p, q):\n        if p.val > root.val and q.val > root.val:\n            return self.lowestCommonAncestor(root.right, p, q)\n        elif p.val < root.val and q.val < root.val:\n            return self.lowestCommonAncestor(root.left, p, q)\n        else:\n            return root\n\n\nsol = Solution()\ntree = build([6,2,8,0,4,7,9,None,None,3,5])\nprint(sol.lowestCommonAncestor(tree, TreeNode(2), TreeNode(8)).val)  # 6\nprint(sol.lowestCommonAncestor(tree, TreeNode(2), TreeNode(4)).val)  # 2\n"
+      }
+    ]
   },
   {
     "num": 297,
@@ -1215,7 +1419,14 @@
       "Preorder DFS with a null marker (e.g., 'N') is the simplest approach.",
       "Serialize: DFS writing val or 'N'. Deserialize: consume tokens in the same order, recursing left then right."
     ],
-    "description": "Design an algorithm to **serialize** a binary tree into a string and **deserialize** that string back into the original tree structure.\n\nThere is no restriction on how your serialization/deserialization algorithm should work — you just need to ensure a binary tree can be serialized to a string and deserialized back."
+    "description": "Design an algorithm to **serialize** a binary tree into a string and **deserialize** that string back into the original tree structure.\n\nThere is no restriction on how your serialization/deserialization algorithm should work — you just need to ensure a binary tree can be serialized to a string and deserialized back.",
+    "solution_label": "DFS (Preorder)",
+    "alt_solutions": [
+      {
+        "label": "BFS (Level Order)",
+        "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val; self.left = left; self.right = right\n\ndef build(values):\n    if not values: return None\n    root = TreeNode(values[0])\n    q = deque([root]); i = 1\n    while q and i < len(values):\n        node = q.popleft()\n        if i < len(values) and values[i] is not None:\n            node.left = TreeNode(values[i]); q.append(node.left)\n        i += 1\n        if i < len(values) and values[i] is not None:\n            node.right = TreeNode(values[i]); q.append(node.right)\n        i += 1\n    return root\n\ndef to_list(root):\n    if not root: return []\n    out, q = [], deque([root])\n    while q:\n        n = q.popleft()\n        if n is None: out.append(None); continue\n        out.append(n.val)\n        q.append(n.left); q.append(n.right)\n    while out and out[-1] is None: out.pop()\n    return out\n\nclass Codec:\n    def serialize(self, root):\n        if not root:\n            return ''\n        res = []\n        queue = deque([root])\n        while queue:\n            node = queue.popleft()\n            if node:\n                res.append(str(node.val))\n                queue.append(node.left)\n                queue.append(node.right)\n            else:\n                res.append('N')\n        return ','.join(res)\n\n    def deserialize(self, data):\n        if not data:\n            return None\n        vals = data.split(',')\n        root = TreeNode(int(vals[0]))\n        queue = deque([root])\n        i = 1\n        while queue:\n            node = queue.popleft()\n            if vals[i] != 'N':\n                node.left = TreeNode(int(vals[i]))\n                queue.append(node.left)\n            i += 1\n            if vals[i] != 'N':\n                node.right = TreeNode(int(vals[i]))\n                queue.append(node.right)\n            i += 1\n        return root\n\n\ncodec = Codec()\nprint(to_list(codec.deserialize(codec.serialize(build([1,2,3,None,None,4,5])))))  # [1, 2, 3, None, None, 4, 5]\nprint(to_list(codec.deserialize(codec.serialize(build([])))))                      # []\nprint(to_list(codec.deserialize(codec.serialize(build([1])))))                     # [1]\n"
+      }
+    ]
   },
   {
     "num": 543,
@@ -1269,7 +1480,14 @@
       "Track the maximum value seen so far along the path from root to current node.",
       "DFS passing max_val down. If node.val >= max_val, it's good. Update max_val = max(max_val, node.val)."
     ],
-    "description": "Given a binary tree, a node `X` is **good** if in the path from root to `X` there are no nodes with a value **greater than** `X`.\n\nReturn the number of good nodes in the binary tree.\n\n**Example:**\n```\nInput: root = [3,1,4,3,null,1,5]\nOutput: 4\n```"
+    "description": "Given a binary tree, a node `X` is **good** if in the path from root to `X` there are no nodes with a value **greater than** `X`.\n\nReturn the number of good nodes in the binary tree.\n\n**Example:**\n```\nInput: root = [3,1,4,3,null,1,5]\nOutput: 4\n```",
+    "solution_label": "DFS (Recursive)",
+    "alt_solutions": [
+      {
+        "label": "BFS (Iterative)",
+        "code": "from collections import deque\n\nclass TreeNode:\n    def __init__(self, val=0, left=None, right=None):\n        self.val = val; self.left = left; self.right = right\n\ndef build(values):\n    if not values: return None\n    root = TreeNode(values[0])\n    q = deque([root]); i = 1\n    while q and i < len(values):\n        node = q.popleft()\n        if i < len(values) and values[i] is not None:\n            node.left = TreeNode(values[i]); q.append(node.left)\n        i += 1\n        if i < len(values) and values[i] is not None:\n            node.right = TreeNode(values[i]); q.append(node.right)\n        i += 1\n    return root\n\nclass Solution:\n    def goodNodes(self, root):\n        count = 0\n        queue = deque([(root, root.val)])\n        while queue:\n            node, max_val = queue.popleft()\n            if node.val >= max_val:\n                count += 1\n            new_max = max(max_val, node.val)\n            if node.left:\n                queue.append((node.left, new_max))\n            if node.right:\n                queue.append((node.right, new_max))\n        return count\n\n\nsol = Solution()\nprint(sol.goodNodes(build([3,1,4,3,None,1,5])))  # 4\nprint(sol.goodNodes(build([3,3,None,4,2])))       # 3\nprint(sol.goodNodes(build([1])))                  # 1\n"
+      }
+    ]
   },
   {
     "num": 208,
@@ -1346,7 +1564,14 @@
       "Maintain a min-heap of size k. The top element is always the kth largest seen so far.",
       "Push each element. If heap exceeds size k, pop the smallest. Final heap[0] is the answer."
     ],
-    "description": "Given an integer array `nums` and an integer `k`, return the `k`th **largest** element in the array.\n\nNote that it is the `k`th largest element in the sorted order, not the `k`th distinct element.\n\nCan you solve it without sorting?\n\n**Example:**\n```\nInput: nums = [3,2,1,5,6,4], k = 2\nOutput: 5\n```"
+    "description": "Given an integer array `nums` and an integer `k`, return the `k`th **largest** element in the array.\n\nNote that it is the `k`th largest element in the sorted order, not the `k`th distinct element.\n\nCan you solve it without sorting?\n\n**Example:**\n```\nInput: nums = [3,2,1,5,6,4], k = 2\nOutput: 5\n```",
+    "solution_label": "Heap",
+    "alt_solutions": [
+      {
+        "label": "Quickselect",
+        "code": "import random\n\nclass Solution:\n    def findKthLargest(self, nums, k):\n        target = len(nums) - k\n\n        def quickselect(l, r):\n            pivot_idx = random.randint(l, r)\n            nums[pivot_idx], nums[r] = nums[r], nums[pivot_idx]\n            pivot = nums[r]\n            store = l\n            for i in range(l, r):\n                if nums[i] <= pivot:\n                    nums[i], nums[store] = nums[store], nums[i]\n                    store += 1\n            nums[store], nums[r] = nums[r], nums[store]\n            if store == target:\n                return nums[store]\n            elif store < target:\n                return quickselect(store + 1, r)\n            else:\n                return quickselect(l, store - 1)\n\n        return quickselect(0, len(nums) - 1)\n\n\nsol = Solution()\nprint(sol.findKthLargest([3,2,1,5,6,4], 2))     # 5\nprint(sol.findKthLargest([3,2,3,1,2,4,5,5,6], 4))  # 4\n"
+      }
+    ]
   },
   {
     "num": 295,
@@ -1403,7 +1628,14 @@
       "Use a max-heap for task frequencies and a cooldown queue tracking when tasks become available.",
       "Each tick: pop from heap, decrement count, push to cooldown with ready time. When cooldown expires, push back to heap."
     ],
-    "description": "Given a characters array `tasks` representing CPU tasks (A-Z) and a non-negative integer `n` representing the cooldown interval between two **same tasks**, return the least number of intervals the CPU will take to finish all tasks.\n\n**Example:**\n```\nInput: tasks = [\"A\",\"A\",\"A\",\"B\",\"B\",\"B\"], n = 2\nOutput: 8\nExplanation: A → B → idle → A → B → idle → A → B\n```"
+    "description": "Given a characters array `tasks` representing CPU tasks (A-Z) and a non-negative integer `n` representing the cooldown interval between two **same tasks**, return the least number of intervals the CPU will take to finish all tasks.\n\n**Example:**\n```\nInput: tasks = [\"A\",\"A\",\"A\",\"B\",\"B\",\"B\"], n = 2\nOutput: 8\nExplanation: A → B → idle → A → B → idle → A → B\n```",
+    "solution_label": "Heap + Cooldown Queue",
+    "alt_solutions": [
+      {
+        "label": "Math Formula",
+        "code": "from collections import Counter\n\nclass Solution:\n    def leastInterval(self, tasks, n):\n        counts = Counter(tasks)\n        max_count = max(counts.values())\n        max_count_tasks = sum(1 for c in counts.values() if c == max_count)\n        return max(len(tasks), (max_count - 1) * (n + 1) + max_count_tasks)\n\n\nsol = Solution()\nprint(sol.leastInterval([\"A\",\"A\",\"A\",\"B\",\"B\",\"B\"], 2))              # 8\nprint(sol.leastInterval([\"A\",\"C\",\"A\",\"B\",\"D\",\"B\"], 1))              # 6\nprint(sol.leastInterval([\"A\",\"A\",\"A\",\"B\",\"B\",\"B\"], 0))              # 6\n"
+      }
+    ]
   },
   {
     "num": 703,
@@ -1440,7 +1672,14 @@
       "Use a max-heap of size k. Push negative distances so Python's min-heap acts as a max-heap.",
       "For each point, if heap has fewer than k elements push it. Otherwise, replace the farthest if current is closer."
     ],
-    "description": "Given an array of `points` where `points[i] = [xi, yi]` represents a point on the X-Y plane and an integer `k`, return the `k` **closest points** to the origin `(0, 0)`.\n\nThe distance between two points is the Euclidean distance: `√(x² + y²)`.\n\n**Example:**\n```\nInput: points = [[1,3],[-2,2]], k = 1\nOutput: [[-2,2]]\n```"
+    "description": "Given an array of `points` where `points[i] = [xi, yi]` represents a point on the X-Y plane and an integer `k`, return the `k` **closest points** to the origin `(0, 0)`.\n\nThe distance between two points is the Euclidean distance: `√(x² + y²)`.\n\n**Example:**\n```\nInput: points = [[1,3],[-2,2]], k = 1\nOutput: [[-2,2]]\n```",
+    "solution_label": "Heap (Max-Heap)",
+    "alt_solutions": [
+      {
+        "label": "Sorting",
+        "code": "class Solution:\n    def kClosest(self, points, k):\n        points.sort(key=lambda p: p[0] ** 2 + p[1] ** 2)\n        return points[:k]\n\n\nsol = Solution()\nprint(sorted(sol.kClosest([[1,3],[-2,2]], 1)))           # [[-2, 2]]\nprint(sorted(sol.kClosest([[3,3],[5,-1],[-2,4]], 2)))    # [[-2, 4], [3, 3]]\n"
+      }
+    ]
   },
   {
     "num": 1046,
@@ -1475,7 +1714,14 @@
       "Use backtracking with an index tracking which digit you're processing. At each level, branch into all letters for that digit.",
       "Build the string by concatenating characters. When the string length equals the number of digits, add it to results."
     ],
-    "description": "Given a string containing digits from `2-9`, return **all possible letter combinations** that the number could represent (like on a phone's dial pad).\n\n**Example:**\n```\nInput: digits = \"23\"\nOutput: [\"ad\",\"ae\",\"af\",\"bd\",\"be\",\"bf\",\"cd\",\"ce\",\"cf\"]\n```"
+    "description": "Given a string containing digits from `2-9`, return **all possible letter combinations** that the number could represent (like on a phone's dial pad).\n\n**Example:**\n```\nInput: digits = \"23\"\nOutput: [\"ad\",\"ae\",\"af\",\"bd\",\"be\",\"bf\",\"cd\",\"ce\",\"cf\"]\n```",
+    "solution_label": "Backtracking",
+    "alt_solutions": [
+      {
+        "label": "Iterative (BFS-style)",
+        "code": "class Solution:\n    def letterCombinations(self, digits):\n        if not digits:\n            return []\n        phone = {\n            \"2\": \"abc\", \"3\": \"def\", \"4\": \"ghi\", \"5\": \"jkl\",\n            \"6\": \"mno\", \"7\": \"pqrs\", \"8\": \"tuv\", \"9\": \"wxyz\"\n        }\n        result = [\"\"]\n        for digit in digits:\n            new_result = []\n            for combo in result:\n                for letter in phone[digit]:\n                    new_result.append(combo + letter)\n            result = new_result\n        return result\n\n\nsol = Solution()\nprint(sorted(sol.letterCombinations(\"23\")))  # ['ad', 'ae', 'af', 'bd', 'be', 'bf', 'cd', 'ce', 'cf']\nprint(sol.letterCombinations(\"\"))            # []\nprint(sorted(sol.letterCombinations(\"2\")))   # ['a', 'b', 'c']\n"
+      }
+    ]
   },
   {
     "num": 39,
@@ -1522,14 +1768,21 @@
       "Array",
       "Backtracking"
     ],
-    "template": "class Solution:\n    def permute(self, nums):\n        # Your code here\n        pass\n\n\nsol = Solution()\nprint(sorted(sol.permute([1, 2, 3])))  # [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]\nprint(sol.permute([0, 1]))             # [[0, 1], [1, 0]]\nprint(sol.permute([1]))                # [[1]]\n",
-    "solution": "class Solution:\n    def permute(self, nums):\n        res = []\n\n        def backtrack(perm):\n            if len(perm) == len(nums):\n                res.append(perm[:])\n                return\n            for n in nums:\n                if n not in perm:\n                    perm.append(n)\n                    backtrack(perm)\n                    perm.pop()\n\n        backtrack([])\n        return res\n\n\nsol = Solution()\nprint(sorted(sol.permute([1, 2, 3])))  # [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]\nprint(sol.permute([0, 1]))             # [[0, 1], [1, 0]]\nprint(sol.permute([1]))                # [[1]]\n",
+    "template": "class Solution:\n    def permute(self, nums):\n        # Your code here\n        pass\n\n\nsol = Solution()\nprint(sorted(sol.permute([1, 2, 3])))  # [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]\nprint(sorted(sol.permute([0, 1])))             # [[0, 1], [1, 0]]\nprint(sol.permute([1]))                # [[1]]\n",
+    "solution": "class Solution:\n    def permute(self, nums):\n        res = []\n\n        def backtrack(perm):\n            if len(perm) == len(nums):\n                res.append(perm[:])\n                return\n            for n in nums:\n                if n not in perm:\n                    perm.append(n)\n                    backtrack(perm)\n                    perm.pop()\n\n        backtrack([])\n        return res\n\n\nsol = Solution()\nprint(sorted(sol.permute([1, 2, 3])))  # [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]\nprint(sorted(sol.permute([0, 1])))             # [[0, 1], [1, 0]]\nprint(sol.permute([1]))                # [[1]]\n",
     "hints": [
       "A permutation uses every element exactly once. At each position, try every unused element.",
       "Use backtracking: build the permutation one element at a time, skipping elements already in the current permutation.",
       "For each recursive call, iterate through all nums and only add those not already in the current permutation. When the permutation length equals nums length, save it."
     ],
-    "description": "Given an array `nums` of distinct integers, return **all possible permutations**. You can return the answer in any order.\n\n**Example:**\n```\nInput: nums = [1,2,3]\nOutput: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]\n```"
+    "description": "Given an array `nums` of distinct integers, return **all possible permutations**. You can return the answer in any order.\n\n**Example:**\n```\nInput: nums = [1,2,3]\nOutput: [[1,2,3],[1,3,2],[2,1,3],[2,3,1],[3,1,2],[3,2,1]]\n```",
+    "solution_label": "Backtracking",
+    "alt_solutions": [
+      {
+        "label": "Iterative (Insert)",
+        "code": "class Solution:\n    def permute(self, nums):\n        result = [[]]\n        for num in nums:\n            new_result = []\n            for perm in result:\n                for i in range(len(perm) + 1):\n                    new_result.append(perm[:i] + [num] + perm[i:])\n            result = new_result\n        return result\n\n\nsol = Solution()\nprint(sorted(sol.permute([1, 2, 3])))  # [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]\nprint(sorted(sol.permute([0, 1])))             # [[0, 1], [1, 0]]\nprint(sol.permute([1]))                # [[1]]\n"
+      }
+    ]
   },
   {
     "num": 51,
@@ -1558,14 +1811,25 @@
       "Array",
       "Backtracking"
     ],
-    "template": "class Solution:\n    def subsets(self, nums):\n        # Your code here\n        pass\n\n\nsol = Solution()\nprint(sorted(sol.subsets([1, 2, 3])))  # [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]\nprint(sol.subsets([0]))                # [[], [0]]\n",
-    "solution": "class Solution:\n    def subsets(self, nums):\n        res = []\n        subset = []\n\n        def backtrack(i):\n            if i >= len(nums):\n                res.append(subset[:])\n                return\n            subset.append(nums[i])\n            backtrack(i + 1)\n            subset.pop()\n            backtrack(i + 1)\n\n        backtrack(0)\n        return res\n\n\nsol = Solution()\nprint(sorted(sol.subsets([1, 2, 3])))  # [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]\nprint(sol.subsets([0]))                # [[], [0]]\n",
+    "template": "class Solution:\n    def subsets(self, nums):\n        # Your code here\n        pass\n\n\nsol = Solution()\nprint(sorted(sol.subsets([1, 2, 3])))  # [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]\nprint(sorted(sol.subsets([0])))                # [[], [0]]\n",
+    "solution": "class Solution:\n    def subsets(self, nums):\n        res = []\n        subset = []\n\n        def backtrack(i):\n            if i >= len(nums):\n                res.append(subset[:])\n                return\n            subset.append(nums[i])\n            backtrack(i + 1)\n            subset.pop()\n            backtrack(i + 1)\n\n        backtrack(0)\n        return res\n\n\nsol = Solution()\nprint(sorted(sol.subsets([1, 2, 3])))  # [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]\nprint(sorted(sol.subsets([0])))                # [[], [0]]\n",
     "hints": [
       "For each element, you have two choices: include it or skip it.",
       "Use a recursive backtracking approach where you build subsets by deciding include/exclude at each index.",
       "At each index i, add nums[i] to the current subset and recurse, then remove it and recurse again. When i reaches the end, append a copy of the current subset to results."
     ],
-    "description": "Given an integer array `nums` of **unique** elements, return **all possible subsets** (the power set).\n\nThe solution set must not contain duplicate subsets. Return the solution in any order.\n\n**Example:**\n```\nInput: nums = [1,2,3]\nOutput: [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]\n```"
+    "description": "Given an integer array `nums` of **unique** elements, return **all possible subsets** (the power set).\n\nThe solution set must not contain duplicate subsets. Return the solution in any order.\n\n**Example:**\n```\nInput: nums = [1,2,3]\nOutput: [[],[1],[2],[1,2],[3],[1,3],[2,3],[1,2,3]]\n```",
+    "solution_label": "Backtracking",
+    "alt_solutions": [
+      {
+        "label": "Iterative (Build-Up)",
+        "code": "class Solution:\n    def subsets(self, nums):\n        result = [[]]\n        for num in nums:\n            result += [subset + [num] for subset in result]\n        return result\n\n\nsol = Solution()\nprint(sorted(sol.subsets([1, 2, 3])))  # [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]\nprint(sorted(sol.subsets([0])))                # [[], [0]]\n"
+      },
+      {
+        "label": "Bitmask",
+        "code": "class Solution:\n    def subsets(self, nums):\n        n = len(nums)\n        result = []\n        for mask in range(1 << n):\n            subset = [nums[i] for i in range(n) if mask & (1 << i)]\n            result.append(subset)\n        return result\n\n\nsol = Solution()\nprint(sorted(sol.subsets([1, 2, 3])))  # [[], [1], [1, 2], [1, 2, 3], [1, 3], [2], [2, 3], [3]]\nprint(sorted(sol.subsets([0])))                # [[], [0]]\n"
+      }
+    ]
   },
   {
     "num": 79,
@@ -1602,7 +1866,14 @@
       "Sort the array first. When you decide to skip an element, skip all duplicates of that element too.",
       "After sorting, at each index decide to include or exclude. When excluding, advance the index past all duplicates of the current element."
     ],
-    "description": "Given an integer array `nums` that **may contain duplicates**, return all possible subsets (the power set).\n\nThe solution set must **not** contain duplicate subsets. Return the solution in any order.\n\n**Example:**\n```\nInput: nums = [1,2,2]\nOutput: [[],[1],[1,2],[1,2,2],[2],[2,2]]\n```"
+    "description": "Given an integer array `nums` that **may contain duplicates**, return all possible subsets (the power set).\n\nThe solution set must **not** contain duplicate subsets. Return the solution in any order.\n\n**Example:**\n```\nInput: nums = [1,2,2]\nOutput: [[],[1],[1,2],[1,2,2],[2],[2,2]]\n```",
+    "solution_label": "Backtracking",
+    "alt_solutions": [
+      {
+        "label": "Iterative (Build-Up)",
+        "code": "class Solution:\n    def subsetsWithDup(self, nums):\n        nums.sort()\n        result = [[]]\n        prev_size = 0\n        for i in range(len(nums)):\n            start = prev_size if i > 0 and nums[i] == nums[i - 1] else 0\n            prev_size = len(result)\n            result += [subset + [nums[i]] for subset in result[start:]]\n        return result\n\n\nsol = Solution()\nprint(sorted(sol.subsetsWithDup([1, 2, 2])))  # [[], [1], [1, 2], [1, 2, 2], [2], [2, 2]]\nprint(sorted(sol.subsetsWithDup([0])))         # [[], [0]]\n"
+      }
+    ]
   },
   {
     "num": 131,
@@ -1639,7 +1910,14 @@
       "BFS gives the shortest path. At each step, try changing each character to every letter a-z and check if the result is in the word list.",
       "Use a set for O(1) word lookup. BFS level by level, tracking visited words. For each word, try all 26 letters at each position. Return the level when endWord is found."
     ],
-    "description": "Given two words, `beginWord` and `endWord`, and a dictionary `wordList`, return the number of words in the **shortest transformation sequence** from `beginWord` to `endWord`, where each transformation changes a single letter.\n\nReturn `0` if no such sequence exists.\n\n**Example:**\n```\nInput: beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]\nOutput: 5\nExplanation: \"hit\" → \"hot\" → \"dot\" → \"dog\" → \"cog\"\n```"
+    "description": "Given two words, `beginWord` and `endWord`, and a dictionary `wordList`, return the number of words in the **shortest transformation sequence** from `beginWord` to `endWord`, where each transformation changes a single letter.\n\nReturn `0` if no such sequence exists.\n\n**Example:**\n```\nInput: beginWord = \"hit\", endWord = \"cog\", wordList = [\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]\nOutput: 5\nExplanation: \"hit\" → \"hot\" → \"dot\" → \"dog\" → \"cog\"\n```",
+    "solution_label": "BFS",
+    "alt_solutions": [
+      {
+        "label": "Bidirectional BFS",
+        "code": "class Solution:\n    def ladderLength(self, beginWord, endWord, wordList):\n        word_set = set(wordList)\n        if endWord not in word_set:\n            return 0\n        front = {beginWord}\n        back = {endWord}\n        word_set.discard(beginWord)\n        length = 1\n        while front and back:\n            if len(front) > len(back):\n                front, back = back, front\n            next_front = set()\n            for word in front:\n                for i in range(len(word)):\n                    for c in 'abcdefghijklmnopqrstuvwxyz':\n                        candidate = word[:i] + c + word[i+1:]\n                        if candidate in back:\n                            return length + 1\n                        if candidate in word_set:\n                            next_front.add(candidate)\n                            word_set.discard(candidate)\n            front = next_front\n            length += 1\n        return 0\n\n\nsol = Solution()\nprint(sol.ladderLength(\"hit\", \"cog\", [\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]))  # 5\nprint(sol.ladderLength(\"hit\", \"cog\", [\"hot\",\"dot\",\"dog\",\"lot\",\"log\"]))        # 0\n"
+      }
+    ]
   },
   {
     "num": 130,
@@ -1659,7 +1937,14 @@
       "Start DFS/BFS from all border O's and mark them as safe (temporary marker). Then flip remaining O's to X and restore safe ones.",
       "Mark border-connected O's as 'T'. Then iterate the entire board: convert 'O' to 'X' (captured) and 'T' back to 'O' (safe)."
     ],
-    "description": "Given an `m x n` matrix `board` containing `'X'` and `'O'`, capture all regions that are **4-directionally surrounded** by `'X'`.\n\nA region is captured by flipping all `'O'`s into `'X'`s in that surrounded region."
+    "description": "Given an `m x n` matrix `board` containing `'X'` and `'O'`, capture all regions that are **4-directionally surrounded** by `'X'`.\n\nA region is captured by flipping all `'O'`s into `'X'`s in that surrounded region.",
+    "solution_label": "DFS",
+    "alt_solutions": [
+      {
+        "label": "BFS",
+        "code": "from collections import deque\n\nclass Solution:\n    def solve(self, board):\n        if not board:\n            return\n        rows, cols = len(board), len(board[0])\n\n        def bfs(r, c):\n            queue = deque([(r, c)])\n            board[r][c] = \"T\"\n            while queue:\n                row, col = queue.popleft()\n                for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:\n                    nr, nc = row + dr, col + dc\n                    if 0 <= nr < rows and 0 <= nc < cols and board[nr][nc] == \"O\":\n                        board[nr][nc] = \"T\"\n                        queue.append((nr, nc))\n\n        # Mark border-connected O's\n        for r in range(rows):\n            for c in range(cols):\n                if (r == 0 or r == rows-1 or c == 0 or c == cols-1) and board[r][c] == \"O\":\n                    bfs(r, c)\n\n        # Flip: O -> X (captured), T -> O (border-connected)\n        for r in range(rows):\n            for c in range(cols):\n                if board[r][c] == \"O\":\n                    board[r][c] = \"X\"\n                elif board[r][c] == \"T\":\n                    board[r][c] = \"O\"\n\n\nsol = Solution()\nboard1 = [[\"X\",\"X\",\"X\",\"X\"],[\"X\",\"O\",\"O\",\"X\"],[\"X\",\"X\",\"O\",\"X\"],[\"X\",\"O\",\"X\",\"X\"]]\nsol.solve(board1)\nprint(board1)  # [['X', 'X', 'X', 'X'], ['X', 'X', 'X', 'X'], ['X', 'X', 'X', 'X'], ['X', 'O', 'X', 'X']]\nboard2 = [[\"X\"]]\nsol.solve(board2)\nprint(board2)  # [['X']]\n"
+      }
+    ]
   },
   {
     "num": 133,
@@ -1679,7 +1964,14 @@
       "Use a hash map from original node to cloned node. Before cloning a node, check if it already exists in the map.",
       "DFS through the graph. For each node, create a clone, store it in the map, then recursively clone all neighbors and add them to the clone's neighbor list."
     ],
-    "description": "Given a reference of a node in a **connected** undirected graph, return a **deep copy** (clone) of the graph.\n\nEach node in the graph contains a value and a list of its neighbors."
+    "description": "Given a reference of a node in a **connected** undirected graph, return a **deep copy** (clone) of the graph.\n\nEach node in the graph contains a value and a list of its neighbors.",
+    "solution_label": "DFS",
+    "alt_solutions": [
+      {
+        "label": "BFS",
+        "code": "from collections import deque\n\nclass Node:\n    def __init__(self, val=0, neighbors=None):\n        self.val = val\n        self.neighbors = neighbors if neighbors is not None else []\n\nclass Solution:\n    def cloneGraph(self, node):\n        if not node:\n            return None\n        old_to_new = {node: Node(node.val)}\n        queue = deque([node])\n        while queue:\n            curr = queue.popleft()\n            for neighbor in curr.neighbors:\n                if neighbor not in old_to_new:\n                    old_to_new[neighbor] = Node(neighbor.val)\n                    queue.append(neighbor)\n                old_to_new[curr].neighbors.append(old_to_new[neighbor])\n        return old_to_new[node]\n\n\ndef build_graph(adj_list):\n    if not adj_list: return None\n    nodes = {i: Node(i) for i in range(1, len(adj_list) + 1)}\n    for i, neighbors in enumerate(adj_list):\n        nodes[i + 1].neighbors = [nodes[n] for n in neighbors]\n    return nodes[1]\n\ndef graph_to_adj(node):\n    if not node: return []\n    visited = {}\n    def dfs(n):\n        if n.val in visited: return\n        visited[n.val] = [nb.val for nb in n.neighbors]\n        for nb in n.neighbors: dfs(nb)\n    dfs(node)\n    return [visited[i] for i in sorted(visited)]\n\nsol = Solution()\ng1 = build_graph([[2, 4], [1, 3], [2, 4], [1, 3]])\nclone1 = sol.cloneGraph(g1)\nprint(graph_to_adj(clone1))  # [[2, 4], [1, 3], [2, 4], [1, 3]]\nprint(clone1 is not g1)      # True\nprint(sol.cloneGraph(None))  # None\n"
+      }
+    ]
   },
   {
     "num": 200,
@@ -1699,7 +1991,18 @@
       "Use DFS or BFS. When you find a '1', increment count and flood-fill to mark all connected '1's as visited.",
       "Sink the island by changing '1' to '0' as you visit each cell. Explore all 4 directions from each cell."
     ],
-    "description": "Given an `m x n` 2D binary grid `grid` which represents a map of `'1'`s (land) and `'0'`s (water), return the **number of islands**.\n\nAn island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically.\n\n**Example:**\n```\nInput: grid = [\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"0\",\"0\",\"1\",\"0\",\"0\"],\n  [\"0\",\"0\",\"0\",\"1\",\"1\"]\n]\nOutput: 3\n```"
+    "description": "Given an `m x n` 2D binary grid `grid` which represents a map of `'1'`s (land) and `'0'`s (water), return the **number of islands**.\n\nAn island is surrounded by water and is formed by connecting adjacent lands horizontally or vertically.\n\n**Example:**\n```\nInput: grid = [\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"1\",\"1\",\"0\",\"0\",\"0\"],\n  [\"0\",\"0\",\"1\",\"0\",\"0\"],\n  [\"0\",\"0\",\"0\",\"1\",\"1\"]\n]\nOutput: 3\n```",
+    "solution_label": "DFS",
+    "alt_solutions": [
+      {
+        "label": "BFS",
+        "code": "from collections import deque\n\nclass Solution:\n    def numIslands(self, grid):\n        if not grid:\n            return 0\n        rows, cols = len(grid), len(grid[0])\n        count = 0\n\n        def bfs(r, c):\n            queue = deque([(r, c)])\n            grid[r][c] = \"0\"\n            while queue:\n                row, col = queue.popleft()\n                for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:\n                    nr, nc = row + dr, col + dc\n                    if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == \"1\":\n                        grid[nr][nc] = \"0\"\n                        queue.append((nr, nc))\n\n        for r in range(rows):\n            for c in range(cols):\n                if grid[r][c] == \"1\":\n                    count += 1\n                    bfs(r, c)\n        return count\n\n\nsol = Solution()\nprint(sol.numIslands([\n    [\"1\",\"1\",\"1\",\"1\",\"0\"],\n    [\"1\",\"1\",\"0\",\"1\",\"0\"],\n    [\"1\",\"1\",\"0\",\"0\",\"0\"],\n    [\"0\",\"0\",\"0\",\"0\",\"0\"]\n]))  # 1\nprint(sol.numIslands([\n    [\"1\",\"1\",\"0\",\"0\",\"0\"],\n    [\"1\",\"1\",\"0\",\"0\",\"0\"],\n    [\"0\",\"0\",\"1\",\"0\",\"0\"],\n    [\"0\",\"0\",\"0\",\"1\",\"1\"]\n]))  # 3\n"
+      },
+      {
+        "label": "Union-Find",
+        "code": "class UnionFind:\n    def __init__(self, n):\n        self.parent = list(range(n))\n        self.rank = [0] * n\n        self.count = 0\n\n    def find(self, x):\n        while self.parent[x] != x:\n            self.parent[x] = self.parent[self.parent[x]]\n            x = self.parent[x]\n        return x\n\n    def union(self, x, y):\n        px, py = self.find(x), self.find(y)\n        if px == py:\n            return\n        if self.rank[px] < self.rank[py]:\n            px, py = py, px\n        self.parent[py] = px\n        if self.rank[px] == self.rank[py]:\n            self.rank[px] += 1\n        self.count -= 1\n\nclass Solution:\n    def numIslands(self, grid):\n        if not grid:\n            return 0\n        rows, cols = len(grid), len(grid[0])\n        uf = UnionFind(rows * cols)\n\n        for r in range(rows):\n            for c in range(cols):\n                if grid[r][c] == \"1\":\n                    uf.count += 1\n\n        for r in range(rows):\n            for c in range(cols):\n                if grid[r][c] == \"1\":\n                    idx = r * cols + c\n                    for dr, dc in [(1,0),(0,1)]:\n                        nr, nc = r + dr, c + dc\n                        if nr < rows and nc < cols and grid[nr][nc] == \"1\":\n                            uf.union(idx, nr * cols + nc)\n        return uf.count\n\n\nsol = Solution()\nprint(sol.numIslands([\n    [\"1\",\"1\",\"1\",\"1\",\"0\"],\n    [\"1\",\"1\",\"0\",\"1\",\"0\"],\n    [\"1\",\"1\",\"0\",\"0\",\"0\"],\n    [\"0\",\"0\",\"0\",\"0\",\"0\"]\n]))  # 1\nprint(sol.numIslands([\n    [\"1\",\"1\",\"0\",\"0\",\"0\"],\n    [\"1\",\"1\",\"0\",\"0\",\"0\"],\n    [\"0\",\"0\",\"1\",\"0\",\"0\"],\n    [\"0\",\"0\",\"0\",\"1\",\"1\"]\n]))  # 3\n"
+      }
+    ]
   },
   {
     "num": 207,
@@ -1719,7 +2022,14 @@
       "Build an adjacency list and use DFS with three states: unvisited, visiting (in current path), and visited (fully processed).",
       "If you encounter a node in the 'visiting' state during DFS, there's a cycle. Mark nodes as 'visited' after fully exploring all their prerequisites."
     ],
-    "description": "There are a total of `numCourses` courses you have to take, labeled from `0` to `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [ai, bi]` indicates that you must take course `bi` before course `ai`.\n\nReturn `True` if you can finish all courses, or `False` otherwise.\n\n**Example:**\n```\nInput: numCourses = 2, prerequisites = [[1,0]]\nOutput: True\n```"
+    "description": "There are a total of `numCourses` courses you have to take, labeled from `0` to `numCourses - 1`. You are given an array `prerequisites` where `prerequisites[i] = [ai, bi]` indicates that you must take course `bi` before course `ai`.\n\nReturn `True` if you can finish all courses, or `False` otherwise.\n\n**Example:**\n```\nInput: numCourses = 2, prerequisites = [[1,0]]\nOutput: True\n```",
+    "solution_label": "DFS (Cycle Detection)",
+    "alt_solutions": [
+      {
+        "label": "BFS (Kahn's Algorithm)",
+        "code": "from collections import deque, defaultdict\n\nclass Solution:\n    def canFinish(self, numCourses, prerequisites):\n        graph = defaultdict(list)\n        in_degree = [0] * numCourses\n\n        for course, prereq in prerequisites:\n            graph[prereq].append(course)\n            in_degree[course] += 1\n\n        queue = deque(i for i in range(numCourses) if in_degree[i] == 0)\n        count = 0\n\n        while queue:\n            node = queue.popleft()\n            count += 1\n            for neighbor in graph[node]:\n                in_degree[neighbor] -= 1\n                if in_degree[neighbor] == 0:\n                    queue.append(neighbor)\n\n        return count == numCourses\n\n\nsol = Solution()\nprint(sol.canFinish(2, [[1, 0]]))          # True\nprint(sol.canFinish(2, [[1, 0], [0, 1]]))  # False\nprint(sol.canFinish(5, [[1,4],[2,4],[3,1],[3,2]]))  # True\n"
+      }
+    ]
   },
   {
     "num": 210,
@@ -1739,7 +2049,14 @@
       "Use DFS with cycle detection. After fully processing a node (all dependencies visited), add it to the result.",
       "DFS post-order gives reverse topological order. Append courses after all their prerequisites are processed. If a cycle is detected, return empty list."
     ],
-    "description": "There are `numCourses` courses. Given `prerequisites` pairs, return the **ordering** of courses you should take to finish all courses. If impossible, return an empty array.\n\nIf there are multiple valid orderings, return any of them.\n\n**Example:**\n```\nInput: numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]\nOutput: [0,2,1,3] or [0,1,2,3]\n```"
+    "description": "There are `numCourses` courses. Given `prerequisites` pairs, return the **ordering** of courses you should take to finish all courses. If impossible, return an empty array.\n\nIf there are multiple valid orderings, return any of them.\n\n**Example:**\n```\nInput: numCourses = 4, prerequisites = [[1,0],[2,0],[3,1],[3,2]]\nOutput: [0,2,1,3] or [0,1,2,3]\n```",
+    "solution_label": "DFS (Topological Sort)",
+    "alt_solutions": [
+      {
+        "label": "BFS (Kahn's Algorithm)",
+        "code": "from collections import deque, defaultdict\n\nclass Solution:\n    def findOrder(self, numCourses, prerequisites):\n        graph = defaultdict(list)\n        in_degree = [0] * numCourses\n\n        for course, prereq in prerequisites:\n            graph[prereq].append(course)\n            in_degree[course] += 1\n\n        queue = deque(i for i in range(numCourses) if in_degree[i] == 0)\n        order = []\n\n        while queue:\n            node = queue.popleft()\n            order.append(node)\n            for neighbor in graph[node]:\n                in_degree[neighbor] -= 1\n                if in_degree[neighbor] == 0:\n                    queue.append(neighbor)\n\n        return order if len(order) == numCourses else []\n\n\nsol = Solution()\nprint(sol.findOrder(2, [[1, 0]]))                    # [0, 1]\nprint(sol.findOrder(4, [[1,0],[2,0],[3,1],[3,2]]))   # [0, 1, 2, 3] or [0, 2, 1, 3]\nprint(sol.findOrder(1, []))                          # [0]\n"
+      }
+    ]
   },
   {
     "num": 261,
@@ -1757,7 +2074,14 @@
       "Use Union-Find. First check if edges count equals n-1. Then process edges — if any edge connects already-connected nodes, there's a cycle.",
       "Quick check: if len(edges) != n-1, return False. Then use Union-Find: for each edge, if both nodes share the same root, it's a cycle — return False."
     ],
-    "description": "Given `n` nodes labeled from `0` to `n - 1` and a list of undirected edges, determine if these edges form a **valid tree**.\n\nA valid tree has exactly `n - 1` edges, is connected, and has no cycles.\n\n**Example:**\n```\nInput: n = 5, edges = [[0,1],[0,2],[0,3],[1,4]]\nOutput: True\n```"
+    "description": "Given `n` nodes labeled from `0` to `n - 1` and a list of undirected edges, determine if these edges form a **valid tree**.\n\nA valid tree has exactly `n - 1` edges, is connected, and has no cycles.\n\n**Example:**\n```\nInput: n = 5, edges = [[0,1],[0,2],[0,3],[1,4]]\nOutput: True\n```",
+    "solution_label": "Union-Find",
+    "alt_solutions": [
+      {
+        "label": "DFS",
+        "code": "from collections import defaultdict\n\nclass Solution:\n    def validTree(self, n, edges):\n        if len(edges) != n - 1:\n            return False\n        graph = defaultdict(list)\n        for u, v in edges:\n            graph[u].append(v)\n            graph[v].append(u)\n\n        visited = set()\n        def dfs(node, parent):\n            visited.add(node)\n            for neighbor in graph[node]:\n                if neighbor == parent:\n                    continue\n                if neighbor in visited:\n                    return False\n                if not dfs(neighbor, node):\n                    return False\n            return True\n\n        return dfs(0, -1) and len(visited) == n\n\n\nsol = Solution()\nprint(sol.validTree(5, [[0,1],[0,2],[0,3],[1,4]]))   # True\nprint(sol.validTree(5, [[0,1],[1,2],[2,3],[1,3],[1,4]]))  # False\nprint(sol.validTree(1, []))  # True\n"
+      }
+    ]
   },
   {
     "num": 286,
@@ -1794,7 +2118,18 @@
       "Use Union-Find. Initialize each node as its own parent. For each edge, union the two nodes.",
       "Start with components = n. Each successful union (where the two nodes had different roots) decreases components by 1. Return the final count."
     ],
-    "description": "Given `n` nodes labeled from `0` to `n - 1` and a list of undirected edges, return the **number of connected components** in the graph.\n\n**Example:**\n```\nInput: n = 5, edges = [[0,1],[1,2],[3,4]]\nOutput: 2\n```"
+    "description": "Given `n` nodes labeled from `0` to `n - 1` and a list of undirected edges, return the **number of connected components** in the graph.\n\n**Example:**\n```\nInput: n = 5, edges = [[0,1],[1,2],[3,4]]\nOutput: 2\n```",
+    "solution_label": "Union-Find",
+    "alt_solutions": [
+      {
+        "label": "DFS",
+        "code": "from collections import defaultdict\n\nclass Solution:\n    def countComponents(self, n, edges):\n        graph = defaultdict(list)\n        for u, v in edges:\n            graph[u].append(v)\n            graph[v].append(u)\n\n        visited = set()\n        count = 0\n\n        def dfs(node):\n            visited.add(node)\n            for neighbor in graph[node]:\n                if neighbor not in visited:\n                    dfs(neighbor)\n\n        for i in range(n):\n            if i not in visited:\n                dfs(i)\n                count += 1\n        return count\n\n\nsol = Solution()\nprint(sol.countComponents(5, [[0,1],[1,2],[3,4]]))        # 2\nprint(sol.countComponents(5, [[0,1],[1,2],[2,3],[3,4]]))   # 1\n"
+      },
+      {
+        "label": "BFS",
+        "code": "from collections import defaultdict, deque\n\nclass Solution:\n    def countComponents(self, n, edges):\n        graph = defaultdict(list)\n        for u, v in edges:\n            graph[u].append(v)\n            graph[v].append(u)\n\n        visited = set()\n        count = 0\n\n        for i in range(n):\n            if i not in visited:\n                count += 1\n                queue = deque([i])\n                visited.add(i)\n                while queue:\n                    node = queue.popleft()\n                    for neighbor in graph[node]:\n                        if neighbor not in visited:\n                            visited.add(neighbor)\n                            queue.append(neighbor)\n        return count\n\n\nsol = Solution()\nprint(sol.countComponents(5, [[0,1],[1,2],[3,4]]))        # 2\nprint(sol.countComponents(5, [[0,1],[1,2],[2,3],[3,4]]))   # 1\n"
+      }
+    ]
   },
   {
     "num": 417,
@@ -1814,7 +2149,14 @@
       "Run DFS/BFS from Pacific border cells and Atlantic border cells separately, flowing uphill. Cells reachable from both are the answer.",
       "Pacific touches top and left edges, Atlantic touches bottom and right edges. DFS from each border, only moving to cells with height >= current. Intersect the two reachable sets."
     ],
-    "description": "There is an `m x n` rectangular island that borders the Pacific Ocean (top and left edges) and the Atlantic Ocean (bottom and right edges).\n\nWater can only flow in four directions (up, down, left, right) from a cell to a neighboring cell with **equal or lower** height.\n\nReturn a list of grid coordinates where water can flow to **both** the Pacific and Atlantic oceans."
+    "description": "There is an `m x n` rectangular island that borders the Pacific Ocean (top and left edges) and the Atlantic Ocean (bottom and right edges).\n\nWater can only flow in four directions (up, down, left, right) from a cell to a neighboring cell with **equal or lower** height.\n\nReturn a list of grid coordinates where water can flow to **both** the Pacific and Atlantic oceans.",
+    "solution_label": "DFS",
+    "alt_solutions": [
+      {
+        "label": "BFS",
+        "code": "from collections import deque\n\nclass Solution:\n    def pacificAtlantic(self, heights):\n        if not heights:\n            return []\n        rows, cols = len(heights), len(heights[0])\n\n        def bfs(starts):\n            reachable = set(starts)\n            queue = deque(starts)\n            while queue:\n                r, c = queue.popleft()\n                for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:\n                    nr, nc = r + dr, c + dc\n                    if (0 <= nr < rows and 0 <= nc < cols and\n                        (nr, nc) not in reachable and\n                        heights[nr][nc] >= heights[r][c]):\n                        reachable.add((nr, nc))\n                        queue.append((nr, nc))\n            return reachable\n\n        pacific = [(r, 0) for r in range(rows)] + [(0, c) for c in range(1, cols)]\n        atlantic = [(r, cols-1) for r in range(rows)] + [(rows-1, c) for c in range(cols-1)]\n\n        pac_reach = bfs(pacific)\n        atl_reach = bfs(atlantic)\n\n        return sorted([list(cell) for cell in pac_reach & atl_reach])\n\n\nsol = Solution()\nprint(sorted(sol.pacificAtlantic([\n    [1,2,2,3,5],\n    [3,2,3,4,4],\n    [2,4,5,3,1],\n    [6,7,1,4,5],\n    [5,1,1,2,4]\n])))  # [[0, 4], [1, 3], [1, 4], [2, 2], [3, 0], [3, 1], [4, 0]]\nprint(sol.pacificAtlantic([[1]]))  # [[0, 0]]\n"
+      }
+    ]
   },
   {
     "num": 684,
@@ -1832,7 +2174,14 @@
       "Use Union-Find. Process edges one by one. The first edge that connects two already-connected nodes is the redundant one.",
       "Implement Union-Find with path compression and union by rank. For each edge, if find(a) == find(b), that edge is redundant."
     ],
-    "description": "Given a graph that started as a tree with `n` nodes and had **one additional edge** added, return the edge that can be removed so the result is a tree.\n\nIf there are multiple answers, return the edge that occurs **last** in the input.\n\n**Example:**\n```\nInput: edges = [[1,2],[1,3],[2,3]]\nOutput: [2,3]\n```"
+    "description": "Given a graph that started as a tree with `n` nodes and had **one additional edge** added, return the edge that can be removed so the result is a tree.\n\nIf there are multiple answers, return the edge that occurs **last** in the input.\n\n**Example:**\n```\nInput: edges = [[1,2],[1,3],[2,3]]\nOutput: [2,3]\n```",
+    "solution_label": "Union-Find",
+    "alt_solutions": [
+      {
+        "label": "DFS (Cycle Detection)",
+        "code": "from collections import defaultdict\n\nclass Solution:\n    def findRedundantConnection(self, edges):\n        graph = defaultdict(set)\n\n        def has_path(src, dst, visited):\n            if src == dst:\n                return True\n            visited.add(src)\n            for neighbor in graph[src]:\n                if neighbor not in visited and has_path(neighbor, dst, visited):\n                    return True\n            return False\n\n        for u, v in edges:\n            if graph[u] and graph[v] and has_path(u, v, set()):\n                return [u, v]\n            graph[u].add(v)\n            graph[v].add(u)\n\n        return []\n\n\nsol = Solution()\nprint(sol.findRedundantConnection([[1,2],[1,3],[2,3]]))          # [2, 3]\nprint(sol.findRedundantConnection([[1,2],[2,3],[3,4],[1,4],[1,5]]))  # [1, 4]\n"
+      }
+    ]
   },
   {
     "num": 695,
@@ -1852,7 +2201,14 @@
       "Use DFS that returns the area (count of cells) for each island. Keep track of the maximum.",
       "DFS returns 0 for out-of-bounds or water cells. For land cells, mark as visited and return 1 + sum of DFS in all 4 directions."
     ],
-    "description": "You are given an `m x n` binary matrix `grid`. An island is a group of `1`'s connected 4-directionally. Return the maximum area of an island in the grid. If there is no island, return `0`.\n\n**Example:**\n```\nInput: grid = [[0,0,1,0,0],[0,0,0,0,0],[0,1,1,0,1],[0,1,0,0,1],[0,1,1,1,1]]\nOutput: 6\n```"
+    "description": "You are given an `m x n` binary matrix `grid`. An island is a group of `1`'s connected 4-directionally. Return the maximum area of an island in the grid. If there is no island, return `0`.\n\n**Example:**\n```\nInput: grid = [[0,0,1,0,0],[0,0,0,0,0],[0,1,1,0,1],[0,1,0,0,1],[0,1,1,1,1]]\nOutput: 6\n```",
+    "solution_label": "DFS",
+    "alt_solutions": [
+      {
+        "label": "BFS",
+        "code": "from collections import deque\n\nclass Solution:\n    def maxAreaOfIsland(self, grid):\n        if not grid:\n            return 0\n        rows, cols = len(grid), len(grid[0])\n        max_area = 0\n\n        def bfs(r, c):\n            area = 0\n            queue = deque([(r, c)])\n            grid[r][c] = 0\n            while queue:\n                row, col = queue.popleft()\n                area += 1\n                for dr, dc in [(1,0),(-1,0),(0,1),(0,-1)]:\n                    nr, nc = row + dr, col + dc\n                    if 0 <= nr < rows and 0 <= nc < cols and grid[nr][nc] == 1:\n                        grid[nr][nc] = 0\n                        queue.append((nr, nc))\n            return area\n\n        for r in range(rows):\n            for c in range(cols):\n                if grid[r][c] == 1:\n                    max_area = max(max_area, bfs(r, c))\n        return max_area\n\n\nsol = Solution()\nprint(sol.maxAreaOfIsland([\n    [0,0,1,0,0,0,0,1,0,0,0,0,0],\n    [0,0,0,0,0,0,0,1,1,1,0,0,0],\n    [0,1,1,0,1,0,0,0,0,0,0,0,0],\n    [0,1,0,0,1,1,0,0,1,0,1,0,0],\n    [0,1,0,0,1,1,0,0,1,1,1,0,0],\n    [0,0,0,0,0,0,0,0,0,0,1,0,0],\n    [0,0,0,0,0,0,0,1,1,1,0,0,0],\n    [0,0,0,0,0,0,0,1,1,0,0,0,0]\n]))  # 6\nprint(sol.maxAreaOfIsland([[0,0,0,0,0,0,0,0]]))  # 0\n"
+      }
+    ]
   },
   {
     "num": 994,
@@ -1927,7 +2283,14 @@
       "Use Dijkstra's algorithm. Build an adjacency list and use a min-heap to process nodes in order of arrival time.",
       "Start Dijkstra from node k. Track the time to reach each node. The answer is the max time among all visited nodes. If not all nodes are reachable, return -1."
     ],
-    "description": "You are given a network of `n` nodes, labeled from `1` to `n`. Given `times`, a list of travel times as directed edges `[u, v, w]`, and a source node `k`, return the **minimum time** it takes for all `n` nodes to receive the signal. If impossible, return `-1`.\n\n**Example:**\n```\nInput: times = [[2,1,1],[2,3,1],[3,4,1]], n = 4, k = 2\nOutput: 2\n```"
+    "description": "You are given a network of `n` nodes, labeled from `1` to `n`. Given `times`, a list of travel times as directed edges `[u, v, w]`, and a source node `k`, return the **minimum time** it takes for all `n` nodes to receive the signal. If impossible, return `-1`.\n\n**Example:**\n```\nInput: times = [[2,1,1],[2,3,1],[3,4,1]], n = 4, k = 2\nOutput: 2\n```",
+    "solution_label": "Dijkstra's Algorithm",
+    "alt_solutions": [
+      {
+        "label": "Bellman-Ford",
+        "code": "class Solution:\n    def networkDelayTime(self, times, n, k):\n        dist = [float('inf')] * (n + 1)\n        dist[k] = 0\n\n        for _ in range(n - 1):\n            for u, v, w in times:\n                if dist[u] + w < dist[v]:\n                    dist[v] = dist[u] + w\n\n        max_time = max(dist[1:])\n        return max_time if max_time < float('inf') else -1\n\n\nsol = Solution()\nprint(sol.networkDelayTime([[2,1,1],[2,3,1],[3,4,1]], 4, 2))  # 2\nprint(sol.networkDelayTime([[1,2,1]], 2, 1))                   # 1\nprint(sol.networkDelayTime([[1,2,1]], 2, 2))                   # -1\n"
+      }
+    ]
   },
   {
     "num": 778,
@@ -1966,7 +2329,14 @@
       "Run Bellman-Ford for exactly k+1 iterations (k stops = k+1 edges). Use a copy of the prices array each iteration to avoid cascading updates.",
       "Initialize prices[src] = 0, all others infinity. For k+1 rounds, copy the prices array and relax all edges using the previous round's values. This ensures at most k+1 edges are used."
     ],
-    "description": "There are `n` cities connected by some flights. You are given `flights` where `flights[i] = [from, to, price]`. Find the cheapest price from `src` to `dst` with at most `k` stops. If there is no such route, return `-1`.\n\n**Example:**\n```\nInput: n = 4, flights = [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]], src = 0, dst = 3, k = 1\nOutput: 700\n```"
+    "description": "There are `n` cities connected by some flights. You are given `flights` where `flights[i] = [from, to, price]`. Find the cheapest price from `src` to `dst` with at most `k` stops. If there is no such route, return `-1`.\n\n**Example:**\n```\nInput: n = 4, flights = [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]], src = 0, dst = 3, k = 1\nOutput: 700\n```",
+    "solution_label": "Bellman-Ford",
+    "alt_solutions": [
+      {
+        "label": "BFS (Layer-by-Layer)",
+        "code": "from collections import defaultdict, deque\n\nclass Solution:\n    def findCheapestPrice(self, n, flights, src, dst, k):\n        graph = defaultdict(list)\n        for u, v, w in flights:\n            graph[u].append((v, w))\n\n        dist = [float('inf')] * n\n        dist[src] = 0\n        queue = deque([(src, 0, 0)])  # (node, cost, stops)\n\n        while queue:\n            node, cost, stops = queue.popleft()\n            if stops > k:\n                continue\n            for neighbor, price in graph[node]:\n                new_cost = cost + price\n                if new_cost < dist[neighbor]:\n                    dist[neighbor] = new_cost\n                    queue.append((neighbor, new_cost, stops + 1))\n\n        return dist[dst] if dist[dst] != float('inf') else -1\n\n\nsol = Solution()\nprint(sol.findCheapestPrice(4, [[0,1,100],[1,2,100],[2,0,100],[1,3,600],[2,3,200]], 0, 3, 1))  # 700\nprint(sol.findCheapestPrice(3, [[0,1,100],[1,2,100],[0,2,500]], 0, 2, 1))  # 200\nprint(sol.findCheapestPrice(3, [[0,1,100],[1,2,100],[0,2,500]], 0, 2, 0))  # 500\n"
+      }
+    ]
   },
   {
     "num": 1584,
@@ -1984,7 +2354,14 @@
       "Use Prim's algorithm with a min-heap. Start from any point and greedily add the cheapest edge to an unvisited point.",
       "Start with point 0 in the MST. Push all edges from it to the heap. Pop the smallest edge, add the new point if unvisited, push its edges. Repeat until all points are connected."
     ],
-    "description": "You are given an array `points` representing integer coordinates of some points on a 2D-plane. The cost of connecting two points is the **Manhattan distance** between them.\n\nReturn the minimum cost to make all points connected.\n\n**Example:**\n```\nInput: points = [[0,0],[2,2],[3,10],[5,2],[7,0]]\nOutput: 20\n```"
+    "description": "You are given an array `points` representing integer coordinates of some points on a 2D-plane. The cost of connecting two points is the **Manhattan distance** between them.\n\nReturn the minimum cost to make all points connected.\n\n**Example:**\n```\nInput: points = [[0,0],[2,2],[3,10],[5,2],[7,0]]\nOutput: 20\n```",
+    "solution_label": "Prim's Algorithm",
+    "alt_solutions": [
+      {
+        "label": "Kruskal's Algorithm",
+        "code": "class Solution:\n    def minCostConnectPoints(self, points):\n        n = len(points)\n        parent = list(range(n))\n        rank = [0] * n\n\n        def find(x):\n            while parent[x] != x:\n                parent[x] = parent[parent[x]]\n                x = parent[x]\n            return x\n\n        def union(x, y):\n            px, py = find(x), find(y)\n            if px == py:\n                return False\n            if rank[px] < rank[py]:\n                px, py = py, px\n            parent[py] = px\n            if rank[px] == rank[py]:\n                rank[px] += 1\n            return True\n\n        # Build all edges sorted by weight\n        edges = []\n        for i in range(n):\n            for j in range(i + 1, n):\n                dist = abs(points[i][0] - points[j][0]) + abs(points[i][1] - points[j][1])\n                edges.append((dist, i, j))\n        edges.sort()\n\n        cost = 0\n        edges_used = 0\n        for dist, u, v in edges:\n            if union(u, v):\n                cost += dist\n                edges_used += 1\n                if edges_used == n - 1:\n                    break\n        return cost\n\n\nsol = Solution()\nprint(sol.minCostConnectPoints([[0,0],[2,2],[3,10],[5,2],[7,0]]))  # 20\nprint(sol.minCostConnectPoints([[3,12],[-2,5],[-4,1]]))            # 18\nprint(sol.minCostConnectPoints([[0,0]]))                           # 0\n"
+      }
+    ]
   },
   {
     "num": 5,
@@ -2002,7 +2379,14 @@
       "There are 2n-1 centers: each character (odd-length) and between each pair (even-length).",
       "For each center, expand outward while characters match. Track the longest found."
     ],
-    "description": "Given a string `s`, return the **longest palindromic substring** in `s`.\n\n**Example:**\n```\nInput: s = \"babad\"\nOutput: \"bab\" (or \"aba\")\n```"
+    "description": "Given a string `s`, return the **longest palindromic substring** in `s`.\n\n**Example:**\n```\nInput: s = \"babad\"\nOutput: \"bab\" (or \"aba\")\n```",
+    "solution_label": "Expand Around Center",
+    "alt_solutions": [
+      {
+        "label": "DP (2D Table)",
+        "code": "class Solution:\n    def longestPalindrome(self, s):\n        n = len(s)\n        if n < 2:\n            return s\n        dp = [[False] * n for _ in range(n)]\n        start, max_len = 0, 1\n\n        for i in range(n):\n            dp[i][i] = True\n\n        for length in range(2, n + 1):\n            for i in range(n - length + 1):\n                j = i + length - 1\n                if s[i] == s[j]:\n                    if length == 2 or dp[i+1][j-1]:\n                        dp[i][j] = True\n                        if length > max_len:\n                            start, max_len = i, length\n\n        return s[start:start + max_len]\n\n\nsol = Solution()\nprint(sol.longestPalindrome('babad'))    # Expected: 'bab' or 'aba'\nprint(sol.longestPalindrome('cbbd'))     # Expected: 'bb'\nprint(sol.longestPalindrome('a'))        # Expected: 'a'\n"
+      }
+    ]
   },
   {
     "num": 70,
@@ -2020,7 +2404,14 @@
       "This is essentially the Fibonacci sequence. Use two variables to track the last two values.",
       "Iterate from 3 to n, updating: a, b = b, a + b. Return b."
     ],
-    "description": "You are climbing a staircase. It takes `n` steps to reach the top. Each time you can either climb `1` or `2` steps. In how many **distinct ways** can you climb to the top?\n\n**Example:**\n```\nInput: n = 3\nOutput: 3\nExplanation: 1+1+1, 1+2, 2+1\n```"
+    "description": "You are climbing a staircase. It takes `n` steps to reach the top. Each time you can either climb `1` or `2` steps. In how many **distinct ways** can you climb to the top?\n\n**Example:**\n```\nInput: n = 3\nOutput: 3\nExplanation: 1+1+1, 1+2, 2+1\n```",
+    "solution_label": "DP (Bottom-Up)",
+    "alt_solutions": [
+      {
+        "label": "Memoization (Top-Down)",
+        "code": "from functools import lru_cache\n\nclass Solution:\n    def climbStairs(self, n):\n        @lru_cache(maxsize=None)\n        def dp(i):\n            if i <= 1:\n                return 1\n            return dp(i - 1) + dp(i - 2)\n        return dp(n)\n\n\nsol = Solution()\nprint(sol.climbStairs(2))   # Expected: 2\nprint(sol.climbStairs(3))   # Expected: 3\nprint(sol.climbStairs(5))   # Expected: 8\n"
+      }
+    ]
   },
   {
     "num": 91,
@@ -2057,7 +2448,14 @@
       "dp[i] is True if s[0:i] can be segmented. For each i, check all j < i where dp[j] is True and s[j:i] is in the dictionary.",
       "Convert wordDict to a set for O(1) lookups. dp[0] = True (empty string). Return dp[len(s)]."
     ],
-    "description": "Given a string `s` and a dictionary of strings `wordDict`, return `True` if `s` can be segmented into a space-separated sequence of one or more dictionary words.\n\n**Example:**\n```\nInput: s = \"leetcode\", wordDict = [\"leet\",\"code\"]\nOutput: True\nExplanation: \"leet code\"\n```"
+    "description": "Given a string `s` and a dictionary of strings `wordDict`, return `True` if `s` can be segmented into a space-separated sequence of one or more dictionary words.\n\n**Example:**\n```\nInput: s = \"leetcode\", wordDict = [\"leet\",\"code\"]\nOutput: True\nExplanation: \"leet code\"\n```",
+    "solution_label": "DP (Bottom-Up)",
+    "alt_solutions": [
+      {
+        "label": "Memoization (Top-Down)",
+        "code": "class Solution:\n    def wordBreak(self, s, wordDict):\n        word_set = set(wordDict)\n        memo = {}\n        def dp(i):\n            if i == len(s):\n                return True\n            if i in memo:\n                return memo[i]\n            for j in range(i + 1, len(s) + 1):\n                if s[i:j] in word_set and dp(j):\n                    memo[i] = True\n                    return True\n            memo[i] = False\n            return False\n        return dp(0)\n\n\n# Test cases\nsol = Solution()\nprint(sol.wordBreak('leetcode', ['leet', 'code']))              # Expected: True\nprint(sol.wordBreak('applepenapple', ['apple', 'pen']))         # Expected: True\nprint(sol.wordBreak('catsandog', ['cats', 'dog', 'sand', 'and', 'cat']))  # Expected: False\n"
+      }
+    ]
   },
   {
     "num": 152,
@@ -2093,7 +2491,14 @@
       "dp[i] = max(dp[i-1], dp[i-2] + nums[i]). You only need two variables.",
       "Track two values: a (two houses back) and b (previous house). For each num: a, b = b, max(b, a + num)."
     ],
-    "description": "You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed. **Adjacent houses have security systems connected** — if two adjacent houses are broken into on the same night, the police will be alerted.\n\nGiven an array `nums` representing the amount of money at each house, return the maximum amount you can rob **without alerting the police**.\n\n**Example:**\n```\nInput: nums = [1,2,3,1]\nOutput: 4\nExplanation: Rob house 1 (1) and house 3 (3) = 4.\n```"
+    "description": "You are a professional robber planning to rob houses along a street. Each house has a certain amount of money stashed. **Adjacent houses have security systems connected** — if two adjacent houses are broken into on the same night, the police will be alerted.\n\nGiven an array `nums` representing the amount of money at each house, return the maximum amount you can rob **without alerting the police**.\n\n**Example:**\n```\nInput: nums = [1,2,3,1]\nOutput: 4\nExplanation: Rob house 1 (1) and house 3 (3) = 4.\n```",
+    "solution_label": "DP (Space-Optimized)",
+    "alt_solutions": [
+      {
+        "label": "Memoization (Top-Down)",
+        "code": "from functools import lru_cache\n\nclass Solution:\n    def rob(self, nums):\n        @lru_cache(maxsize=None)\n        def dp(i):\n            if i >= len(nums):\n                return 0\n            return max(dp(i + 1), nums[i] + dp(i + 2))\n        return dp(0)\n\n\n# Test cases\nsol = Solution()\nprint(sol.rob([1, 2, 3, 1]))       # Expected: 4\nprint(sol.rob([2, 7, 9, 3, 1]))    # Expected: 12\nprint(sol.rob([2, 1, 1, 2]))       # Expected: 4\n"
+      }
+    ]
   },
   {
     "num": 213,
@@ -2130,7 +2535,14 @@
       "For O(n log n): maintain a 'tails' array where tails[i] is the smallest tail of all increasing subsequences of length i+1.",
       "For each number, use binary search (bisect_left) to find where it fits in tails. Replace or append."
     ],
-    "description": "Given an integer array `nums`, return the length of the **longest strictly increasing subsequence**.\n\n**Example:**\n```\nInput: nums = [10,9,2,5,3,7,101,18]\nOutput: 4\nExplanation: The longest increasing subsequence is [2,3,7,101].\n```"
+    "description": "Given an integer array `nums`, return the length of the **longest strictly increasing subsequence**.\n\n**Example:**\n```\nInput: nums = [10,9,2,5,3,7,101,18]\nOutput: 4\nExplanation: The longest increasing subsequence is [2,3,7,101].\n```",
+    "solution_label": "DP O(n²)",
+    "alt_solutions": [
+      {
+        "label": "Binary Search O(n log n)",
+        "code": "import bisect\n\nclass Solution:\n    def lengthOfLIS(self, nums):\n        tails = []\n        for num in nums:\n            pos = bisect.bisect_left(tails, num)\n            if pos == len(tails):\n                tails.append(num)\n            else:\n                tails[pos] = num\n        return len(tails)\n\n\nsol = Solution()\nprint(sol.lengthOfLIS([10, 9, 2, 5, 3, 7, 101, 18]))  # Expected: 4\nprint(sol.lengthOfLIS([0, 1, 0, 3, 2, 3]))             # Expected: 4\nprint(sol.lengthOfLIS([7, 7, 7, 7, 7, 7, 7]))          # Expected: 1\n"
+      }
+    ]
   },
   {
     "num": 322,
@@ -2148,7 +2560,18 @@
       "Build a dp array of size amount+1. dp[i] = minimum coins to make amount i.",
       "dp[i] = min(dp[i - c] + 1) for each coin c <= i. Initialize dp[0] = 0, rest = infinity."
     ],
-    "description": "You are given an integer array `coins` representing coins of different denominations and an integer `amount` representing a total amount of money.\n\nReturn the **fewest number of coins** needed to make up that amount. If it cannot be made up, return `-1`.\n\n**Example:**\n```\nInput: coins = [1,5,10], amount = 27\nOutput: 5\nExplanation: 10 + 10 + 5 + 1 + 1\n```"
+    "description": "You are given an integer array `coins` representing coins of different denominations and an integer `amount` representing a total amount of money.\n\nReturn the **fewest number of coins** needed to make up that amount. If it cannot be made up, return `-1`.\n\n**Example:**\n```\nInput: coins = [1,5,10], amount = 27\nOutput: 5\nExplanation: 10 + 10 + 5 + 1 + 1\n```",
+    "solution_label": "DP (Bottom-Up)",
+    "alt_solutions": [
+      {
+        "label": "BFS (Shortest Path)",
+        "code": "from collections import deque\n\nclass Solution:\n    def coinChange(self, coins, amount):\n        if amount == 0:\n            return 0\n        visited = {0}\n        queue = deque([(0, 0)])\n        while queue:\n            curr, steps = queue.popleft()\n            for coin in coins:\n                nxt = curr + coin\n                if nxt == amount:\n                    return steps + 1\n                if nxt < amount and nxt not in visited:\n                    visited.add(nxt)\n                    queue.append((nxt, steps + 1))\n        return -1\n\n\nsol = Solution()\nprint(sol.coinChange([1, 5, 10, 25], 30))   # Expected: 2\nprint(sol.coinChange([2], 3))                # Expected: -1\nprint(sol.coinChange([1], 0))                # Expected: 0\n"
+      },
+      {
+        "label": "Memoization (Top-Down)",
+        "code": "from functools import lru_cache\n\nclass Solution:\n    def coinChange(self, coins, amount):\n        @lru_cache(maxsize=None)\n        def dp(rem):\n            if rem == 0:\n                return 0\n            if rem < 0:\n                return float('inf')\n            return min((dp(rem - c) for c in coins), default=float('inf')) + 1\n\n        result = dp(amount)\n        return result if result != float('inf') else -1\n\n\nsol = Solution()\nprint(sol.coinChange([1, 5, 10, 25], 30))   # Expected: 2\nprint(sol.coinChange([2], 3))                # Expected: -1\nprint(sol.coinChange([1], 0))                # Expected: 0\n"
+      }
+    ]
   },
   {
     "num": 416,
@@ -2184,7 +2607,14 @@
       "Count each valid expansion as one palindromic substring.",
       "For each center (both odd and even), expand while characters match, incrementing the count each time."
     ],
-    "description": "Given a string `s`, return the number of **palindromic substrings** in it.\n\nA string is a palindrome when it reads the same backward as forward. A substring is a contiguous sequence of characters within the string.\n\n**Example:**\n```\nInput: s = \"abc\"\nOutput: 3\nExplanation: \"a\", \"b\", \"c\" are palindromic substrings.\n```"
+    "description": "Given a string `s`, return the number of **palindromic substrings** in it.\n\nA string is a palindrome when it reads the same backward as forward. A substring is a contiguous sequence of characters within the string.\n\n**Example:**\n```\nInput: s = \"abc\"\nOutput: 3\nExplanation: \"a\", \"b\", \"c\" are palindromic substrings.\n```",
+    "solution_label": "Expand Around Center",
+    "alt_solutions": [
+      {
+        "label": "DP (2D Table)",
+        "code": "class Solution:\n    def countSubstrings(self, s):\n        n = len(s)\n        dp = [[False] * n for _ in range(n)]\n        count = 0\n        for length in range(1, n + 1):\n            for i in range(n - length + 1):\n                j = i + length - 1\n                if s[i] == s[j] and (length <= 2 or dp[i+1][j-1]):\n                    dp[i][j] = True\n                    count += 1\n        return count\n\n\n# Test cases\nsol = Solution()\nprint(sol.countSubstrings('abc'))    # Expected: 3\nprint(sol.countSubstrings('aaa'))    # Expected: 6\n"
+      }
+    ]
   },
   {
     "num": 746,
@@ -2202,7 +2632,14 @@
       "dp[i] = min(dp[i-1] + cost[i-1], dp[i-2] + cost[i-2]). You only need two variables.",
       "Initialize a=0, b=0. For i in range(2, len(cost)+1): a, b = b, min(b + cost[i-1], a + cost[i-2])."
     ],
-    "description": "You are given an integer array `cost` where `cost[i]` is the cost of the `i`th step on a staircase. Once you pay the cost, you can climb one or two steps.\n\nYou can start from the step with index `0` or index `1`.\n\nReturn the **minimum cost** to reach the top of the floor.\n\n**Example:**\n```\nInput: cost = [10,15,20]\nOutput: 15\nExplanation: Start at index 1, pay 15, climb two steps to the top.\n```"
+    "description": "You are given an integer array `cost` where `cost[i]` is the cost of the `i`th step on a staircase. Once you pay the cost, you can climb one or two steps.\n\nYou can start from the step with index `0` or index `1`.\n\nReturn the **minimum cost** to reach the top of the floor.\n\n**Example:**\n```\nInput: cost = [10,15,20]\nOutput: 15\nExplanation: Start at index 1, pay 15, climb two steps to the top.\n```",
+    "solution_label": "DP (Space-Optimized)",
+    "alt_solutions": [
+      {
+        "label": "DP (Full Array)",
+        "code": "class Solution:\n    def minCostClimbingStairs(self, cost):\n        n = len(cost)\n        dp = [0] * (n + 1)\n        for i in range(2, n + 1):\n            dp[i] = min(dp[i-1] + cost[i-1], dp[i-2] + cost[i-2])\n        return dp[n]\n\n\n# Test cases\nsol = Solution()\nprint(sol.minCostClimbingStairs([10, 15, 20]))          # Expected: 15\nprint(sol.minCostClimbingStairs([1, 100, 1, 1, 1, 100, 1, 1, 100, 1]))  # Expected: 6\n"
+      }
+    ]
   },
   {
     "num": 10,
@@ -2238,7 +2675,18 @@
       "dp[i][j] = dp[i-1][j] + dp[i][j-1]. The first row and column are all 1s.",
       "Optimize space to a single row. For each new row, update left to right: row[j] += row[j-1]."
     ],
-    "description": "There is a robot on an `m x n` grid starting at the top-left corner. The robot can only move either **down** or **right** at any point. How many possible **unique paths** are there to the bottom-right corner?\n\n**Example:**\n```\nInput: m = 3, n = 7\nOutput: 28\n```"
+    "description": "There is a robot on an `m x n` grid starting at the top-left corner. The robot can only move either **down** or **right** at any point. How many possible **unique paths** are there to the bottom-right corner?\n\n**Example:**\n```\nInput: m = 3, n = 7\nOutput: 28\n```",
+    "solution_label": "DP (2D Table)",
+    "alt_solutions": [
+      {
+        "label": "Math (Combinations)",
+        "code": "from math import comb\n\nclass Solution:\n    def uniquePaths(self, m, n):\n        return comb(m + n - 2, m - 1)\n\n\nsol = Solution()\nprint(sol.uniquePaths(3, 7))   # Expected: 28\nprint(sol.uniquePaths(3, 2))   # Expected: 3\n"
+      },
+      {
+        "label": "DP (1D Space-Optimized)",
+        "code": "class Solution:\n    def uniquePaths(self, m, n):\n        row = [1] * n\n        for _ in range(1, m):\n            for j in range(1, n):\n                row[j] += row[j - 1]\n        return row[n - 1]\n\n\nsol = Solution()\nprint(sol.uniquePaths(3, 7))   # Expected: 28\nprint(sol.uniquePaths(3, 2))   # Expected: 3\n"
+      }
+    ]
   },
   {
     "num": 72,
@@ -2347,7 +2795,14 @@
       "Use @lru_cache or a memo dictionary. The path is a DAG (no cycles since values strictly increase).",
       "dfs(r, c) returns the longest path starting at (r, c). Result = max of dfs over all cells."
     ],
-    "description": "Given an `m x n` integers matrix, return the length of the **longest increasing path** in the matrix.\n\nFrom each cell, you can move in four directions. You may **not** move diagonally or outside the boundary.\n\n**Example:**\n```\nInput: matrix = [[9,9,4],[6,6,8],[2,1,1]]\nOutput: 4\nExplanation: The longest increasing path is [1, 2, 6, 9].\n```"
+    "description": "Given an `m x n` integers matrix, return the length of the **longest increasing path** in the matrix.\n\nFrom each cell, you can move in four directions. You may **not** move diagonally or outside the boundary.\n\n**Example:**\n```\nInput: matrix = [[9,9,4],[6,6,8],[2,1,1]]\nOutput: 4\nExplanation: The longest increasing path is [1, 2, 6, 9].\n```",
+    "solution_label": "DFS + Memoization",
+    "alt_solutions": [
+      {
+        "label": "Topological Sort (BFS)",
+        "code": "from collections import deque\n\nclass Solution:\n    def longestIncreasingPath(self, matrix):\n        m, n = len(matrix), len(matrix[0])\n        in_degree = [[0] * n for _ in range(m)]\n        dirs = [(0,1),(0,-1),(1,0),(-1,0)]\n\n        for r in range(m):\n            for c in range(n):\n                for dr, dc in dirs:\n                    nr, nc = r + dr, c + dc\n                    if 0 <= nr < m and 0 <= nc < n and matrix[nr][nc] > matrix[r][c]:\n                        in_degree[nr][nc] += 1\n\n        queue = deque()\n        for r in range(m):\n            for c in range(n):\n                if in_degree[r][c] == 0:\n                    queue.append((r, c))\n\n        length = 0\n        while queue:\n            length += 1\n            for _ in range(len(queue)):\n                r, c = queue.popleft()\n                for dr, dc in dirs:\n                    nr, nc = r + dr, c + dc\n                    if 0 <= nr < m and 0 <= nc < n and matrix[nr][nc] > matrix[r][c]:\n                        in_degree[nr][nc] -= 1\n                        if in_degree[nr][nc] == 0:\n                            queue.append((nr, nc))\n        return length\n\n\n# Test cases\nsol = Solution()\nprint(sol.longestIncreasingPath([[9,9,4],[6,6,8],[2,1,1]]))    # Expected: 4\nprint(sol.longestIncreasingPath([[3,4,5],[3,2,6],[2,2,1]]))    # Expected: 4\nprint(sol.longestIncreasingPath([[1]]))                        # Expected: 1\n"
+      }
+    ]
   },
   {
     "num": 494,
@@ -2365,7 +2820,14 @@
       "Use a dictionary mapping current_sum -> number_of_ways to reach it.",
       "For each num, create a new dictionary. For each existing (sum, count), add count to sum+num and sum-num."
     ],
-    "description": "You are given an integer array `nums` and an integer `target`. You want to build an expression by adding `'+'` or `'-'` before each integer in `nums` and concatenating them.\n\nReturn the number of different expressions that evaluate to `target`.\n\n**Example:**\n```\nInput: nums = [1,1,1,1,1], target = 3\nOutput: 5\n```"
+    "description": "You are given an integer array `nums` and an integer `target`. You want to build an expression by adding `'+'` or `'-'` before each integer in `nums` and concatenating them.\n\nReturn the number of different expressions that evaluate to `target`.\n\n**Example:**\n```\nInput: nums = [1,1,1,1,1], target = 3\nOutput: 5\n```",
+    "solution_label": "DP (Bottom-Up)",
+    "alt_solutions": [
+      {
+        "label": "DFS + Memoization",
+        "code": "from functools import lru_cache\n\nclass Solution:\n    def findTargetSumWays(self, nums, target):\n        @lru_cache(maxsize=None)\n        def dp(i, total):\n            if i == len(nums):\n                return 1 if total == target else 0\n            return dp(i + 1, total + nums[i]) + dp(i + 1, total - nums[i])\n        return dp(0, 0)\n\n\n# Test cases\nsol = Solution()\nprint(sol.findTargetSumWays([1, 1, 1, 1, 1], 3))   # Expected: 5\nprint(sol.findTargetSumWays([1], 1))                # Expected: 1\n"
+      }
+    ]
   },
   {
     "num": 518,
@@ -2401,7 +2863,14 @@
       "dp[i][j] = dp[i-1][j-1] + 1 if match, else max(dp[i-1][j], dp[i][j-1]).",
       "Optimize to two rows (prev and curr) since each row only depends on the previous row."
     ],
-    "description": "Given two strings `text1` and `text2`, return the length of their **longest common subsequence**. If there is no common subsequence, return `0`.\n\nA subsequence is a sequence that can be derived by deleting some (or no) elements without changing the order of the remaining elements.\n\n**Example:**\n```\nInput: text1 = \"abcde\", text2 = \"ace\"\nOutput: 3\nExplanation: The longest common subsequence is \"ace\".\n```"
+    "description": "Given two strings `text1` and `text2`, return the length of their **longest common subsequence**. If there is no common subsequence, return `0`.\n\nA subsequence is a sequence that can be derived by deleting some (or no) elements without changing the order of the remaining elements.\n\n**Example:**\n```\nInput: text1 = \"abcde\", text2 = \"ace\"\nOutput: 3\nExplanation: The longest common subsequence is \"ace\".\n```",
+    "solution_label": "DP (1D Space-Optimized)",
+    "alt_solutions": [
+      {
+        "label": "Memoization (Top-Down)",
+        "code": "from functools import lru_cache\n\nclass Solution:\n    def longestCommonSubsequence(self, text1, text2):\n        @lru_cache(maxsize=None)\n        def dp(i, j):\n            if i == len(text1) or j == len(text2):\n                return 0\n            if text1[i] == text2[j]:\n                return 1 + dp(i + 1, j + 1)\n            return max(dp(i + 1, j), dp(i, j + 1))\n        return dp(0, 0)\n\n\n# Test cases\nsol = Solution()\nprint(sol.longestCommonSubsequence('abcde', 'ace'))     # Expected: 3\nprint(sol.longestCommonSubsequence('abc', 'abc'))       # Expected: 3\nprint(sol.longestCommonSubsequence('abc', 'def'))       # Expected: 0\n"
+      }
+    ]
   },
   {
     "num": 45,
@@ -2419,7 +2888,14 @@
       "Track the end of the current jump range. When you reach it, increment jumps and set the new end.",
       "farthest = max reachable from current level. When i == cur_end: jumps++, cur_end = farthest."
     ],
-    "description": "You are given a 0-indexed array of integers `nums` of length `n`, where `nums[i]` is the maximum jump length from index `i`.\n\nReturn the **minimum number of jumps** to reach `nums[n - 1]`. The test cases are generated so you can always reach the last index.\n\n**Example:**\n```\nInput: nums = [2,3,1,1,4]\nOutput: 2\n```"
+    "description": "You are given a 0-indexed array of integers `nums` of length `n`, where `nums[i]` is the maximum jump length from index `i`.\n\nReturn the **minimum number of jumps** to reach `nums[n - 1]`. The test cases are generated so you can always reach the last index.\n\n**Example:**\n```\nInput: nums = [2,3,1,1,4]\nOutput: 2\n```",
+    "solution_label": "Greedy",
+    "alt_solutions": [
+      {
+        "label": "BFS (Level-by-Level)",
+        "code": "class Solution:\n    def jump(self, nums):\n        n = len(nums)\n        if n <= 1:\n            return 0\n        jumps = 0\n        left = right = 0\n        while right < n - 1:\n            farthest = 0\n            for i in range(left, right + 1):\n                farthest = max(farthest, i + nums[i])\n            left = right + 1\n            right = farthest\n            jumps += 1\n        return jumps\n\n\n# Test cases\nsol = Solution()\nprint(sol.jump([2, 3, 1, 1, 4]))    # Expected: 2\nprint(sol.jump([2, 3, 0, 1, 4]))    # Expected: 2\n"
+      }
+    ]
   },
   {
     "num": 53,
@@ -2438,7 +2914,14 @@
       "Kadane's algorithm: cur_sum = max(num, cur_sum + num) at each step.",
       "Track the global maximum across all positions. Initialize max_sum = nums[0]."
     ],
-    "description": "Given an integer array `nums`, find the subarray with the **largest sum**, and return its sum.\n\n**Example:**\n```\nInput: nums = [-2,1,-3,4,-1,2,1,-5,4]\nOutput: 6\nExplanation: The subarray [4,-1,2,1] has the largest sum 6.\n```"
+    "description": "Given an integer array `nums`, find the subarray with the **largest sum**, and return its sum.\n\n**Example:**\n```\nInput: nums = [-2,1,-3,4,-1,2,1,-5,4]\nOutput: 6\nExplanation: The subarray [4,-1,2,1] has the largest sum 6.\n```",
+    "solution_label": "Kadane's Algorithm",
+    "alt_solutions": [
+      {
+        "label": "Divide and Conquer",
+        "code": "class Solution:\n    def maxSubArray(self, nums):\n        def helper(l, r):\n            if l == r:\n                return nums[l]\n            mid = (l + r) // 2\n            left_max = helper(l, mid)\n            right_max = helper(mid + 1, r)\n\n            # Max crossing sum\n            left_sum = float('-inf')\n            curr = 0\n            for i in range(mid, l - 1, -1):\n                curr += nums[i]\n                left_sum = max(left_sum, curr)\n\n            right_sum = float('-inf')\n            curr = 0\n            for i in range(mid + 1, r + 1):\n                curr += nums[i]\n                right_sum = max(right_sum, curr)\n\n            return max(left_max, right_max, left_sum + right_sum)\n\n        return helper(0, len(nums) - 1)\n\n\nsol = Solution()\nprint(sol.maxSubArray([-2,1,-3,4,-1,2,1,-5,4]))   # Expected: 6\nprint(sol.maxSubArray([1]))                        # Expected: 1\nprint(sol.maxSubArray([5,4,-1,7,8]))               # Expected: 23\n"
+      }
+    ]
   },
   {
     "num": 55,
@@ -2492,7 +2975,14 @@
       "lo = minimum possible open count, hi = maximum. '(' increments both, ')' decrements both, '*' decrements lo and increments hi.",
       "If hi < 0, too many ')'. Clamp lo to 0 (can't have negative open parens). Valid if lo == 0 at the end."
     ],
-    "description": "Given a string `s` containing only three types of characters: `'('`, `')'` and `'*'`, return `True` if `s` is **valid**.\n\n`'*'` could be treated as:\n- A single right parenthesis `')'`\n- A single left parenthesis `'('`\n- An empty string `\"\"`"
+    "description": "Given a string `s` containing only three types of characters: `'('`, `')'` and `'*'`, return `True` if `s` is **valid**.\n\n`'*'` could be treated as:\n- A single right parenthesis `')'`\n- A single left parenthesis `'('`\n- An empty string `\"\"`",
+    "solution_label": "Greedy (Min/Max Range)",
+    "alt_solutions": [
+      {
+        "label": "Two-Pass (Left + Right)",
+        "code": "class Solution:\n    def checkValidString(self, s):\n        # Left-to-right: treat * as (\n        balance = 0\n        for c in s:\n            balance += 1 if c != ')' else -1\n            if balance < 0:\n                return False\n        # Right-to-left: treat * as )\n        balance = 0\n        for c in reversed(s):\n            balance += 1 if c != '(' else -1\n            if balance < 0:\n                return False\n        return True\n\n\n# Test cases\nsol = Solution()\nprint(sol.checkValidString('()'))       # Expected: True\nprint(sol.checkValidString('(*)'))      # Expected: True\nprint(sol.checkValidString('(*))'))     # Expected: True\nprint(sol.checkValidString('((*)'))     # Expected: True\n"
+      }
+    ]
   },
   {
     "num": 763,
@@ -2898,7 +3388,14 @@
       "Sum of 0 to n = n*(n+1)/2. Subtract the actual sum to find the missing number.",
       "Alternatively, XOR all numbers with indices 0..n. The missing number remains."
     ],
-    "description": "Given an array `nums` containing `n` distinct numbers in the range `[0, n]`, return the only number in the range that is **missing** from the array.\n\n**Example:**\n```\nInput: nums = [3,0,1]\nOutput: 2\n```"
+    "description": "Given an array `nums` containing `n` distinct numbers in the range `[0, n]`, return the only number in the range that is **missing** from the array.\n\n**Example:**\n```\nInput: nums = [3,0,1]\nOutput: 2\n```",
+    "solution_label": "Sum Formula",
+    "alt_solutions": [
+      {
+        "label": "XOR (Bit Manipulation)",
+        "code": "class Solution:\n    def missingNumber(self, nums):\n        xor = len(nums)\n        for i, num in enumerate(nums):\n            xor ^= i ^ num\n        return xor\n\n\nsol = Solution()\nprint(sol.missingNumber([3, 0, 1]))       # Expected: 2\nprint(sol.missingNumber([0, 1]))           # Expected: 2\nprint(sol.missingNumber([9,6,4,2,3,5,7,0,1]))  # Expected: 8\n"
+      }
+    ]
   },
   {
     "num": 338,
@@ -2916,7 +3413,14 @@
       "dp[i] = dp[i >> 1] + (i & 1). This uses the fact that i >> 1 has already been computed.",
       "Initialize dp[0] = 0. Iterate from 1 to n, applying the recurrence."
     ],
-    "description": "Given an integer `n`, return an array `ans` of length `n + 1` such that for each `i` (0 ≤ i ≤ n), `ans[i]` is the **number of 1's** in the binary representation of `i`.\n\n**Example:**\n```\nInput: n = 5\nOutput: [0,1,1,2,1,2]\n```"
+    "description": "Given an integer `n`, return an array `ans` of length `n + 1` such that for each `i` (0 ≤ i ≤ n), `ans[i]` is the **number of 1's** in the binary representation of `i`.\n\n**Example:**\n```\nInput: n = 5\nOutput: [0,1,1,2,1,2]\n```",
+    "solution_label": "DP (Right Shift)",
+    "alt_solutions": [
+      {
+        "label": "DP (Last Set Bit)",
+        "code": "class Solution:\n    def countBits(self, n):\n        dp = [0] * (n + 1)\n        for i in range(1, n + 1):\n            dp[i] = dp[i & (i - 1)] + 1\n        return dp\n\n\n# Test cases\nsol = Solution()\nprint(sol.countBits(2))    # Expected: [0, 1, 1]\nprint(sol.countBits(5))    # Expected: [0, 1, 1, 2, 1, 2]\n"
+      }
+    ]
   },
   {
     "num": 371,
