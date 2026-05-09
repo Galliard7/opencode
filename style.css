@@ -367,6 +367,39 @@ kbd {
 }
 
 /* Description Panel */
+.complexity-bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 16px;
+  background: rgba(99,102,241,0.08);
+  border-bottom: 1px solid rgba(99,102,241,0.18);
+  font-family: var(--font-ui);
+  font-size: 12px;
+  flex-shrink: 0;
+}
+.complexity-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.complexity-label {
+  color: var(--fg-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 10px;
+  letter-spacing: 0.5px;
+}
+.complexity-item span:not(.complexity-label) {
+  color: var(--accent-hover);
+  font-family: var(--font-mono, 'SF Mono', 'Fira Code', monospace);
+  font-weight: 500;
+}
+.complexity-sep {
+  color: var(--fg-muted);
+  opacity: 0.4;
+}
+
 .desc-panel {
   background: var(--bg-panel);
   border-bottom: 1px solid var(--border);
